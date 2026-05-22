@@ -686,7 +686,7 @@ function renderNav() {
   let html = '';
   items.forEach(item => {
     if (item.divider) html += `<div class="nav-label" style="margin-top:12px">${item.divider}</div>`;
-    html += `<a class="nav-item ${item.active?'active':''}" href="#">
+    html += `<a class="nav-item ${item.active?'active':''}" href="${item.href||'#'}">
       <span class="nav-icon">${item.icon}</span>
       ${item.label}
       ${item.badge ? `<span class="nav-badge">${item.badge}</span>` : ''}
@@ -1137,9 +1137,7 @@ function renderAdminDashboard(el) {
     </div>
 
     <div class="quick-grid">
-      <a class="quick-card" href="#">
-        <span class="quick-icon">👤</span>
-        <span class="quick-label">User Management</span>
+      <a class="quick-card" href="employees.html">
         <span class="quick-sub">Add / edit / deactivate</span>
       </a>
       <a class="quick-card" href="#">

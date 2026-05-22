@@ -184,7 +184,7 @@ tr:hover td{background:#fafafa}
 <aside class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-company">PKP &amp; Associates</div>
-    <div class="s-name">Pratapkaran Paul &amp; Co1.<br><span>Reimbursement</span></div>
+    <div class="s-name">Pratapkaran Paul &amp; Co.<br><span>Reimbursement</span></div>
   </div>
   <nav id="sideNav"></nav>
   <div class="s-foot">
@@ -479,6 +479,23 @@ var NAV = {
 var ROLE_LABELS = { EMPLOYEE:"Employee", MANAGER:"Manager", FINANCE_MGR:"Finance Manager", ACCOUNTS:"Accounts Team", ADMIN:"Administrator" };
 
 // ══ INIT ══
+
+function setQuickActions(btns) {
+  var wrap = document.createElement("div");
+  wrap.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px";
+  for (var i = 0; i < btns.length; i++) {
+    var b = document.createElement("button");
+    b.className = btns[i].cls;
+    b.textContent = btns[i].label;
+    (function(pane) {
+      b.addEventListener("click", function() { showPane(pane); });
+    })(btns[i].pane);
+    wrap.appendChild(b);
+  }
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashQuickActions").appendChild(wrap);
+}
+
 function init() {
   // DEBUG: show session info
   console.log("SESSION:", JSON.stringify(sess));
@@ -507,16 +524,31 @@ function init() {
 
 function buildNav() {
   var items = NAV[sess.role] || NAV.EMPLOYEE;
-  var html = "<div class='nav-group'>";
+  var el = document.getElementById("sideNav");
+  var div = document.createElement("div");
+  div.className = "nav-group";
   for (var i = 0; i < items.length; i++) {
     var it = items[i];
-    html += "<div class='nav-item' id='nav-" + it.id + "' data-pane='" + it.id + "' onclick='showPane("" + it.id + "")'>";
-    html += "<span>" + it.icon + "</span><span>" + it.label + "</span>";
-    if (it.badgeId) html += "<span class='badge' id='" + it.badgeId + "' style='display:none'>0</span>";
-    html += "</div>";
+    var item = document.createElement("div");
+    item.className = "nav-item";
+    item.id = "nav-" + it.id;
+    item.setAttribute("data-pane", it.id);
+    item.innerHTML = "<span>" + it.icon + "</span><span>" + it.label + "</span>";
+    if (it.badgeId) {
+      var badge = document.createElement("span");
+      badge.className = "badge";
+      badge.id = it.badgeId;
+      badge.style.display = "none";
+      badge.textContent = "0";
+      item.appendChild(badge);
+    }
+    (function(paneId) {
+      item.addEventListener("click", function() { showPane(paneId); });
+    })(it.id);
+    div.appendChild(item);
   }
-  html += "</div>";
-  document.getElementById("sideNav").innerHTML = html;
+  el.innerHTML = "";
+  el.appendChild(div);
 }
 
 // ══ API CALL ══
@@ -614,7 +646,7 @@ function loadEmployeeDashboard() {
       { lbl:"Received", val:fmtAmt(received), sub:"Paid by firm", cls:"s-green" },
       { lbl:"Rejected", val:fmtAmt(rejected), sub:"Claims returned", cls:"s-red" }
     ]);
-    document.getElementById("dashQuickActions").innerHTML = "<div style='display:flex;gap:10px;margin-bottom:18px'><button class='btn-pri' onclick='showPane("new-claim")'>+ New Claim</button><button class='btn-sec' onclick='showPane("my-claims")'>View All Claims</button><button class='btn-sec' onclick='showPane("reports")'>Reports</button></div>";
+    setQuickActions([{label:"+ New Claim",pane:"new-claim",cls:"btn-pri"},{label:"View All Claims",pane:"my-claims",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
     renderRecentClaims(claims.slice(0, 5));
   });
 }
@@ -640,7 +672,7 @@ function loadManagerDashboard() {
       { lbl:"Total Amount", val:fmtAmt(totalAmt), sub:"All claims", cls:"s-blue" }
     ]);
     if (pending > 0) { var b = document.getElementById("apBadge"); if (b) { b.textContent = pending; b.style.display = "inline-block"; } }
-    document.getElementById("dashQuickActions").innerHTML = "<div style='display:flex;gap:10px;margin-bottom:18px'><button class='btn-pri' onclick='showPane("approvals")'>Review Pending (" + pending + ")</button><button class='btn-sec' onclick='showPane("new-claim")'>+ My Claim</button><button class='btn-sec' onclick='showPane("reports")'>Reports</button></div>";
+    setQuickActions([{label:"Review Pending ( + pending + )",pane:"approvals",cls:"btn-pri"},{label:"+ My Claim",pane:"new-claim",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
     renderPendingApprovalPreview(claims);
   });
 }
@@ -664,7 +696,7 @@ function loadFinanceDashboard() {
       { lbl:"Finance Approved", val:approved, sub:"This period", cls:"s-green" },
       { lbl:"Total Claims", val:claims.length, sub:"All records" }
     ]);
-    document.getElementById("dashQuickActions").innerHTML = "<div style='display:flex;gap:10px;margin-bottom:18px'><button class='btn-pri' onclick='showPane("finance")'>Review Finance Approvals</button><button class='btn-sec' onclick='showPane("reports")'>Reports</button></div>";
+    setQuickActions([{label:"Review Finance Approvals",pane:"finance",cls:"btn-pri"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
   });
 }
 
@@ -687,7 +719,7 @@ function loadAccountsDashboard() {
       { lbl:"Pending Invoice", val:uninvoiced, sub:"To client", cls:"s-blue" },
       { lbl:"Total Records", val:claims.length, sub:"All claims" }
     ]);
-    document.getElementById("dashQuickActions").innerHTML = "<div style='display:flex;gap:10px;margin-bottom:18px'><button class='btn-pri' onclick='showPane("accounts")'>Update Payments</button><button class='btn-sec' onclick='showPane("reports")'>Reports</button></div>";
+    setQuickActions([{label:"Update Payments",pane:"accounts",cls:"btn-pri"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
   });
 }
 
@@ -712,7 +744,7 @@ function loadAdminDashboard() {
       { lbl:"Pending Finance", val:pendFin, sub:"Awaiting finance", cls:"s-blue" },
       { lbl:"Paid", val:paid, sub:"Settled", cls:"s-green" }
     ]);
-    document.getElementById("dashQuickActions").innerHTML = "<div style='display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px'><button class='btn-pri' onclick='showPane("approvals")'>Manager Approvals</button><button class='btn-pri' onclick='showPane("finance")'>Finance Approvals</button><button class='btn-sec' onclick='showPane("accounts")'>Accounts</button><button class='btn-sec' onclick='showPane("users")'>Users</button><button class='btn-sec' onclick='showPane("reports")'>Reports</button></div>";
+    setQuickActions([{label:"Manager Approvals",pane:"approvals",cls:"btn-pri"},{label:"Finance Approvals",pane:"finance",cls:"btn-pri"},{label:"Accounts",pane:"accounts",cls:"btn-sec"},{label:"Users",pane:"users",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
     renderPendingApprovalPreview(claims);
   });
 }

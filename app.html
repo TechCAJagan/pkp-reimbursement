@@ -194,7 +194,7 @@ tr:hover td{background:#fafafa}
         <div class="s-uname" id="sName">User</div>
         <div class="s-urole" id="sRole">-</div>
       </div>
-      <button class="s-logout" id="logoutBtn" title="Sign out">&#9211;</button>
+      <button class="s-logout" id="logoutBtn" title="Sign out" onclick="sessionStorage.clear();window.location.href='index.html'">&#9211;</button>
     </div>
   </div>
 </aside>
@@ -208,7 +208,7 @@ tr:hover td{background:#fafafa}
   <!-- ══ PANE: DASHBOARD ══ -->
   <div class="pane active" id="pane-dashboard">
     <div class="pane-title" id="dashTitle">Dashboard</div>
-    <div class="stat-grid" id="dashStats"></div>
+    <div class="stat-grid" id="dashStats"><div style="padding:20px;color:#6b7280;font-size:13px">Loading dashboard data...</div></div>
     <div id="dashQuickActions"></div>
     <div id="dashPendingSection"></div>
   </div>
@@ -480,6 +480,15 @@ var ROLE_LABELS = { EMPLOYEE:"Employee", MANAGER:"Manager", FINANCE_MGR:"Finance
 
 // ══ INIT ══
 function init() {
+  // DEBUG: show session info
+  console.log("SESSION:", JSON.stringify(sess));
+  console.log("TOKEN:", tok ? tok.substring(0,10)+"..." : "MISSING");
+
+  if (!sess || !sess.role) {
+    document.body.innerHTML = "<div style='padding:40px;font-family:sans-serif'><h2 style='color:#991b1b'>Session Error</h2><p>No session found. <a href='index.html'>Click here to login again</a></p></div>";
+    return;
+  }
+
   document.getElementById("sAvatar").textContent = (sess.name || "U").charAt(0).toUpperCase();
   document.getElementById("sName").textContent = sess.name || "User";
   document.getElementById("sRole").textContent = ROLE_LABELS[sess.role] || sess.role;

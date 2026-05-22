@@ -752,27 +752,67 @@ function loadAdminDashboard() {
 function renderRecentClaims(claims) {
   var el = document.getElementById("dashPendingSection");
   if (!claims || claims.length === 0) { el.innerHTML = ""; return; }
-  var html = "<div class='tcard'><div class='tcard-hdr'><div class='tcard-hdr-title'>Recent Claims</div><button class='ghost' onclick='showPane("my-claims")'>View All</button></div><div class='twrap'><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>";
+  var wrap = document.createElement("div"); wrap.className = "tcard";
+  var hdr = document.createElement("div"); hdr.className = "tcard-hdr";
+  var ttl = document.createElement("div"); ttl.className = "tcard-hdr-title"; ttl.textContent = "Recent Claims";
+  var vbtn = document.createElement("button"); vbtn.className = "ghost"; vbtn.textContent = "View All";
+  vbtn.addEventListener("click", function() { showPane("my-claims"); });
+  hdr.appendChild(ttl); hdr.appendChild(vbtn); wrap.appendChild(hdr);
+  var twrap = document.createElement("div"); twrap.className = "twrap";
+  var tbl = document.createElement("table");
+  tbl.innerHTML = "<thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead>";
+  var tbody = document.createElement("tbody");
   for (var i = 0; i < claims.length; i++) {
     var c = claims[i]; var s = getClaimStatus(c);
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td></tr>";
+    var tr = document.createElement("tr");
+    tr.innerHTML = "<td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td>";
+    tbody.appendChild(tr);
   }
-  html += "</tbody></table></div></div>";
-  el.innerHTML = html;
+  tbl.appendChild(tbody); twrap.appendChild(tbl); wrap.appendChild(twrap);
+  el.innerHTML = ""; el.appendChild(wrap);
 }
 
 function renderPendingApprovalPreview(claims) {
   var pending = [];
   for (var i = 0; i < claims.length; i++) { if (claims[i].ManagerApprovalStatus === "PENDING_MANAGER") pending.push(claims[i]); }
   var el = document.getElementById("dashPendingSection");
-  if (!pending.length) { el.innerHTML = "<div style='padding:16px;background:#fff;border-radius:10px;border:1px solid var(--border);color:var(--muted);font-size:13px'>No pending approvals. All caught up!</div>"; return; }
-  var html = "<div class='tcard'><div class='tcard-hdr'><div class='tcard-hdr-title'>Pending Approvals (" + pending.length + ")</div><button class='ghost' onclick='showPane("approvals")'>View All</button></div><div class='twrap'><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Action</th></tr></thead><tbody>";
-  for (var i = 0; i < Math.min(pending.length, 5); i++) {
-    var c = pending[i]; var cid = (c.ClaimID || "").replace(/'/g, "");
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td><button class='btn btn-ok' data-id='" + cid + "' onclick='quickApproveFromDash(this)'>Approve</button><button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,true)'>View</button></td></tr>";
+  if (!pending.length) {
+    el.innerHTML = "<div style='padding:16px;background:#fff;border-radius:10px;border:1px solid var(--border);color:var(--muted);font-size:13px'>No pending approvals. All caught up!</div>";
+    return;
   }
-  html += "</tbody></table></div></div>";
-  el.innerHTML = html;
+  var wrap = document.createElement("div"); wrap.className = "tcard";
+  var hdr = document.createElement("div"); hdr.className = "tcard-hdr";
+  var ttl = document.createElement("div"); ttl.className = "tcard-hdr-title"; ttl.textContent = "Pending Approvals (" + pending.length + ")";
+  var vbtn = document.createElement("button"); vbtn.className = "ghost"; vbtn.textContent = "View All";
+  vbtn.addEventListener("click", function() { showPane("approvals"); });
+  hdr.appendChild(ttl); hdr.appendChild(vbtn); wrap.appendChild(hdr);
+  var twrap = document.createElement("div"); twrap.className = "twrap";
+  var tbl = document.createElement("table");
+  tbl.innerHTML = "<thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Action</th></tr></thead>";
+  var tbody = document.createElement("tbody");
+  var shown = Math.min(pending.length, 5);
+  for (var i = 0; i < shown; i++) {
+    var c = pending[i];
+    var tr = document.createElement("tr");
+    var td1 = "<td><span class='cid'>" + c.ClaimID + "</span></td>";
+    var td2 = "<td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td>";
+    var td3 = "<td>" + (c.ClientName || "-") + "</td>";
+    var td4 = "<td class='amt'>" + fmtAmt(c.Amount) + "</td>";
+    tr.innerHTML = td1 + td2 + td3 + td4 + "<td></td>";
+    var tdAction = tr.querySelector("td:last-child");
+    var appBtn = document.createElement("button");
+    appBtn.className = "btn btn-ok"; appBtn.textContent = "Approve";
+    appBtn.setAttribute("data-id", c.ClaimID);
+    appBtn.addEventListener("click", function() { quickApproveFromDash(this); });
+    var viewBtn = document.createElement("button");
+    viewBtn.className = "btn"; viewBtn.textContent = "View";
+    viewBtn.setAttribute("data-id", c.ClaimID);
+    viewBtn.addEventListener("click", function() { viewClaimModal(this, true); });
+    tdAction.appendChild(appBtn); tdAction.appendChild(viewBtn);
+    tbody.appendChild(tr);
+  }
+  tbl.appendChild(tbody); twrap.appendChild(tbl); wrap.appendChild(twrap);
+  el.innerHTML = ""; el.appendChild(wrap);
 }
 
 // ══ MY CLAIMS ══

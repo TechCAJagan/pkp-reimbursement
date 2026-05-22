@@ -578,7 +578,7 @@
     <div class="topbar-actions">
       <div id="roleSwitchWrap"></div>
       <span class="role-pill" id="rolePill"></span>
-      <a class="btn-primary" href="#" id="ctaBtn">+ New Claim</a>
+      <a class="btn-primary" href="claim-new.html" id="ctaBtn">+ New Claim</a>
     </div>
   </header>
 
@@ -600,8 +600,7 @@ if (urlRole && ROLE_MAP[urlRole]) SESSION.role = ROLE_MAP[urlRole];
 const NAV = {
   EMPLOYEE: [
     { label:'Dashboard', icon:'📊', active:true },
-    { label:'New Claim', icon:'➕' },
-    { label:'My Claims', icon:'📋', badge:'3' },
+    { label:'New Claim', icon:'➕', href:'claim-new.html' },
     { label:'Print Summary', icon:'🖨️' },
   ],
   MANAGER: [

@@ -3,664 +3,492 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PKP Reimbursement — New Claim</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<title>PKP - New Claim</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --ink:#1a1a2e; --ink-2:#2d2d4e; --gold:#c9a84c; --gold-lt:#e8c96a;
-    --cream:#faf8f3; --surface:#ffffff; --muted:#8888a0; --border:#eceae3;
-    --gold-bg:rgba(201,168,76,0.07); --sidebar-w:260px;
-    --error:#d94040; --success:#2e9e6b;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-  body { font-family: 'DM Sans', sans-serif; background: #f4f2ec; color: var(--ink); display: flex; min-height: 100vh; }
-
-  /* Sidebar (same as dashboard) */
-  .sidebar { width: var(--sidebar-w); background: var(--ink); min-height: 100vh; position: fixed; top:0; left:0; z-index:100; display:flex; flex-direction:column; }
-  .sidebar-logo { padding: 28px 24px 20px; border-bottom: 1px solid rgba(201,168,76,0.15); }
-  .sidebar-logo .badge { display:inline-block; background:var(--gold); color:var(--ink); font-size:10px; font-weight:700; letter-spacing:0.1em; text-transform:uppercase; padding:3px 8px; border-radius:4px; margin-bottom:10px; }
-  .sidebar-logo h2 { font-family:'DM Serif Display',serif; font-size:20px; color:var(--cream); line-height:1.2; }
-  .sidebar-logo h2 em { color:var(--gold); font-style:italic; }
-  .nav-item { display:flex; align-items:center; gap:12px; padding:10px 24px; font-size:13.5px; color:rgba(250,248,243,0.65); text-decoration:none; border-left:3px solid transparent; transition:all 0.15s; }
-  .nav-item:hover { color:var(--cream); background:rgba(201,168,76,0.06); }
-  .nav-item.active { color:var(--gold); background:rgba(201,168,76,0.1); border-left-color:var(--gold); font-weight:500; }
-  .nav-label { padding:12px 24px 4px; font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:rgba(136,136,160,0.6); }
-  .sidebar-footer { margin-top:auto; padding:20px 24px; border-top:1px solid rgba(201,168,76,0.1); }
-  .user-card { display:flex; align-items:center; gap:12px; }
-  .user-avatar { width:38px; height:38px; border-radius:50%; background:linear-gradient(135deg,var(--gold),var(--gold-lt)); display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700; color:var(--ink); flex-shrink:0; }
-  .user-name { font-size:13px; font-weight:600; color:var(--cream); }
-  .user-role { font-size:11px; color:var(--muted); margin-top:1px; }
-  .btn-logout { background:none; border:none; color:var(--muted); font-size:18px; cursor:pointer; padding:4px; transition:color 0.15s; }
-  .btn-logout:hover { color:var(--gold); }
-
-  /* Main */
-  .main { margin-left: var(--sidebar-w); flex:1; display:flex; flex-direction:column; }
-  .topbar { background:var(--surface); border-bottom:1px solid var(--border); padding:0 36px; height:64px; display:flex; align-items:center; gap:16px; position:sticky; top:0; z-index:50; }
-  .page-title { font-family:'DM Serif Display',serif; font-size:22px; color:var(--ink); flex:1; }
-  .breadcrumb { font-size:13px; color:var(--muted); }
-  .breadcrumb a { color:var(--gold); text-decoration:none; }
-
-  .content { padding: 32px 36px; flex:1; max-width:900px; }
-
-  /* Form card */
-  .form-card {
-    background: var(--surface);
-    border-radius: 16px;
-    border: 1px solid var(--border);
-    overflow: hidden;
-    margin-bottom: 20px;
-  }
-
-  .form-card-header {
-    padding: 20px 28px;
-    border-bottom: 1px solid var(--border);
-    display: flex;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .form-card-icon {
-    width: 36px; height: 36px;
-    border-radius: 10px;
-    background: var(--gold-bg);
-    border: 1px solid rgba(201,168,76,0.2);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-  }
-
-  .form-card-title {
-    font-family: 'DM Serif Display', serif;
-    font-size: 16px;
-    color: var(--ink);
-  }
-
-  .form-card-body { padding: 24px 28px; }
-
-  .form-grid { display: grid; gap: 20px; }
-  .col-2 { grid-template-columns: 1fr 1fr; }
-  .col-3 { grid-template-columns: 1fr 1fr 1fr; }
-  .span-2 { grid-column: span 2; }
-  .span-3 { grid-column: span 3; }
-
-  .field { display: flex; flex-direction: column; gap: 6px; }
-
-  label {
-    font-size: 12px;
-    font-weight: 600;
-    letter-spacing: 0.07em;
-    text-transform: uppercase;
-    color: var(--ink-2);
-  }
-
-  label .req { color: var(--gold); margin-left: 2px; }
-
-  input[type="text"], input[type="date"], input[type="number"],
-  select, textarea {
-    width: 100%;
-    padding: 11px 14px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13.5px;
-    color: var(--ink);
-    background: #fff;
-    transition: border-color 0.2s, box-shadow 0.2s;
-    outline: none;
-    appearance: none;
-  }
-
-  select {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%238888a0' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E");
-    background-repeat: no-repeat;
-    background-position: right 12px center;
-    padding-right: 32px;
-  }
-
-  input:focus, select:focus, textarea:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
-  }
-
-  textarea { resize: vertical; min-height: 80px; }
-
-  .field-hint { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  /* Category radio */
-  .radio-group { display: flex; gap: 10px; flex-wrap: wrap; }
-
-  .radio-option {
-    flex: 1;
-    min-width: 140px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    padding: 12px 14px;
-    cursor: pointer;
-    transition: all 0.15s;
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    background: #fff;
-  }
-
-  .radio-option:has(input:checked) {
-    border-color: var(--gold);
-    background: var(--gold-bg);
-  }
-
-  .radio-option input[type="radio"] {
-    width: auto;
-    padding: 0;
-    border: none;
-    box-shadow: none;
-    flex-shrink: 0;
-    margin-top: 2px;
-    accent-color: var(--gold);
-  }
-
-  .radio-label { font-size: 13px; font-weight: 500; color: var(--ink); }
-  .radio-sub { font-size: 11px; color: var(--muted); margin-top: 2px; }
-
-  /* Attachment box */
-  .attach-zone {
-    border: 2px dashed var(--border);
-    border-radius: 12px;
-    padding: 28px;
-    text-align: center;
-    cursor: pointer;
-    transition: all 0.2s;
-    background: #fafaf6;
-    position: relative;
-  }
-
-  .attach-zone:hover, .attach-zone.drag-over {
-    border-color: var(--gold);
-    background: var(--gold-bg);
-  }
-
-  .attach-zone input[type="file"] {
-    position: absolute; inset: 0;
-    width: 100%; height: 100%;
-    opacity: 0; cursor: pointer;
-    border: none; padding: 0;
-  }
-
-  .attach-icon { font-size: 32px; margin-bottom: 10px; display: block; }
-  .attach-title { font-weight: 600; font-size: 14px; color: var(--ink); }
-  .attach-sub { font-size: 12px; color: var(--muted); margin-top: 4px; }
-
-  .attach-ref {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    background: rgba(201,168,76,0.1);
-    border: 1px solid rgba(201,168,76,0.25);
-    border-radius: 8px;
-    padding: 8px 14px;
-    font-family: monospace;
-    font-size: 13px;
-    color: #7a6020;
-    margin-top: 12px;
-  }
-
-  .file-list { margin-top: 14px; display: flex; flex-direction: column; gap: 8px; }
-
-  .file-item {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 10px 14px;
-    background: #fff;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    font-size: 13px;
-  }
-
-  .file-item-name { flex: 1; font-weight: 500; }
-  .file-item-size { color: var(--muted); font-size: 11px; }
-  .file-remove { color: var(--muted); cursor: pointer; font-size: 16px; transition: color 0.15s; }
-  .file-remove:hover { color: var(--error); }
-
-  /* Amount summary */
-  .amount-summary {
-    background: var(--gold-bg);
-    border: 1px solid rgba(201,168,76,0.2);
-    border-radius: 10px;
-    padding: 16px 20px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 8px;
-  }
-
-  .amount-label { font-size: 13px; color: var(--ink-2); font-weight: 500; }
-  .amount-value { font-family: 'DM Serif Display', serif; font-size: 24px; color: var(--ink); }
-
-  /* Submit bar */
-  .submit-bar {
-    background: var(--surface);
-    border-top: 1px solid var(--border);
-    padding: 20px 36px;
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 12px;
-    position: sticky;
-    bottom: 0;
-    margin-left: var(--sidebar-w);
-  }
-
-  .btn-secondary {
-    padding: 10px 20px;
-    border: 1.5px solid var(--border);
-    border-radius: 9px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 500;
-    color: var(--ink-2);
-    background: #fff;
-    cursor: pointer;
-    transition: all 0.15s;
-  }
-  .btn-secondary:hover { border-color: var(--gold); color: var(--ink); }
-
-  .btn-primary {
-    padding: 10px 24px;
-    background: var(--ink);
-    color: var(--cream);
-    border: none;
-    border-radius: 9px;
-    font-family: 'DM Sans', sans-serif;
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-  .btn-primary:hover { background: var(--ink-2); transform: translateY(-1px); }
-
-  /* Toast */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    right: 32px;
-    background: var(--ink);
-    color: var(--cream);
-    padding: 14px 20px;
-    border-radius: 10px;
-    font-size: 13px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    box-shadow: 0 8px 32px rgba(26,26,46,0.3);
-    z-index: 999;
-    transform: translateY(20px);
-    opacity: 0;
-    transition: all 0.3s ease;
-  }
-  .toast.show { transform: translateY(0); opacity: 1; }
-  .toast.success { background: #065f46; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:"DM Sans",sans-serif;background:#f4f2ec;display:flex;min-height:100vh}
+.sidebar{width:240px;background:#1a1a2e;min-height:100vh;position:fixed;top:0;left:0;display:flex;flex-direction:column;padding:24px 0}
+.logo{padding:0 20px 20px;border-bottom:1px solid rgba(201,168,76,0.2)}
+.logo-badge{background:#c9a84c;color:#1a1a2e;font-size:10px;font-weight:700;padding:2px 8px;border-radius:4px;display:inline-block;margin-bottom:8px}
+.logo h2{font-family:"DM Serif Display",serif;color:#faf8f3;font-size:18px;line-height:1.2}
+.logo h2 em{color:#c9a84c;font-style:italic}
+.nav{padding:16px 0}
+.nav a{display:flex;align-items:center;gap:10px;padding:9px 20px;color:rgba(250,248,243,0.6);text-decoration:none;font-size:13px;border-left:3px solid transparent;transition:all 0.15s}
+.nav a:hover{color:#faf8f3;background:rgba(201,168,76,0.06)}
+.nav a.active{color:#c9a84c;background:rgba(201,168,76,0.1);border-left-color:#c9a84c;font-weight:500}
+.sidebar-foot{margin-top:auto;padding:16px 20px;border-top:1px solid rgba(201,168,76,0.1)}
+.ucard{display:flex;align-items:center;gap:10px}
+.uavatar{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#c9a84c,#e8c96a);display:flex;align-items:center;justify-content:center;font-weight:700;color:#1a1a2e;font-size:14px;flex-shrink:0}
+.uname{font-size:13px;font-weight:600;color:#faf8f3}
+.urole{font-size:11px;color:#8888a0}
+.logout-btn{background:none;border:none;color:#8888a0;font-size:16px;cursor:pointer;margin-left:auto;padding:4px}
+.logout-btn:hover{color:#c9a84c}
+.main{margin-left:240px;flex:1;display:flex;flex-direction:column;padding-bottom:80px}
+.topbar{background:#fff;border-bottom:1px solid #eceae3;height:60px;display:flex;align-items:center;padding:0 32px;position:sticky;top:0;z-index:50}
+.topbar-inner{flex:1}
+.breadcrumb{font-size:12px;color:#8888a0}
+.breadcrumb a{color:#c9a84c;text-decoration:none}
+.topbar h1{font-family:"DM Serif Display",serif;font-size:20px;color:#1a1a2e}
+.page{padding:28px 32px;max-width:860px}
+.section{background:#fff;border-radius:12px;border:1px solid #eceae3;margin-bottom:18px;overflow:hidden}
+.sec-hdr{padding:16px 22px;border-bottom:1px solid #eceae3;display:flex;align-items:center;gap:12px}
+.sec-icon{width:34px;height:34px;border-radius:9px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.2);display:flex;align-items:center;justify-content:center;font-size:15px;flex-shrink:0}
+.sec-title{font-family:"DM Serif Display",serif;font-size:15px;color:#1a1a2e}
+.sec-sub{font-size:11px;color:#8888a0;margin-top:1px}
+.sec-body{padding:20px 22px}
+.fg{display:grid;gap:16px}
+.fg2{grid-template-columns:1fr 1fr}
+.fg3{grid-template-columns:1fr 1fr 1fr}
+.s2{grid-column:span 2}
+.s3{grid-column:span 3}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#2d2d4e}
+.req{color:#c9a84c}
+.field input,.field select,.field textarea{width:100%;padding:10px 13px;border:1.5px solid #eceae3;border-radius:9px;font-family:"DM Sans",sans-serif;font-size:13.5px;color:#1a1a2e;background:#fff;outline:none;transition:border-color 0.2s}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:#c9a84c;box-shadow:0 0 0 3px rgba(201,168,76,0.1)}
+.field textarea{resize:vertical;min-height:80px}
+.hint{font-size:11px;color:#8888a0;margin-top:3px}
+.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cat-opt{border:1.5px solid #eceae3;border-radius:9px;padding:13px 15px;cursor:pointer;transition:all 0.15s;display:flex;align-items:flex-start;gap:10px;background:#fff}
+.cat-opt:hover{border-color:#c9a84c}
+.cat-opt.sel{border-color:#c9a84c;background:rgba(201,168,76,0.07)}
+.cat-opt input[type=radio]{flex-shrink:0;margin-top:2px;accent-color:#c9a84c;width:14px;height:14px}
+.cat-lbl{font-size:13px;font-weight:500;color:#1a1a2e}
+.cat-sub{font-size:11px;color:#8888a0;margin-top:2px}
+.amt-box{background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.2);border-radius:10px;padding:14px 18px;display:flex;align-items:center;justify-content:space-between;margin-top:10px}
+.amt-lbl{font-size:13px;color:#2d2d4e;font-weight:500}
+.amt-val{font-family:"DM Serif Display",serif;font-size:26px;color:#1a1a2e}
+.drop-zone{border:2px dashed #eceae3;border-radius:11px;padding:28px;text-align:center;cursor:pointer;transition:all 0.2s;background:#fafaf6;position:relative}
+.drop-zone:hover,.drop-zone.over{border-color:#c9a84c;background:rgba(201,168,76,0.05)}
+.drop-zone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
+.drop-icon{font-size:30px;margin-bottom:8px}
+.drop-title{font-weight:600;font-size:14px;color:#1a1a2e}
+.drop-sub{font-size:12px;color:#8888a0;margin-top:4px}
+.att-ref{display:inline-flex;align-items:center;gap:8px;background:rgba(201,168,76,0.1);border:1px solid rgba(201,168,76,0.25);border-radius:8px;padding:7px 13px;font-family:monospace;font-size:13px;color:#7a6020;margin-top:12px}
+.file-list{margin-top:12px;display:flex;flex-direction:column;gap:7px}
+.file-item{display:flex;align-items:center;gap:10px;padding:9px 13px;background:#fff;border:1px solid #eceae3;border-radius:8px;font-size:13px}
+.file-name{flex:1;font-weight:500}
+.file-size{color:#8888a0;font-size:11px}
+.file-ref{font-family:monospace;font-size:11px;color:#c9a84c}
+.file-del{background:none;border:none;color:#8888a0;cursor:pointer;font-size:15px;padding:2px;transition:color 0.15s;margin-left:auto}
+.file-del:hover{color:#d94040}
+.submit-bar{position:fixed;bottom:0;left:240px;right:0;background:#fff;border-top:1px solid #eceae3;padding:14px 32px;display:flex;align-items:center;justify-content:flex-end;gap:12px;z-index:50}
+.btn-cxl{padding:9px 20px;border:1.5px solid #eceae3;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;color:#2d2d4e;background:#fff;cursor:pointer}
+.btn-cxl:hover{border-color:#c9a84c}
+.btn-draft{padding:9px 20px;border:1.5px solid #eceae3;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;color:#2d2d4e;background:#fff;cursor:pointer}
+.btn-draft:hover{border-color:#c9a84c}
+.btn-submit{padding:9px 24px;background:#1a1a2e;color:#faf8f3;border:none;border-radius:8px;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;cursor:pointer}
+.btn-submit:hover{background:#2d2d4e}
+.btn-submit:disabled{opacity:0.6;cursor:default}
+.toast{position:fixed;bottom:80px;right:24px;padding:12px 18px;border-radius:10px;font-size:13px;font-family:"DM Sans",sans-serif;z-index:999;opacity:0;transform:translateY(16px);transition:all 0.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.t-ok{background:#065f46;color:#fff}
+.t-err{background:#991b1b;color:#fff}
+.t-info{background:#1a1a2e;color:#faf8f3}
 </style>
 </head>
 <body>
-
-<!-- Sidebar -->
 <aside class="sidebar">
-  <div class="sidebar-logo">
-    <div class="badge">PKP</div>
+  <div class="logo">
+    <div class="logo-badge">PKP</div>
     <h2>Reimburse<br><em>ment</em></h2>
   </div>
-  <div style="padding:16px 0 8px">
-    <div class="nav-label">Navigation</div>
-    <a class="nav-item" href="dashboard.html">📊 Dashboard</a>
-    <a class="nav-item active" href="#">➕ New Claim</a>
-    <a class="nav-item" href="#">📋 My Claims</a>
-    <a class="nav-item" href="#">🖨️ Print Summary</a>
-    <a class="nav-item" href="#">📊 Reports</a>
-  </div>
-  <div class="sidebar-footer">
-    <div class="user-card">
-      <div class="user-avatar" id="userAvatar">R</div>
+  <nav class="nav">
+    <a href="dashboard.html"> Dashboard</a>
+    <a href="claim-new.html" class="active">+ New Claim</a>
+    <a href="#"> My Claims</a>
+    <a href="#"> Reports</a>
+  </nav>
+  <div class="sidebar-foot">
+    <div class="ucard">
+      <div class="uavatar" id="uAvatar">R</div>
       <div>
-        <div class="user-name" id="userName">Ravi Kumar</div>
-        <div class="user-role">Employee</div>
+        <div class="uname" id="uName">User</div>
+        <div class="urole" id="uRole">Employee</div>
       </div>
-      <button class="btn-logout" onclick="window.location.href='index.html'">⏻</button>
+      <button class="logout-btn" id="logoutBtn">logout</button>
     </div>
   </div>
 </aside>
 
-<!-- Main -->
 <main class="main">
   <header class="topbar">
-    <div>
-      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> / New Claim</div>
-      <h1 class="page-title">Log New Reimbursement</h1>
+    <div class="topbar-inner">
+      <div class="breadcrumb"><a href="dashboard.html">Dashboard</a> &rsaquo; New Claim</div>
+      <h1>Log New Reimbursement</h1>
     </div>
   </header>
+  <div class="page">
 
-  <div class="content">
-
-    <!-- Section 1: Basic Details -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">📅</div>
-        <div>
-          <div class="form-card-title">Basic Details</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">Date, client and expense information</div>
-        </div>
+    <div class="section">
+      <div class="sec-hdr">
+        <div class="sec-icon"></div>
+        <div><div class="sec-title">Basic Details</div><div class="sec-sub">Date of expense and client information</div></div>
       </div>
-      <div class="form-card-body">
-        <div class="form-grid col-2">
+      <div class="sec-body">
+        <div class="fg fg2">
           <div class="field">
             <label>Date of Expense <span class="req">*</span></label>
-            <input type="date" id="dateExpense" max="">
+            <input type="date" id="fDate">
           </div>
           <div class="field">
             <label>Client Name <span class="req">*</span></label>
-            <input type="text" id="clientName" placeholder="e.g. ABC Corporation" list="clientList">
-            <datalist id="clientList">
-              <option>ABC Corporation</option>
-              <option>XYZ Limited</option>
-              <option>PQR Private Ltd</option>
-              <option>LMN Industries</option>
-              <option>Internal</option>
-            </datalist>
+            <input type="text" id="fClient" placeholder="e.g. ABC Corporation">
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Section 2: Expense Classification -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">🗂️</div>
-        <div>
-          <div class="form-card-title">Expense Classification</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">Major head, minor head and nature</div>
-        </div>
+    <div class="section">
+      <div class="sec-hdr">
+        <div class="sec-icon"></div>
+        <div><div class="sec-title">Expense Classification</div><div class="sec-sub">Major head, minor head, nature and amount</div></div>
       </div>
-      <div class="form-card-body">
-        <div class="form-grid col-3">
+      <div class="sec-body">
+        <div class="fg fg3">
           <div class="field">
             <label>Major Head <span class="req">*</span></label>
-            <select id="majorHead" onchange="updateMinorHead()">
-              <option value="">Select Major Head</option>
-              <option>Travel</option>
-              <option>Client Entertainment</option>
-              <option>Accommodation</option>
-              <option>Communication</option>
-              <option>Office Supplies</option>
-              <option>Professional Fees</option>
-            </select>
+            <select id="fMajor"><option value="">Select Major Head</option></select>
           </div>
           <div class="field">
             <label>Minor Head <span class="req">*</span></label>
-            <select id="minorHead" onchange="updateNature()">
-              <option value="">Select Minor Head</option>
-            </select>
+            <select id="fMinor"><option value="">Select Minor Head</option></select>
           </div>
           <div class="field">
             <label>Nature <span class="req">*</span></label>
-            <select id="nature">
-              <option value="">Select Nature</option>
-            </select>
+            <select id="fNature"><option value="">Select Nature</option></select>
           </div>
-          <div class="field span-2">
-            <label>Sub-Nature / Sub-Category</label>
-            <input type="text" id="subNature" placeholder="Additional classification details">
+          <div class="field s2">
+            <label>Sub-Nature</label>
+            <input type="text" id="fSubNature" placeholder="Additional classification (optional)">
           </div>
           <div class="field">
-            <label>Amount (₹) <span class="req">*</span></label>
-            <input type="number" id="amount" placeholder="0.00" min="0" step="0.01" oninput="updateAmount()">
+            <label>Amount (Rs.) <span class="req">*</span></label>
+            <input type="number" id="fAmount" placeholder="0.00" min="0" step="0.01">
           </div>
-          <div class="field span-3">
+          <div class="field s3">
             <label>Description <span class="req">*</span></label>
-            <textarea id="description" placeholder="Provide details about this expense — purpose, occasion, persons involved, etc."></textarea>
+            <textarea id="fDesc" placeholder="Describe the purpose, occasion, persons involved..."></textarea>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Section 3: Category -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">🏷️</div>
-        <div>
-          <div class="form-card-title">Expense Category</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">How should this expense be classified?</div>
-        </div>
+    <div class="section">
+      <div class="sec-hdr">
+        <div class="sec-icon"></div>
+        <div><div class="sec-title">Expense Category</div><div class="sec-sub">How should this expense be classified?</div></div>
       </div>
-      <div class="form-card-body">
-        <div class="radio-group" id="categoryGroup">
-          <label class="radio-option">
-            <input type="radio" name="category" value="client_reimbursable" checked>
-            <div>
-              <div class="radio-label">🏢 Client Reimbursable</div>
-              <div class="radio-sub">To be recovered from client</div>
-            </div>
+      <div class="sec-body">
+        <div class="cat-grid">
+          <label class="cat-opt sel" id="cat0">
+            <input type="radio" name="cat" value="Client Reimbursable" checked>
+            <div><div class="cat-lbl"> Client Reimbursable</div><div class="cat-sub">To be recovered from client</div></div>
           </label>
-          <label class="radio-option">
-            <input type="radio" name="category" value="non_reimbursable">
-            <div>
-              <div class="radio-label">🏛️ Non-Reimbursable</div>
-              <div class="radio-sub">Firm bears the cost</div>
-            </div>
+          <label class="cat-opt" id="cat1">
+            <input type="radio" name="cat" value="Non Reimbursable">
+            <div><div class="cat-lbl"> Non Reimbursable</div><div class="cat-sub">Firm bears the cost</div></div>
           </label>
-          <label class="radio-option">
-            <input type="radio" name="category" value="drawings">
-            <div>
-              <div class="radio-label">💼 Drawings</div>
-              <div class="radio-sub">Partner / proprietor drawings</div>
-            </div>
+          <label class="cat-opt" id="cat2">
+            <input type="radio" name="cat" value="Drawings">
+            <div><div class="cat-lbl"> Drawings</div><div class="cat-sub">Partner / proprietor drawings</div></div>
           </label>
-          <label class="radio-option">
-            <input type="radio" name="category" value="firm_expenses">
-            <div>
-              <div class="radio-label">🏗️ Firm's Expenses</div>
-              <div class="radio-sub">General firm overhead</div>
-            </div>
+          <label class="cat-opt" id="cat3">
+            <input type="radio" name="cat" value="Firms Expenses">
+            <div><div class="cat-lbl"> Firms Expenses</div><div class="cat-sub">General firm overhead</div></div>
           </label>
         </div>
-
-        <div class="amount-summary" style="margin-top:16px">
-          <span class="amount-label">Claim Amount</span>
-          <span class="amount-value" id="amountDisplay">₹0</span>
+        <div class="amt-box">
+          <span class="amt-lbl">Claim Amount</span>
+          <span class="amt-val" id="amtDisplay">Rs. 0.00</span>
         </div>
       </div>
     </div>
 
-    <!-- Section 4: Attachments -->
-    <div class="form-card">
-      <div class="form-card-header">
-        <div class="form-card-icon">📎</div>
-        <div>
-          <div class="form-card-title">Proof of Expense</div>
-          <div style="font-size:12px;color:var(--muted);margin-top:2px">Receipts, invoices, bills — auto-numbered for tracking</div>
-        </div>
+    <div class="section">
+      <div class="sec-hdr">
+        <div class="sec-icon"></div>
+        <div><div class="sec-title">Proof of Expense</div><div class="sec-sub">Receipts and bills - auto numbered for tracking</div></div>
       </div>
-      <div class="form-card-body">
-        <div class="attach-zone" id="dropZone">
-          <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" onchange="handleFiles(this.files)">
-          <span class="attach-icon">📂</span>
-          <div class="attach-title">Drop files here or click to upload</div>
-          <div class="attach-sub">PDF, JPG, PNG — max 10MB per file</div>
+      <div class="sec-body">
+        <div class="drop-zone" id="dropZone">
+          <input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" id="fileInput">
+          <div class="drop-icon"></div>
+          <div class="drop-title">Drop files here or click to upload</div>
+          <div class="drop-sub">PDF, JPG, PNG</div>
         </div>
-
-        <div class="attach-ref" id="attachRef" style="display:none">
-          🏷️ Attachment Reference: <strong id="attachRefNo">PKP-ATT-2025-0088</strong>
-          <span style="font-size:11px;color:var(--muted);font-family:'DM Sans',sans-serif">Auto-assigned</span>
+        <div id="attRefBox" style="display:none">
+          <div class="att-ref"> Reference: <strong id="attRefNo">-</strong></div>
         </div>
-
         <div class="file-list" id="fileList"></div>
-
-        <div class="field-hint" style="margin-top:12px">
-          📌 Files will be named sequentially (PKP-ATT-YYYY-NNNN-A, -B, -C…) and stored in OneDrive for audit purposes.
-        </div>
+        <p class="hint" style="margin-top:10px">Files are numbered PKP-ATT-YYYY-NNNN-A, B, C for audit tracing.</p>
       </div>
     </div>
 
-    <div style="height:80px"></div><!-- spacer for sticky bar -->
   </div>
 </main>
 
-<!-- Submit bar -->
 <div class="submit-bar">
-  <button class="btn-secondary" onclick="window.location.href='dashboard.html'">Cancel</button>
-  <button class="btn-secondary" onclick="saveDraft()">💾 Save Draft</button>
-  <button class="btn-primary" onclick="submitClaim()">
-    <span>Submit for Approval</span> →
-  </button>
+  <button class="btn-cxl" id="cancelBtn">Cancel</button>
+  <button class="btn-draft" id="draftBtn">Save Draft</button>
+  <button class="btn-submit" id="submitBtn">Submit for Approval ></button>
 </div>
 
-<!-- Toast -->
 <div class="toast" id="toast"></div>
-
 <script>
-  // Set max date to today
-  document.getElementById('dateExpense').max = new Date().toISOString().split('T')[0];
-  document.getElementById('dateExpense').value = new Date().toISOString().split('T')[0];
+var API = "https://script.google.com/macros/s/AKfycbwbUXVKUKAFb7DWnkpsLDUEJsK4_cepH867tnCaZVdWrva6W94fBjpmAWToQbnVR7PIgg/exec";
+var sess = {};
+var tok = "";
+var uploadedFiles = [];
+var attRefValue = "";
 
-  // Minor head data
-  const MINOR_HEADS = {
-    'Travel': ['Air Travel', 'Train', 'Bus / Taxi', 'Own Vehicle', 'Metro / Local'],
-    'Client Entertainment': ['Lunch / Dinner', 'Gifts', 'Events / Shows', 'Hotel Hospitality'],
-    'Accommodation': ['Hotel Stay', 'Guest House', 'Service Apartment'],
-    'Communication': ['Mobile Recharge', 'Internet', 'Courier / Postage'],
-    'Office Supplies': ['Stationery', 'Printing', 'Equipment'],
-    'Professional Fees': ['Consultant', 'Legal', 'Audit Support'],
+try {
+  sess = JSON.parse(sessionStorage.getItem("pkp_user") || "{}");
+  tok = sessionStorage.getItem("pkp_token") || "";
+} catch(ex) {}
+
+if (!sess.role) { window.location.href = "index.html"; }
+
+document.getElementById("uAvatar").textContent = (sess.name || "U").charAt(0).toUpperCase();
+document.getElementById("uName").textContent = sess.name || "User";
+document.getElementById("uRole").textContent = sess.role || "";
+
+var today = new Date().toISOString().split("T")[0];
+document.getElementById("fDate").value = today;
+document.getElementById("fDate").max = today;
+
+document.getElementById("logoutBtn").addEventListener("click", function() {
+  sessionStorage.clear();
+  window.location.href = "index.html";
+});
+
+document.getElementById("cancelBtn").addEventListener("click", function() {
+  window.location.href = "dashboard.html";
+});
+
+document.getElementById("draftBtn").addEventListener("click", function() {
+  toast("Draft saved.", "info");
+});
+
+document.getElementById("submitBtn").addEventListener("click", function() {
+  submitClaim();
+});
+
+function toast(msg, type) {
+  var el = document.getElementById("toast");
+  el.textContent = msg;
+  el.className = "toast show t-" + (type || "info");
+  setTimeout(function() { el.className = "toast"; }, 4000);
+}
+
+function api(params, cb) {
+  var name = "pkp" + Date.now() + Math.floor(Math.random() * 9999);
+  var done = false;
+  var timer = setTimeout(function() {
+    if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); }
+  }, 20000);
+  function cleanup() {
+    delete window[name];
+    var s = document.getElementById("s_" + name);
+    if (s && s.parentNode) s.parentNode.removeChild(s);
+  }
+  window[name] = function(data) {
+    if (!done) { done = true; clearTimeout(timer); cleanup(); cb(data); }
   };
-
-  const NATURE = {
-    'Air Travel':    ['Domestic', 'International'],
-    'Train':         ['Local', 'Outstation'],
-    'Bus / Taxi':    ['Local', 'Outstation'],
-    'Own Vehicle':   ['Local', 'Outstation'],
-    'Metro / Local': ['Within City'],
-    'Lunch / Dinner':['Client', 'Team', 'Internal'],
-    'Hotel Stay':    ['Domestic', 'International'],
-    'default':       ['Standard', 'Special', 'Recurring'],
-  };
-
-  function updateMinorHead() {
-    const major = document.getElementById('majorHead').value;
-    const minor = document.getElementById('minorHead');
-    minor.innerHTML = '<option value="">Select Minor Head</option>';
-    (MINOR_HEADS[major]||[]).forEach(m => {
-      const o = document.createElement('option');
-      o.value = o.textContent = m;
-      minor.appendChild(o);
-    });
-    document.getElementById('nature').innerHTML = '<option value="">Select Nature</option>';
-  }
-
-  function updateNature() {
-    const minor = document.getElementById('minorHead').value;
-    const nature = document.getElementById('nature');
-    const opts = NATURE[minor] || NATURE['default'];
-    nature.innerHTML = '<option value="">Select Nature</option>';
-    opts.forEach(n => {
-      const o = document.createElement('option');
-      o.value = o.textContent = n;
-      nature.appendChild(o);
-    });
-  }
-
-  function updateAmount() {
-    const v = parseFloat(document.getElementById('amount').value) || 0;
-    document.getElementById('amountDisplay').textContent = '₹' + v.toLocaleString('en-IN', {minimumFractionDigits:2});
-  }
-
-  // Drag-drop
-  const dz = document.getElementById('dropZone');
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-  dz.addEventListener('drop', e => { e.preventDefault(); dz.classList.remove('drag-over'); handleFiles(e.dataTransfer.files); });
-
-  let uploadedFiles = [];
-
-  function handleFiles(files) {
-    Array.from(files).forEach((file, i) => {
-      uploadedFiles.push(file);
-      const suffix = String.fromCharCode(65 + uploadedFiles.length - 1); // A, B, C…
-      renderFileList();
-    });
-
-    // Show attachment ref
-    document.getElementById('attachRef').style.display = 'inline-flex';
-  }
-
-  function renderFileList() {
-    const list = document.getElementById('fileList');
-    list.innerHTML = uploadedFiles.map((f,i) => `
-      <div class="file-item">
-        <span>📄</span>
-        <span class="file-item-name">${f.name}</span>
-        <span class="file-item-size">${(f.size/1024/1024).toFixed(2)} MB</span>
-        <span style="font-family:monospace;font-size:11px;color:var(--gold)">PKP-ATT-2025-0088-${String.fromCharCode(65+i)}</span>
-        <span class="file-remove" onclick="removeFile(${i})">✕</span>
-      </div>
-    `).join('');
-  }
-
-  function removeFile(i) {
-    uploadedFiles.splice(i,1);
-    renderFileList();
-    if (!uploadedFiles.length) document.getElementById('attachRef').style.display = 'none';
-  }
-
-  function showToast(msg, type='') {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.className = `toast show ${type}`;
-    setTimeout(() => t.className = 'toast', 3000);
-  }
-
-  function validate() {
-    const required = ['dateExpense','clientName','majorHead','minorHead','nature','amount','description'];
-    for (const id of required) {
-      const el = document.getElementById(id);
-      if (!el.value.trim()) {
-        el.focus();
-        el.style.borderColor = 'var(--error)';
-        setTimeout(() => el.style.borderColor = '', 2000);
-        showToast('⚠ Please fill in all required fields.');
-        return false;
-      }
+  var q = "callback=" + encodeURIComponent(name) + "&token=" + encodeURIComponent(tok);
+  for (var k in params) {
+    if (Object.prototype.hasOwnProperty.call(params, k)) {
+      q += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(params[k]);
     }
-    return true;
   }
+  var sc = document.createElement("script");
+  sc.id = "s_" + name;
+  sc.src = API + "?" + q;
+  sc.onerror = function() {
+    if (!done) { done = true; clearTimeout(timer); cleanup(); cb({ error: "Network error." }); }
+  };
+  document.body.appendChild(sc);
+}
 
-  async function submitClaim() {
-    if (!validate()) return;
+var MINOR = {
+  "Travel": ["Air Travel","Train","Bus / Taxi","Own Vehicle","Metro / Local","Auto Rickshaw"],
+  "Client Entertainment": ["Lunch / Dinner","Breakfast","Gifts","Events","Hotel Hospitality"],
+  "Accommodation": ["Hotel Stay","Guest House","Service Apartment"],
+  "Communication": ["Mobile Recharge","Internet","Courier / Postage","Telephone"],
+  "Office Supplies": ["Stationery","Printing","Equipment","Software"],
+  "Professional Fees": ["Consultant","Legal","Audit Support","Valuation"],
+  "Miscellaneous": ["Bank Charges","Subscription","Other"]
+};
 
-    const claim = {
-      dateExpense: document.getElementById('dateExpense').value,
-      clientName:  document.getElementById('clientName').value,
-      majorHead:   document.getElementById('majorHead').value,
-      minorHead:   document.getElementById('minorHead').value,
-      nature:      document.getElementById('nature').value,
-      subNature:   document.getElementById('subNature').value,
-      description: document.getElementById('description').value,
-      amount:      parseFloat(document.getElementById('amount').value),
-      category:    document.querySelector('input[name="category"]:checked').value,
-      attachments: uploadedFiles.map(f=>f.name),
-    };
+var NATURE = {
+  "Air Travel": ["Domestic","International"],
+  "Train": ["Local","Outstation"],
+  "Bus / Taxi": ["Local","Outstation"],
+  "Own Vehicle": ["Local","Outstation"],
+  "Metro / Local": ["Within City"],
+  "Hotel Stay": ["Domestic","International"],
+  "Lunch / Dinner": ["Client Meeting","Team Meeting","Internal"],
+  "default": ["Standard","Special","Recurring","One-time"]
+};
 
-    // Simulate API call
-    showToast('⏳ Submitting claim…');
-    await new Promise(r => setTimeout(r, 1200));
-    showToast('✅ Claim submitted successfully! PKP-2025-0088 is pending manager approval.', 'success');
-    setTimeout(() => window.location.href = 'dashboard.html', 2500);
+var majorSel = document.getElementById("fMajor");
+var minorSel = document.getElementById("fMinor");
+var natureSel = document.getElementById("fNature");
+var amtInput = document.getElementById("fAmount");
+
+var majorList = ["Travel","Client Entertainment","Accommodation","Communication","Office Supplies","Professional Fees","Miscellaneous"];
+for (var i = 0; i < majorList.length; i++) {
+  var o = document.createElement("option");
+  o.value = majorList[i]; o.textContent = majorList[i];
+  majorSel.appendChild(o);
+}
+
+majorSel.addEventListener("change", function() {
+  var opts = MINOR[this.value] || [];
+  minorSel.innerHTML = "<option value=''>Select Minor Head</option>";
+  for (var i = 0; i < opts.length; i++) {
+    var o = document.createElement("option");
+    o.value = opts[i]; o.textContent = opts[i];
+    minorSel.appendChild(o);
   }
+  natureSel.innerHTML = "<option value=''>Select Nature</option>";
+});
 
-  function saveDraft() {
-    showToast('💾 Draft saved.');
+minorSel.addEventListener("change", function() {
+  var opts = NATURE[this.value] || NATURE["default"];
+  natureSel.innerHTML = "<option value=''>Select Nature</option>";
+  for (var i = 0; i < opts.length; i++) {
+    var o = document.createElement("option");
+    o.value = opts[i]; o.textContent = opts[i];
+    natureSel.appendChild(o);
   }
+});
+
+amtInput.addEventListener("input", function() {
+  var v = parseFloat(this.value) || 0;
+  document.getElementById("amtDisplay").textContent = "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits: 2 });
+});
+
+var catLabels = document.querySelectorAll(".cat-opt");
+for (var c = 0; c < catLabels.length; c++) {
+  catLabels[c].addEventListener("click", function() {
+    for (var x = 0; x < catLabels.length; x++) catLabels[x].className = "cat-opt";
+    this.className = "cat-opt sel";
+  });
+}
+
+var dz = document.getElementById("dropZone");
+var fi = document.getElementById("fileInput");
+
+dz.addEventListener("dragover", function(e) { e.preventDefault(); this.className = "drop-zone over"; });
+dz.addEventListener("dragleave", function() { this.className = "drop-zone"; });
+dz.addEventListener("drop", function(e) {
+  e.preventDefault(); this.className = "drop-zone";
+  addFiles(e.dataTransfer.files);
+});
+fi.addEventListener("change", function() { addFiles(this.files); });
+
+function addFiles(files) {
+  if (!files || files.length === 0) return;
+  var firstAdd = uploadedFiles.length === 0;
+  for (var i = 0; i < files.length; i++) uploadedFiles.push(files[i]);
+  if (firstAdd) {
+    api({ action: "getAttachmentRef" }, function(res) {
+      if (!res.error) {
+        attRefValue = res.ref;
+        document.getElementById("attRefNo").textContent = res.ref;
+      }
+      renderFiles();
+    });
+  } else {
+    renderFiles();
+  }
+  document.getElementById("attRefBox").style.display = "block";
+}
+
+function renderFiles() {
+  var html = "";
+  var base = attRefValue || "PKP-ATT-PENDING";
+  for (var i = 0; i < uploadedFiles.length; i++) {
+    var f = uploadedFiles[i];
+    var ref = base + "-" + String.fromCharCode(65 + i);
+    var kb = (f.size / 1024).toFixed(0) + " KB";
+    html += "<div class='file-item'>";
+    html += "<span></span>";
+    html += "<span class='file-name'>" + f.name + "</span>";
+    html += "<span class='file-size'>" + kb + "</span>";
+    html += "<span class='file-ref'>" + ref + "</span>";
+    html += "<button class='file-del' data-idx='" + i + "'>x</button>";
+    html += "</div>";
+  }
+  document.getElementById("fileList").innerHTML = html;
+  var delBtns = document.querySelectorAll(".file-del");
+  for (var d = 0; d < delBtns.length; d++) {
+    delBtns[d].addEventListener("click", function() {
+      var idx = parseInt(this.getAttribute("data-idx"));
+      uploadedFiles.splice(idx, 1);
+      if (uploadedFiles.length === 0) {
+        document.getElementById("attRefBox").style.display = "none";
+        attRefValue = "";
+      }
+      renderFiles();
+    });
+  }
+}
+
+function validate() {
+  var checks = [
+    { id: "fDate",   name: "Date of Expense" },
+    { id: "fClient", name: "Client Name" },
+    { id: "fMajor",  name: "Major Head" },
+    { id: "fMinor",  name: "Minor Head" },
+    { id: "fNature", name: "Nature" },
+    { id: "fAmount", name: "Amount" },
+    { id: "fDesc",   name: "Description" }
+  ];
+  for (var i = 0; i < checks.length; i++) {
+    var el = document.getElementById(checks[i].id);
+    if (!el.value || !el.value.trim()) {
+      toast("Please fill in: " + checks[i].name, "err");
+      el.focus();
+      el.style.borderColor = "#d94040";
+      setTimeout((function(elem) { return function() { elem.style.borderColor = ""; }; })(el), 2500);
+      return false;
+    }
+  }
+  return true;
+}
+
+function submitClaim() {
+  if (!validate()) return;
+  var catEl = document.querySelector("input[name=cat]:checked");
+  var cat = catEl ? catEl.value : "Non Reimbursable";
+  var btn = document.getElementById("submitBtn");
+  btn.disabled = true;
+  btn.textContent = "Submitting...";
+  toast("Submitting your claim...", "info");
+  api({
+    action:        "submitClaim",
+    dateExpense:   document.getElementById("fDate").value,
+    clientName:    document.getElementById("fClient").value.trim(),
+    majorHead:     document.getElementById("fMajor").value,
+    minorHead:     document.getElementById("fMinor").value,
+    nature:        document.getElementById("fNature").value,
+    subNature:     document.getElementById("fSubNature").value.trim(),
+    description:   document.getElementById("fDesc").value.trim(),
+    amount:        document.getElementById("fAmount").value,
+    category:      cat,
+    attachmentRef: attRefValue || "",
+    attachmentURL: ""
+  }, function(res) {
+    btn.disabled = false;
+    btn.textContent = "Submit for Approval";
+    if (res.error) { toast("Error: " + res.error, "err"); return; }
+    toast("Claim " + res.claimId + " submitted! Pending manager approval.", "ok");
+    setTimeout(function() { window.location.href = "dashboard.html"; }, 3000);
+  });
+}
 </script>
 </body>
 </html>

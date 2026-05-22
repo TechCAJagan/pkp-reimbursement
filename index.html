@@ -494,12 +494,10 @@
     err.style.display = 'none';
 
     try {
-      const passwordHash = await hashPassword(password);
-
       const response = await fetch(APPS_SCRIPT_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify({ action: 'login', email, passwordHash }),
+        body: JSON.stringify({ action: 'login', email, password }),
       });
 
       const data = await response.json();

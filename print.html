@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>PKP - Print Summary</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Arial,sans-serif;background:#f4f4f4;color:#111}
+.screen-bar{background:#1e3a5f;color:#fff;padding:12px 24px;display:flex;align-items:center;justify-content:space-between;font-size:13px}
+.screen-bar button{background:#c9a84c;color:#1e3a5f;border:none;padding:7px 16px;border-radius:6px;font-weight:700;cursor:pointer;font-size:13px;margin-left:8px}
+.screen-bar button.sec{background:rgba(255,255,255,0.15);color:#fff}
+.page{max-width:800px;margin:24px auto;background:#fff;padding:32px 40px;border-radius:8px;box-shadow:0 2px 12px rgba(0,0,0,0.08)}
+.co-header{display:flex;align-items:flex-start;justify-content:space-between;border-bottom:2px solid #1e3a5f;padding-bottom:16px;margin-bottom:20px}
+.co-name{font-size:20px;font-weight:700;color:#1e3a5f}
+.co-sub{font-size:12px;color:#6b7280;margin-top:3px}
+.doc-title{text-align:right}
+.doc-title h2{font-size:16px;font-weight:700;color:#1e3a5f;margin-bottom:4px}
+.doc-title .claim-id{font-size:13px;color:#6b7280;font-family:monospace}
+.meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;background:#f9fafb;border-radius:7px;padding:14px 16px}
+.meta-item .meta-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#6b7280;margin-bottom:2px}
+.meta-item .meta-val{font-size:13px;font-weight:600;color:#111}
+.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#1e3a5f;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin-bottom:10px}
+table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px}
+th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:0.05em}
+td{padding:7px 10px;border-bottom:1px solid #f3f4f6;color:#111}
+tr:nth-child(even) td{background:#f9fafb}
+.total-row td{font-weight:700;border-top:2px solid #1e3a5f;background:#e8f0fe}
+.annexure-table th{background:#374151}
+.status-chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#d1fae5;color:#065f46}
+.approval-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:16px}
+.approval-box{text-align:center}
+.approval-name{font-size:12px;font-weight:600;color:#111;margin-bottom:4px}
+.approval-role{font-size:10px;color:#6b7280;margin-bottom:20px}
+.approval-line{border-top:1px solid #374151;margin-top:4px;padding-top:4px;font-size:10px;color:#6b7280}
+.footer{margin-top:20px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:10px;color:#9ca3af;text-align:center}
+.loading{text-align:center;padding:60px;color:#6b7280;font-size:14px}
+@media print{
+  .screen-bar{display:none!important}
+  body{background:#fff}
+  .page{box-shadow:none;margin:0;border-radius:0;padding:20px}
+}
+</style>
+</head>
+<body>
+
+<div class="screen-bar" id="screenBar">
+  <span id="screenTitle">Loading claim...</span>
+  <div>
+    <button class="sec" onclick="window.close()">Close</button>
+    <button onclick="window.print()">Print / Save PDF</button>
+  </div>
+</div>
+
+<div class="page" id="printPage">
+  <div class="loading" id="loadingMsg">Loading claim details...</div>
+</div>
+
+<script>
+var API = "https://script.google.com/macros/s/AKfycbwbUXVKUKAFb7DWnkpsLDUEJsK4_cepH867tnCaZVdWrva6W94fBjpmAWToQbnVR7PIgg/exec";
+var COMPANY = "Pratapkaran Paul & Co.";
+
+var sess = {};
+var tok = "";
+try { sess = JSON.parse(sessionStorage.getItem("pkp_user") || "{}"); tok = sessionStorage.getItem("pkp_token") || ""; } catch(e) {}
+if (!sess.role) { window.location.href = "index.html"; }
+
+var claimId = sessionStorage.getItem("printClaimId") || "";
+if (!claimId) { document.getElementById("loadingMsg").textContent = "No claim selected. Please go back and select a claim to print."; }
+else { loadClaim(); }
+
+function api(params, cb) {
+  var name = "pkp" + Date.now() + Math.floor(Math.random() * 9999);
+  var done = false;
+  var timer = setTimeout(function() { if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); } }, 20000);
+  function cleanup() { delete window[name]; var s = document.getElementById("s_" + name); if (s && s.parentNode) s.parentNode.removeChild(s); }
+  window[name] = function(data) { if (!done) { done = true; clearTimeout(timer); cleanup(); cb(data); } };
+  var q = "callback=" + encodeURIComponent(name) + "&token=" + encodeURIComponent(tok);
+  for (var k in params) { if (Object.prototype.hasOwnProperty.call(params, k)) { q += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); } }
+  var sc = document.createElement("script"); sc.id = "s_" + name; sc.src = API + "?" + q;
+  sc.onerror = function() { if (!done) { done = true; clearTimeout(timer); cleanup(); cb({ error: "Network error." }); } };
+  document.body.appendChild(sc);
+}
+
+function fmtDate(d) { if (!d) return "-"; try { return new Date(d).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }); } catch(e) { return d; } }
+function fmtAmt(n) { var v = parseFloat(n) || 0; return "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits: 2 }); }
+
+function loadClaim() {
+  api({ action: "getClaimDetail", claimId: claimId }, function(res) {
+    if (res.error) { document.getElementById("loadingMsg").textContent = "Error: " + res.error; return; }
+    renderPrint(res.claim);
+  });
+}
+
+function renderPrint(c) {
+  document.getElementById("screenTitle").textContent = "Print Summary: " + c.ClaimID;
+  var printDate = new Date().toLocaleDateString("en-IN", { day:"2-digit", month:"long", year:"numeric" });
+  var html = "";
+  html += "<div class='co-header'>";
+  html += "<div><div class='co-name'>" + COMPANY + "</div><div class='co-sub'>Reimbursement Management System</div></div>";
+  html += "<div class='doc-title'><h2>Reimbursement Claim Summary</h2><div class='claim-id'>" + c.ClaimID + "</div><div style='font-size:11px;color:#6b7280;margin-top:3px'>Printed: " + printDate + "</div></div>";
+  html += "</div>";
+
+  html += "<div class='meta-grid'>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Claimant</div><div class='meta-val'>" + (c.ClaimantName || c.ClaimantID || "-") + "</div></div>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Date of Expense</div><div class='meta-val'>" + fmtDate(c.DateOfExpense) + "</div></div>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Date Submitted</div><div class='meta-val'>" + fmtDate(c.DateClaimed) + "</div></div>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Client</div><div class='meta-val'>" + (c.ClientName || "-") + "</div></div>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Category</div><div class='meta-val'>" + (c.Category || "-") + "</div></div>";
+  html += "<div class='meta-item'><div class='meta-lbl'>Status</div><div class='meta-val'><span class='status-chip'>Finance Approved</span></div></div>";
+  html += "</div>";
+
+  html += "<div class='section-title'>Expense Details</div>";
+  html += "<table><thead><tr><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Sub-Nature</th><th>Description</th><th style='text-align:right'>Amount</th></tr></thead><tbody>";
+  html += "<tr><td>" + (c.MajorHead||"-") + "</td><td>" + (c.MinorHead||"-") + "</td><td>" + (c.Nature||"-") + "</td><td>" + (c.SubNature||"-") + "</td><td>" + (c.Description||"-") + "</td><td style='text-align:right;font-weight:600'>" + fmtAmt(c.Amount) + "</td></tr>";
+  html += "<tr class='total-row'><td colspan='5' style='text-align:right'>Total Claim Amount</td><td style='text-align:right'>" + fmtAmt(c.Amount) + "</td></tr>";
+  html += "</tbody></table>";
+
+  if (c.AttachmentRef) {
+    html += "<div class='section-title'>Annexure / Attachments</div>";
+    html += "<table class='annexure-table'><thead><tr><th>Ref No.</th><th>Description</th><th>Date</th></tr></thead><tbody>";
+    html += "<tr><td style='font-family:monospace'>" + c.AttachmentRef + "</td><td>Supporting documents for " + (c.MajorHead||"expense") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td></tr>";
+    html += "</tbody></table>";
+  }
+
+  if (c.ManagerRemarks) {
+    html += "<div class='section-title'>Manager Remarks</div><p style='font-size:12px;color:#374151;margin-bottom:16px;padding:10px;background:#f9fafb;border-radius:6px'>" + c.ManagerRemarks + "</p>";
+  }
+
+  html += "<div class='approval-grid'>";
+  html += "<div class='approval-box'><div class='approval-name'>" + (c.ClaimantName || "Claimant") + "</div><div class='approval-role'>Claimant</div><div class='approval-line'>Signature &amp; Date</div></div>";
+  html += "<div class='approval-box'><div class='approval-name'>" + (c.ManagerID || "Manager") + "</div><div class='approval-role'>Manager Approval</div><div class='approval-line'>" + fmtDate(c.DateManagerApproved) + "</div></div>";
+  html += "<div class='approval-box'><div class='approval-name'>Finance Manager</div><div class='approval-role'>Finance Approval</div><div class='approval-line'>Signature &amp; Date</div></div>";
+  html += "</div>";
+
+  html += "<div class='footer'>This is a system-generated document from " + COMPANY + " Reimbursement System. Claim ID: " + c.ClaimID + "</div>";
+
+  document.getElementById("printPage").innerHTML = html;
+}
+</script>
+</body>
+</html>

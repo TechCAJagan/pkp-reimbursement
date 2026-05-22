@@ -583,8 +583,10 @@ function renderDashStats(items) {
 function loadEmployeeDashboard() {
   document.getElementById("dashTitle").textContent = "Welcome, " + (sess.name || "");
   document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading your summary...</div>";
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashPendingSection").innerHTML = "";
   api({ action: "getClaims", filter: "mine" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
+    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
     var claims = res.claims || [];
     var total = 0, approved = 0, received = 0, pending = 0, rejected = 0;
     for (var i = 0; i < claims.length; i++) {
@@ -610,8 +612,11 @@ function loadEmployeeDashboard() {
 
 function loadManagerDashboard() {
   document.getElementById("dashTitle").textContent = "Manager Dashboard";
+  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading team summary...</div>";
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashPendingSection").innerHTML = "";
   api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
+    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
     var claims = res.claims || [];
     var pending = 0, pendAmt = 0, approved = 0, totalAmt = 0;
     for (var i = 0; i < claims.length; i++) {
@@ -633,8 +638,11 @@ function loadManagerDashboard() {
 
 function loadFinanceDashboard() {
   document.getElementById("dashTitle").textContent = "Finance Manager Dashboard";
-  api({ action: "getClaims", filter: "all" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
+  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading finance summary...</div>";
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashPendingSection").innerHTML = "";
+  api({ action: "getClaims", filter: "team" }, function(res) {
+    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
     var claims = res.claims || [];
     var pending = 0, pendAmt = 0, approved = 0;
     for (var i = 0; i < claims.length; i++) {
@@ -653,8 +661,11 @@ function loadFinanceDashboard() {
 
 function loadAccountsDashboard() {
   document.getElementById("dashTitle").textContent = "Accounts Dashboard";
-  api({ action: "getClaims", filter: "all" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
+  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading accounts summary...</div>";
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashPendingSection").innerHTML = "";
+  api({ action: "getClaims", filter: "team" }, function(res) {
+    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
     var claims = res.claims || [];
     var unpaid = 0, unpaidAmt = 0, uninvoiced = 0;
     for (var i = 0; i < claims.length; i++) {
@@ -673,8 +684,11 @@ function loadAccountsDashboard() {
 
 function loadAdminDashboard() {
   document.getElementById("dashTitle").textContent = "Admin Dashboard";
-  api({ action: "getClaims", filter: "all" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
+  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading admin summary...</div>";
+  document.getElementById("dashQuickActions").innerHTML = "";
+  document.getElementById("dashPendingSection").innerHTML = "";
+  api({ action: "getClaims", filter: "team" }, function(res) {
+    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
     var claims = res.claims || [];
     var pendMgr = 0, pendFin = 0, paid = 0, totalAmt = 0;
     for (var i = 0; i < claims.length; i++) {
@@ -1162,7 +1176,7 @@ function loadReport(card) {
   card.style.borderColor = "var(--blue3)";
   document.getElementById("reportOutput").innerHTML = "<div class='empty'>Loading report...</div>";
   var filter = (rid === "pending_manager" || rid === "pending_finance" || rid === "pending_payment" || rid === "pending_receipt") ? "all" : "all";
-  api({ action:"getClaims", filter:"all" }, function(res) {
+  api({ action:"getClaims", filter:"team" }, function(res) {
     if (res.error) { toast(res.error, "err"); return; }
     var all = res.claims || [];
     var filtered = [];

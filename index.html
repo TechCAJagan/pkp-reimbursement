@@ -456,42 +456,12 @@
       <span>Sign In</span>
     </button>
 
-    <div class="divider">Demo accounts</div>
-
-    <div class="demo-accounts">
-      <button class="demo-btn" onclick="fillDemo('employee@pkp.com','demo123')">
-        <strong>Ravi Kumar</strong>
-        <span class="role-tag tag-employee">Employee</span>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('manager@pkp.com','demo123')">
-        <strong>Priya Sharma</strong>
-        <span class="role-tag tag-manager">Manager</span>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('finance@pkp.com','demo123')">
-        <strong>Arun Mehta</strong>
-        <span class="role-tag tag-finance">Finance Mgr</span>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('accounts@pkp.com','demo123')">
-        <strong>Sunita Iyer</strong>
-        <span class="role-tag tag-accounts">Accounts</span>
-      </button>
-      <button class="demo-btn" onclick="fillDemo('admin@pkp.com','demo123')" style="grid-column: span 2;">
-        <strong>Admin User</strong>
-        <span class="role-tag tag-admin">Admin</span>
-      </button>
-    </div>
+    <p style="text-align:center; font-size:12px; color:var(--muted); margin-top:16px;">Contact your administrator if you need access.</p>
   </div>
 </div>
 
 <script>
-  // Demo user database (replace with Apps Script API call)
-  const DEMO_USERS = {
-    'employee@pkp.com': { name: 'Ravi Kumar',   role: 'EMPLOYEE',    id: 'PKP001' },
-    'manager@pkp.com':  { name: 'Priya Sharma', role: 'MANAGER',     id: 'PKP002' },
-    'finance@pkp.com':  { name: 'Arun Mehta',   role: 'FINANCE_MGR', id: 'PKP003' },
-    'accounts@pkp.com': { name: 'Sunita Iyer',  role: 'ACCOUNTS',    id: 'PKP004' },
-    'admin@pkp.com':    { name: 'Admin User',    role: 'ADMIN',       id: 'PKP000' },
-  };
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwbUXVKUKAFb7DWnkpsLDUEJsK4_cepH867tnCaZVdWrva6W94fBjpmAWToQbnVR7PIgg/exec';
 
   const ROLE_REDIRECT = {
     EMPLOYEE:    'dashboard.html?role=employee',
@@ -501,17 +471,17 @@
     ADMIN:       'dashboard.html?role=admin',
   };
 
-  function fillDemo(email, pass) {
-    document.getElementById('email').value = email;
-    document.getElementById('password').value = pass;
-    document.getElementById('email').focus();
+  // Hash the password using SHA-256 before sending
+  async function hashPassword(password) {
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(password));
+    return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
   }
 
   async function handleLogin() {
-    const email = document.getElementById('email').value.trim().toLowerCase();
+    const email    = document.getElementById('email').value.trim().toLowerCase();
     const password = document.getElementById('password').value;
-    const btn = document.getElementById('loginBtn');
-    const err = document.getElementById('errorMsg');
+    const btn      = document.getElementById('loginBtn');
+    const err      = document.getElementById('errorMsg');
 
     if (!email || !password) {
       err.textContent = '⚠ Please enter both email and password.';
@@ -523,18 +493,34 @@
     btn.disabled = true;
     err.style.display = 'none';
 
-    // Simulate API call delay (replace with actual Apps Script call)
-    await new Promise(r => setTimeout(r, 900));
+    try {
+      const passwordHash = await hashPassword(password);
 
-    const user = DEMO_USERS[email];
-    if (user && password === 'demo123') {
-      // Store session
-      sessionStorage.setItem('pkp_user', JSON.stringify({
-        id: user.id, name: user.name, role: user.role, email
-      }));
-      window.location.href = ROLE_REDIRECT[user.role];
-    } else {
-      err.textContent = '⚠ Invalid email or password. Please try again.';
+      const response = await fetch(APPS_SCRIPT_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify({ action: 'login', email, passwordHash }),
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        err.textContent = '⚠ ' + data.error;
+        err.style.display = 'block';
+        btn.classList.remove('loading');
+        btn.disabled = false;
+        return;
+      }
+
+      // Save session
+      sessionStorage.setItem('pkp_token', data.token);
+      sessionStorage.setItem('pkp_user',  JSON.stringify(data.user));
+
+      // Redirect based on role
+      window.location.href = ROLE_REDIRECT[data.user.role] || 'dashboard.html';
+
+    } catch (e) {
+      err.textContent = '⚠ Could not connect to server. Please try again.';
       err.style.display = 'block';
       btn.classList.remove('loading');
       btn.disabled = false;

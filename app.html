@@ -398,14 +398,24 @@ function renderAdminDash(claims) {
 }
 
 function renderRecentTbl(claims) {
-  if(!claims.length){document.getElementById('dashPending').innerHTML='';return;}
-  var html='<div class="tc"><div class="th2"><div class="th2-title">Recent Claims</div><button class="ghost" onclick="go('my-claims')">View All</button></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  var el=document.getElementById('dashPending');
+  if(!claims.length){el.innerHTML='';return;}
+  var wrap=document.createElement('div'); wrap.className='tc';
+  var hdr=document.createElement('div'); hdr.className='th2';
+  var ttl=document.createElement('div'); ttl.className='th2-title'; ttl.textContent='Recent Claims';
+  var vb=document.createElement('button'); vb.className='ghost'; vb.textContent='View All';
+  vb.addEventListener('click',function(){ go('my-claims'); });
+  hdr.appendChild(ttl); hdr.appendChild(vb); wrap.appendChild(hdr);
+  var tw=document.createElement('div'); tw.className='tw';
+  var tbl=document.createElement('table');
+  var html='<thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
   for(var i=0;i<claims.length;i++){
     var c=claims[i]; var s=getStatus(c);
     html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td></tr>';
   }
-  html+='</tbody></table></div></div>';
-  document.getElementById('dashPending').innerHTML=html;
+  html+='</tbody>';
+  tbl.innerHTML=html; tw.appendChild(tbl); wrap.appendChild(tw);
+  el.innerHTML=''; el.appendChild(wrap);
 }
 
 function renderPendingTbl(claims) {
@@ -671,6 +681,7 @@ var NATURE={'Air Travel':['Domestic','International'],Train:['Local','Outstation
 
 function setupNewClaim() {
   var today=new Date().toISOString().split('T')[0];
+  document.getElementById('ncCancel').addEventListener('click', function(){ go('my-claims'); });
   document.getElementById('ncDate').max=today;
   var ms=document.getElementById('ncMajor');
   var majorList=Object.keys(MINOR);

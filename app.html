@@ -190,7 +190,7 @@ tr:hover td{background:#fafafa}
 <aside class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-company">PKP &amp; Associates</div>
-    <div class="s-name">Pratapkaran Paul &amp; Co1.<br><span>Reimbursement</span></div>
+    <div class="s-name">Pratapkaran Paul &amp; Co.<br><span>Reimbursement</span></div>
   </div>
   <nav id="sideNav"></nav>
   <div class="s-foot">
@@ -1261,18 +1261,36 @@ function addFiles(files) {
 function uploadToGoogleDrive() {
   var pending = [];
   for (var i = 0; i < uploadedFiles.length; i++) {
-    if (!uploadedFiles[i].driveUrl) pending.push(i);
+    if (!uploadedFiles[i].driveUrl && uploadedFiles[i].driveUrl !== "") pending.push(i);
   }
   if (!pending.length) { renderFiles(); return; }
   var idx = pending[0];
   var f = uploadedFiles[idx];
   var suffix = String.fromCharCode(65 + idx);
-  var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + f.name.split(".").pop();
-  setUploadStatus("Uploading " + newName + "...");
+  var ext = f.name.indexOf(".") >= 0 ? f.name.split(".").pop() : "bin";
+  var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + ext;
+  setUploadStatus("Uploading " + newName + " ...");
+
   var reader = new FileReader();
   reader.onload = function(e) {
     var base64 = e.target.result.split(",")[1];
-    api({ action:"uploadToDrive", fileName:newName, fileData:base64, mimeType:f.type || "application/octet-stream", attachmentRef:attRefValue }, function(res) {
+    var payload = JSON.stringify({
+      action: "uploadToDrive",
+      token: tok,
+      fileName: newName,
+      fileData: base64,
+      mimeType: f.type || "application/octet-stream",
+      attachmentRef: attRefValue || ""
+    });
+
+    // Use fetch POST for file upload - JSONP cannot handle large base64 data
+    fetch(API, {
+      method: "POST",
+      headers: { "Content-Type": "text/plain" },
+      body: payload
+    })
+    .then(function(resp) { return resp.json(); })
+    .then(function(res) {
       if (res.error) {
         setUploadStatus("Upload failed: " + res.error);
         uploadedFiles[idx].driveUrl = "";
@@ -1280,10 +1298,22 @@ function uploadToGoogleDrive() {
       } else {
         uploadedFiles[idx].driveUrl = res.url || "";
         uploadedFiles[idx].driveName = newName;
-        setUploadStatus("");
+        setUploadStatus("Uploaded: " + newName);
+        setTimeout(function() { setUploadStatus(""); }, 3000);
       }
       renderFiles();
-      if (pending.length > 1) { setTimeout(uploadToGoogleDrive, 500); }
+      // Upload next file if any
+      var remaining = [];
+      for (var j = 0; j < uploadedFiles.length; j++) {
+        if (!uploadedFiles[j].driveUrl && uploadedFiles[j].driveUrl !== "") remaining.push(j);
+      }
+      if (remaining.length) setTimeout(uploadToGoogleDrive, 300);
+    })
+    .catch(function(err) {
+      setUploadStatus("Upload failed: " + err.message);
+      uploadedFiles[idx].driveUrl = "";
+      uploadedFiles[idx].driveName = newName;
+      renderFiles();
     });
   };
   reader.readAsDataURL(f);

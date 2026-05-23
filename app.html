@@ -190,7 +190,7 @@ tr:hover td{background:#fafafa}
 <aside class="sidebar" id="sidebar">
   <div class="s-logo">
     <div class="s-company">PKP &amp; Associates</div>
-    <div class="s-name">Pratapkaran Paul &amp; Co1.<br><span>Reimbursement</span></div>
+    <div class="s-name">Pratapkaran Paul &amp; Co.<br><span>Reimbursement</span></div>
   </div>
   <nav id="sideNav"></nav>
   <div class="s-foot">
@@ -561,14 +561,23 @@ function buildNav() {
 function api(params, cb) {
   var name = "pkp" + Date.now() + Math.floor(Math.random() * 9999);
   var done = false;
-  var timer = setTimeout(function() { if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); } }, 25000);
+  var isUpload = params && params.action === "uploadChunk";
+  var timeoutMs = isUpload ? 60000 : 25000;
+  var timer = setTimeout(function() { if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); } }, timeoutMs);
   function cleanup() { delete window[name]; var s = document.getElementById("s_" + name); if (s && s.parentNode) s.parentNode.removeChild(s); }
   window[name] = function(data) { if (!done) { done = true; clearTimeout(timer); cleanup(); cb(data); } };
   var q = "callback=" + encodeURIComponent(name) + "&token=" + encodeURIComponent(tok);
   for (var k in params) { if (Object.prototype.hasOwnProperty.call(params, k)) { q += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); } }
   var sc = document.createElement("script");
   sc.id = "s_" + name; sc.src = API + "?" + q;
-  sc.onerror = function() { if (!done) { done = true; clearTimeout(timer); cleanup(); cb({ error: "Network error." }); } };
+  sc.onerror = function() {
+    if (!done) {
+      done = true; clearTimeout(timer); cleanup();
+      var urlLen = sc.src ? sc.src.length : 0;
+      console.error("JSONP error. URL length:", urlLen, "Action:", params.action || "");
+      cb({ error: "Network error (URL:" + urlLen + " chars). Action:" + (params.action||"") });
+    }
+  };
   document.body.appendChild(sc);
 }
 
@@ -1246,27 +1255,39 @@ function resetNewClaim() {
 }
 
 function addFiles(files) {
-  if (!files || files.length === 0) return;
+  console.log("addFiles called, files:", files ? files.length : 0);
+  if (!files || files.length === 0) { console.log("No files selected"); return; }
   var first = uploadedFiles.length === 0;
-  for (var i = 0; i < files.length; i++) uploadedFiles.push(files[i]);
+  for (var i = 0; i < files.length; i++) {
+    console.log("Adding file:", files[i].name, "size:", files[i].size);
+    uploadedFiles.push(files[i]);
+  }
+  document.getElementById("ncAttRefBox").style.display = "block";
   if (first) {
+    console.log("Getting attachment ref...");
     api({ action:"getAttachmentRef" }, function(res) {
+      console.log("Attachment ref response:", JSON.stringify(res));
       if (!res.error) { attRefValue = res.ref; document.getElementById("ncAttRefNo").textContent = res.ref; }
+      else { attRefValue = "PKP-ATT-" + new Date().getFullYear() + "-XXXX"; }
       uploadToGoogleDrive();
     });
-  } else { uploadToGoogleDrive(); }
-  document.getElementById("ncAttRefBox").style.display = "block";
+  } else {
+    uploadToGoogleDrive();
+  }
 }
 
 // ── CHUNKED UPLOAD via JSONP ──
 // Splits base64 into 50KB chunks, sends each via JSONP, Apps Script reassembles
-var CHUNK_SIZE = 40000; // 40KB per chunk - safe for URL length limits
+var CHUNK_SIZE = 8000; // 8KB per chunk
 
 function uploadToGoogleDrive() {
+  console.log("uploadToGoogleDrive called. Total files:", uploadedFiles.length);
   var pending = [];
   for (var i = 0; i < uploadedFiles.length; i++) {
+    console.log("File", i, "driveUrl:", uploadedFiles[i].driveUrl);
     if (uploadedFiles[i].driveUrl === undefined) pending.push(i);
   }
+  console.log("Pending uploads:", pending.length);
   if (!pending.length) { renderFiles(); return; }
   var idx = pending[0];
   var f = uploadedFiles[idx];
@@ -1274,6 +1295,7 @@ function uploadToGoogleDrive() {
   var suffix = String.fromCharCode(65 + idx);
   var ext = f.name.indexOf(".") >= 0 ? f.name.split(".").pop() : "bin";
   var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + ext;
+  console.log("Starting upload for:", newName);
   setUploadStatus("Reading file: " + f.name + "...");
 
   var reader = new FileReader();
@@ -1299,6 +1321,7 @@ function sendChunk(base64, chunkNum, totalChunks, uploadId, fileName, mimeType, 
   var isLast = (chunkNum === totalChunks - 1);
 
   setUploadStatus("Uploading " + fileName + " (" + (chunkNum+1) + "/" + totalChunks + " parts)...");
+  console.log("Sending chunk", chunkNum+1, "of", totalChunks, "size:", chunk.length, "chars");
 
   api({
     action:      "uploadChunk",

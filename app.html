@@ -464,17 +464,33 @@ function loadMC() {
 }
 
 function filterMC() {
-  var q=(document.getElementById('mcSrch').value||'').toLowerCase();
-  var sf=document.getElementById('mcSt').value;
-  var filtered=[]; for(var i=0;i<myData.length;i++){var c=myData[i];var s=getStatus(c);var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0;var ms=!sf||s===sf;if(mq&&ms)filtered.push(c);}
-  var html='';
-  if(!filtered.length){document.getElementById('mcBody').innerHTML='<tr><td colspan="7"><div class="empty">No claims found.</div></td></tr>';return;}
-  for(var i=0;i<filtered.length;i++){
-    var c=filtered[i]; var s=getStatus(c); var cid=(c.ClaimID||'').replace(/'/g,'');
-    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td>'+(c.MajorHead||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td>';
-    html+='<td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'<button class="btn" onclick="viewClaim(''+cid+'',false,false)">View</button>'+(s==='APPROVED_FINANCE'?'<button class="btn" onclick="printClaim(''+cid+'')">Print</button>':'')+'</td></tr>';
+  var q=(document.getElementById("mcSrch").value||"").toLowerCase();
+  var sf=document.getElementById("mcSt").value;
+  var filtered=[];
+  for(var i=0;i<myData.length;i++){
+    var c=myData[i]; var s=getStatus(c);
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0;
+    var ms=!sf||s===sf;
+    if(mq&&ms) filtered.push(c);
   }
-  document.getElementById('mcBody').innerHTML=html;
+  var tb=document.getElementById("mcBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"7\"><div class=\"empty\">No claims found.</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var s=getStatus(c);
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td>"+(c.MajorHead||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+statusBadge(s)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
+    var last=tr.querySelector("td:last-child");
+    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,false); }); })(c.ClaimID);
+    last.appendChild(vb);
+    if(s==="APPROVED_FINANCE"){
+      var pb=document.createElement("button"); pb.className="btn"; pb.textContent="Print";
+      (function(id){ pb.addEventListener("click",function(){ printClaim(id); }); })(c.ClaimID);
+      last.appendChild(pb);
+    }
+    tb.appendChild(tr);
+  }
 }
 
 // ── APPROVALS ──
@@ -509,17 +525,37 @@ function apTab(tab) {
 }
 
 function filterAP() {
-  var q=(document.getElementById('apSrch').value||'').toLowerCase();
-  var ef=document.getElementById('apEmp').value;
-  var filtered=[]; for(var i=0;i<teamData.length;i++){var c=teamData[i];if(apCurTab==='pending'&&c.ManagerApprovalStatus!=='PENDING_MANAGER')continue;var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;var me=!ef||c.ClaimantID===ef;if(mq&&me)filtered.push(c);}
-  var html='';
-  if(!filtered.length){document.getElementById('apBody').innerHTML='<tr><td colspan="8"><div class="empty">'+(apCurTab==='pending'?'No pending approvals!':'No claims.')+'</div></td></tr>';return;}
-  for(var i=0;i<filtered.length;i++){
-    var c=filtered[i]; var isPend=c.ManagerApprovalStatus==='PENDING_MANAGER'; var nm=c.ClaimantName||c.ClaimantID||'-'; var cid=(c.ClaimID||'').replace(/'/g,'');
-    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td><span class="av">'+nm.charAt(0).toUpperCase()+'</span>'+nm+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'</td><td>'+statusBadge(c.ManagerApprovalStatus)+'</td>';
-    html+='<td><button class="btn" onclick="viewClaim(''+cid+'','+isPend+',false)">View</button>'+(isPend?'<button class="btn btn-ok" onclick="qApprove(''+cid+'')">Approve</button><button class="btn btn-no" onclick="qReject(''+cid+'')">Reject</button>':'')+'</td></tr>';
+  var q=(document.getElementById("apSrch").value||"").toLowerCase();
+  var ef=document.getElementById("apEmp").value;
+  var filtered=[];
+  for(var i=0;i<teamData.length;i++){
+    var c=teamData[i];
+    if(apCurTab==="pending"&&c.ManagerApprovalStatus!=="PENDING_MANAGER") continue;
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
+    var me=!ef||c.ClaimantID===ef;
+    if(mq&&me) filtered.push(c);
   }
-  document.getElementById('apBody').innerHTML=html;
+  var tb=document.getElementById("apBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"8\"><div class=\"empty\">"+(apCurTab==="pending"?"No pending approvals!":"No claims.")+"</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var isPend=c.ManagerApprovalStatus==="PENDING_MANAGER";
+    var nm=c.ClaimantName||c.ClaimantID||"-";
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td><span class=\"av\">"+nm.charAt(0).toUpperCase()+"</span>"+nm+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td>"+statusBadge(c.ManagerApprovalStatus)+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    (function(id,ip){ vb.addEventListener("click",function(){ viewClaim(id,ip,false); }); })(c.ClaimID,isPend);
+    td.appendChild(vb);
+    if(isPend){
+      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.textContent="Approve";
+      (function(id){ ab.addEventListener("click",function(){ qApprove(id); }); })(c.ClaimID);
+      var rb=document.createElement("button"); rb.className="btn btn-no"; rb.textContent="Reject";
+      (function(id){ rb.addEventListener("click",function(){ qReject(id); }); })(c.ClaimID);
+      td.appendChild(ab); td.appendChild(rb);
+    }
+    tb.appendChild(tr);
+  }
 }
 
 function qApprove(id) {
@@ -551,16 +587,25 @@ function loadFIN() {
 }
 
 function filterFIN() {
-  var q=(document.getElementById('finSrch').value||'').toLowerCase();
-  var filtered=finData.filter(function(c){return !q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;});
-  var html='';
-  if(!filtered.length){document.getElementById('finBody').innerHTML='<tr><td colspan="8"><div class="empty">No pending finance approvals.</div></td></tr>';return;}
+  var q=(document.getElementById("finSrch").value||"").toLowerCase();
+  var filtered=finData.filter(function(c){return !q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;});
+  var tb=document.getElementById("finBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"8\"><div class=\"empty\">No pending finance approvals.</div></td></tr>";return;}
+  tb.innerHTML="";
   for(var i=0;i<filtered.length;i++){
-    var c=filtered[i]; var cid=(c.ClaimID||'').replace(/'/g,'');
-    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'</td>';
-    html+='<td><button class="btn" onclick="viewClaim(''+cid+'',false,true)">View</button><button class="btn btn-ok" onclick="qFinApprove(''+cid+'')">Approve</button><button class="btn btn-no" onclick="qFinReject(''+cid+'')">Reject</button></td></tr>';
+    var c=filtered[i];
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,true); }); })(c.ClaimID);
+    var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.textContent="Approve";
+    (function(id){ ab.addEventListener("click",function(){ qFinApprove(id); }); })(c.ClaimID);
+    var rb=document.createElement("button"); rb.className="btn btn-no"; rb.textContent="Reject";
+    (function(id){ rb.addEventListener("click",function(){ qFinReject(id); }); })(c.ClaimID);
+    td.appendChild(vb); td.appendChild(ab); td.appendChild(rb);
+    tb.appendChild(tr);
   }
-  document.getElementById('finBody').innerHTML=html;
 }
 
 function qFinApprove(id){if(!confirm('Finance approve '+id+'?'))return;api({action:'financeApprove',claimId:id,status:'APPROVED',remarks:''},function(res){if(res.error){toast(res.error,'err');return;}toast('Finance approved!','ok');loadFIN();});}
@@ -577,23 +622,29 @@ function loadACC() {
 }
 
 function filterACC() {
-  var q=(document.getElementById('accSrch').value||'').toLowerCase();
-  var f=document.getElementById('accFil').value;
+  var q=(document.getElementById("accSrch").value||"").toLowerCase();
+  var f=document.getElementById("accFil").value;
   var filtered=accData.filter(function(c){
-    var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;
-    var mf=!f||(f==='unpaid'&&!c.DatePaidByFirm)||(f==='uninvoiced'&&c.Category==='Client Reimbursable'&&!c.DateInvoicedToClient)||(f==='unreceived'&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
+    var mf=!f||(f==="unpaid"&&!c.DatePaidByFirm)||(f==="uninvoiced"&&c.Category==="Client Reimbursable"&&!c.DateInvoicedToClient)||(f==="unreceived"&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
     return mq&&mf;
   });
-  var html='';
-  if(!filtered.length){document.getElementById('accBody').innerHTML='<tr><td colspan="9"><div class="empty">No records.</div></td></tr>';return;}
+  var tb=document.getElementById("accBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"9\"><div class=\"empty\">No records.</div></td></tr>";return;}
+  tb.innerHTML="";
   for(var i=0;i<filtered.length;i++){
-    var c=filtered[i]; var cid=(c.ClaimID||'').replace(/'/g,'');
-    var pd=c.DatePaidByFirm?fmtD(c.DatePaidByFirm):'<span style="color:var(--amber)">Pending</span>';
-    var id2=c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):(c.Category==='Client Reimbursable'?'<span style="color:var(--amber)">Pending</span>':'-');
-    var rd=c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?'<span style="color:var(--amber)">Pending</span>':'-');
-    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td>'+pd+'</td><td>'+id2+'</td><td>'+rd+'</td><td><button class="btn" onclick="openAccMod(''+cid+'')">Update</button></td></tr>';
+    var c=filtered[i];
+    var pd=c.DatePaidByFirm?fmtD(c.DatePaidByFirm):"<span style=\"color:var(--amber)\">Pending</span>";
+    var id2=c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):(c.Category==="Client Reimbursable"?"<span style=\"color:var(--amber)\">Pending</span>":"-");
+    var rd=c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?"<span style=\"color:var(--amber)\">Pending</span>":"-");
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td>"+pd+"</td><td>"+id2+"</td><td>"+rd+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var ub=document.createElement("button"); ub.className="btn"; ub.textContent="Update";
+    (function(id){ ub.addEventListener("click",function(){ openAccMod(id); }); })(c.ClaimID);
+    td.appendChild(ub);
+    tb.appendChild(tr);
   }
-  document.getElementById('accBody').innerHTML=html;
 }
 
 function openAccMod(id) {
@@ -752,11 +803,21 @@ function submitClaim(){
 // ── REPORTS ──
 function buildRpts(){
   var role=sess.role;
-  var cards=[{id:'summary',t:'Claims Summary',s:'All claims overview'},{id:'pending_manager',t:'Pending Manager',s:'Awaiting manager approval'},{id:'pending_finance',t:'Pending Finance',s:'Awaiting finance approval'},{id:'pending_payment',t:'Pending Payment',s:'Approved but not paid'},{id:'pending_receipt',t:'Pending Receipt',s:'Invoiced, not received'},{id:'clientwise',t:'Client-wise',s:'Grouped by client'}];
-  if(role==='ADMIN'||role==='FINANCE_MGR') cards.push({id:'employeewise',t:'Employee-wise',s:'Grouped by employee'});
-  var html=''; for(var i=0;i<cards.length;i++){var cd=cards[i];html+='<div style="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s" onclick="loadRpt(''+cd.id+'')" onmouseover="this.style.borderColor='var(--blue3)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px">'+cd.t+'</div><div style="font-size:11px;color:var(--muted)">'+cd.s+'</div></div>';}
-  document.getElementById('rptCards').innerHTML=html;
-  document.getElementById('rptOut').innerHTML='';
+  var cards=[{id:"summary",t:"Claims Summary",s:"All claims overview"},{id:"pending_manager",t:"Pending Manager",s:"Awaiting manager approval"},{id:"pending_finance",t:"Pending Finance",s:"Awaiting finance approval"},{id:"pending_payment",t:"Pending Payment",s:"Approved but not paid"},{id:"pending_receipt",t:"Pending Receipt",s:"Invoiced, not received"},{id:"clientwise",t:"Client-wise",s:"Grouped by client"}];
+  if(role==="ADMIN"||role==="FINANCE_MGR") cards.push({id:"employeewise",t:"Employee-wise",s:"Grouped by employee"});
+  var grid=document.getElementById("rptCards");
+  grid.innerHTML="";
+  for(var i=0;i<cards.length;i++){
+    var cd=cards[i];
+    var div=document.createElement("div");
+    div.style.cssText="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s";
+    div.innerHTML="<div style=\"font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px\">"+cd.t+"</div><div style=\"font-size:11px;color:var(--muted)\">"+cd.s+"</div>";
+    div.addEventListener("mouseover",function(){this.style.borderColor="var(--blue3)";});
+    div.addEventListener("mouseout",function(){this.style.borderColor="var(--border)";});
+    (function(rid){ div.addEventListener("click",function(){ loadRpt(rid); }); })(cd.id);
+    grid.appendChild(div);
+  }
+  document.getElementById("rptOut").innerHTML="";
 }
 
 function loadRpt(rid){
@@ -815,18 +876,24 @@ function loadUSR(){
 }
 function fillMgrDrop(){var sel=document.getElementById('uMgr');sel.innerHTML='<option value="">No Manager</option>';for(var i=0;i<usrData.length;i++){var e=usrData[i];if(e.role==='MANAGER'||e.role==='ADMIN'||e.role==='FINANCE_MGR'){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.role+')';sel.appendChild(o);}}}
 function filterUSR(){
-  var q=(document.getElementById('usrSrch').value||'').toLowerCase();
-  var filtered=usrData.filter(function(e){return !q||(e.name||'').toLowerCase().indexOf(q)>=0||(e.email||'').toLowerCase().indexOf(q)>=0;});
-  var rlbl={EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Mgr',ACCOUNTS:'Accounts',ADMIN:'Admin'};
-  var html='';
+  var q=(document.getElementById("usrSrch").value||"").toLowerCase();
+  var filtered=usrData.filter(function(e){return !q||(e.name||"").toLowerCase().indexOf(q)>=0||(e.email||"").toLowerCase().indexOf(q)>=0;});
+  var rlbl={EMPLOYEE:"Employee",MANAGER:"Manager",FINANCE_MGR:"Finance Mgr",ACCOUNTS:"Accounts",ADMIN:"Admin"};
+  var tb=document.getElementById("usrBody");
+  tb.innerHTML="";
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"7\"><div class=\"empty\">No users.</div></td></tr>";return;}
   for(var i=0;i<filtered.length;i++){
-    var e=filtered[i]; var act=String(e.isActive).toUpperCase()==='TRUE'; var uid=(e.id||'').replace(/'/g,'');
-    html+='<tr><td><span class="av">'+(e.name||'?').charAt(0).toUpperCase()+'</span>'+(e.name||'-')+'</td><td><span class="cid">'+e.id+'</span></td><td>'+(e.email||'-')+'</td>';
-    html+='<td><span class="badge '+(act?'b-af':'b-rej')+'">'+(rlbl[e.role]||e.role)+'</span></td><td>'+(e.department||'-')+'</td>';
-    html+='<td><span style="font-size:12px;font-weight:600;color:'+(act?'#065f46':'#991b1b')+'">'+(act?'Active':'Inactive')+'</span></td>';
-    html+='<td><button class="btn" onclick="openEditUser(''+uid+'')">Edit</button><button class="btn '+(act?'btn-no':'btn-ok')+'" onclick="togUser(''+uid+'','+act+')">'+(act?'Deactivate':'Activate')+'</button></td></tr>';
+    var e=filtered[i]; var act=String(e.isActive).toUpperCase()==="TRUE";
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"av\">"+(e.name||"?").charAt(0).toUpperCase()+"</span>"+(e.name||"-")+"</td><td><span class=\"cid\">"+e.id+"</span></td><td>"+(e.email||"-")+"</td><td><span class=\"badge \"+(act?"b-af":"b-rej")+"\">"+(rlbl[e.role]||e.role)+"</span></td><td>"+(e.department||"-")+"</td><td><span style=\"font-size:12px;font-weight:600;color:"+(act?"#065f46":"#991b1b")+"\">"+(act?"Active":"Inactive")+"</span></td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var eb=document.createElement("button"); eb.className="btn"; eb.textContent="Edit";
+    (function(id){ eb.addEventListener("click",function(){ openEditUser(id); }); })(e.id);
+    var tb2=document.createElement("button"); tb2.className="btn "+(act?"btn-no":"btn-ok"); tb2.textContent=act?"Deactivate":"Activate";
+    (function(id,a){ tb2.addEventListener("click",function(){ togUser(id,a); }); })(e.id,act);
+    td.appendChild(eb); td.appendChild(tb2);
+    tb.appendChild(tr);
   }
-  document.getElementById('usrBody').innerHTML=html||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>';
 }
 function openAddUser(){document.getElementById('uMTtl').textContent='Add Employee';document.getElementById('uId').value='';document.getElementById('uNm').value='';document.getElementById('uEm').value='';document.getElementById('uPw').value='';document.getElementById('uRl').value='';document.getElementById('uDp').value='';document.getElementById('uMgr').value='';document.getElementById('uPwdL').innerHTML='Password <span class="req">*</span>';document.getElementById('uStRow').style.display='none';document.getElementById('uSv').textContent='Add Employee';document.getElementById('usrOv').className='overlay on';}
 function openEditUser(id){var e=null;for(var i=0;i<usrData.length;i++){if(usrData[i].id===id){e=usrData[i];break;}}if(!e)return;document.getElementById('uMTtl').textContent='Edit Employee';document.getElementById('uId').value=e.id;document.getElementById('uNm').value=e.name||'';document.getElementById('uEm').value=e.email||'';document.getElementById('uPw').value='';document.getElementById('uRl').value=e.role||'';document.getElementById('uDp').value=e.department||'';document.getElementById('uMgr').value=e.managerId||'';document.getElementById('uSt').value=String(e.isActive).toUpperCase()==='TRUE'?'TRUE':'FALSE';document.getElementById('uPwdL').innerHTML='New Password <small style="color:var(--muted)">(blank=keep)</small>';document.getElementById('uStRow').style.display='flex';document.getElementById('uSv').textContent='Save Changes';document.getElementById('usrOv').className='overlay on';}

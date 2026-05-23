@@ -1258,65 +1258,85 @@ function addFiles(files) {
   document.getElementById("ncAttRefBox").style.display = "block";
 }
 
+// ── CHUNKED UPLOAD via JSONP ──
+// Splits base64 into 50KB chunks, sends each via JSONP, Apps Script reassembles
+var CHUNK_SIZE = 40000; // 40KB per chunk - safe for URL length limits
+
 function uploadToGoogleDrive() {
   var pending = [];
   for (var i = 0; i < uploadedFiles.length; i++) {
-    if (!uploadedFiles[i].driveUrl && uploadedFiles[i].driveUrl !== "") pending.push(i);
+    if (uploadedFiles[i].driveUrl === undefined) pending.push(i);
   }
   if (!pending.length) { renderFiles(); return; }
   var idx = pending[0];
   var f = uploadedFiles[idx];
+  uploadedFiles[idx].driveUrl = null; // mark as in-progress
   var suffix = String.fromCharCode(65 + idx);
   var ext = f.name.indexOf(".") >= 0 ? f.name.split(".").pop() : "bin";
   var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + ext;
-  setUploadStatus("Uploading " + newName + " ...");
+  setUploadStatus("Reading file: " + f.name + "...");
 
   var reader = new FileReader();
   reader.onload = function(e) {
     var base64 = e.target.result.split(",")[1];
-    var payload = JSON.stringify({
-      action: "uploadToDrive",
-      token: tok,
-      fileName: newName,
-      fileData: base64,
-      mimeType: f.type || "application/octet-stream",
-      attachmentRef: attRefValue || ""
-    });
-
-    // Use fetch POST for file upload - JSONP cannot handle large base64 data
-    fetch(API, {
-      method: "POST",
-      headers: { "Content-Type": "text/plain" },
-      body: payload
-    })
-    .then(function(resp) { return resp.json(); })
-    .then(function(res) {
-      if (res.error) {
-        setUploadStatus("Upload failed: " + res.error);
-        uploadedFiles[idx].driveUrl = "";
-        uploadedFiles[idx].driveName = newName;
-      } else {
-        uploadedFiles[idx].driveUrl = res.url || "";
-        uploadedFiles[idx].driveName = newName;
-        setUploadStatus("Uploaded: " + newName);
-        setTimeout(function() { setUploadStatus(""); }, 3000);
-      }
-      renderFiles();
-      // Upload next file if any
-      var remaining = [];
-      for (var j = 0; j < uploadedFiles.length; j++) {
-        if (!uploadedFiles[j].driveUrl && uploadedFiles[j].driveUrl !== "") remaining.push(j);
-      }
-      if (remaining.length) setTimeout(uploadToGoogleDrive, 300);
-    })
-    .catch(function(err) {
-      setUploadStatus("Upload failed: " + err.message);
-      uploadedFiles[idx].driveUrl = "";
-      uploadedFiles[idx].driveName = newName;
-      renderFiles();
-    });
+    var totalChunks = Math.ceil(base64.length / CHUNK_SIZE);
+    var uploadId = "up_" + Date.now() + "_" + Math.floor(Math.random()*9999);
+    setUploadStatus("Uploading " + newName + " (0/" + totalChunks + " parts)...");
+    sendChunk(base64, 0, totalChunks, uploadId, newName, f.type || "application/octet-stream", idx, pending);
+  };
+  reader.onerror = function() {
+    setUploadStatus("Failed to read file.");
+    uploadedFiles[idx].driveUrl = "";
+    renderFiles();
   };
   reader.readAsDataURL(f);
+}
+
+function sendChunk(base64, chunkNum, totalChunks, uploadId, fileName, mimeType, fileIdx, pending) {
+  var start = chunkNum * CHUNK_SIZE;
+  var end   = Math.min(start + CHUNK_SIZE, base64.length);
+  var chunk = base64.substring(start, end);
+  var isLast = (chunkNum === totalChunks - 1);
+
+  setUploadStatus("Uploading " + fileName + " (" + (chunkNum+1) + "/" + totalChunks + " parts)...");
+
+  api({
+    action:      "uploadChunk",
+    uploadId:    uploadId,
+    fileName:    fileName,
+    mimeType:    mimeType,
+    chunk:       chunk,
+    chunkNum:    chunkNum,
+    totalChunks: totalChunks,
+    isLast:      isLast ? "1" : "0"
+  }, function(res) {
+    if (res.error) {
+      setUploadStatus("Upload failed: " + res.error);
+      uploadedFiles[fileIdx].driveUrl = "";
+      uploadedFiles[fileIdx].driveName = fileName;
+      renderFiles();
+      return;
+    }
+    if (isLast) {
+      // All chunks sent, Apps Script assembled and saved the file
+      uploadedFiles[fileIdx].driveUrl  = res.url || "";
+      uploadedFiles[fileIdx].driveName = fileName;
+      setUploadStatus("Uploaded: " + fileName);
+      setTimeout(function() { setUploadStatus(""); }, 3000);
+      renderFiles();
+      // Upload next pending file
+      var remaining = [];
+      for (var j = 0; j < uploadedFiles.length; j++) {
+        if (uploadedFiles[j].driveUrl === undefined) remaining.push(j);
+      }
+      if (remaining.length) setTimeout(uploadToGoogleDrive, 300);
+    } else {
+      // Send next chunk
+      setTimeout(function() {
+        sendChunk(base64, chunkNum + 1, totalChunks, uploadId, fileName, mimeType, fileIdx, pending);
+      }, 100);
+    }
+  });
 }
 
 function setUploadStatus(msg) {

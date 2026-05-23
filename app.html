@@ -1276,35 +1276,53 @@ function addFiles(files) {
   }
 }
 
-// ── CHUNKED UPLOAD via JSONP ──
-// Splits base64 into 50KB chunks, sends each via JSONP, Apps Script reassembles
-var CHUNK_SIZE = 8000; // 8KB per chunk
+// ── IFRAME FORM POST UPLOAD ──
+// Uses hidden iframe + form POST to bypass CORS - works with Apps Script
+var uploadCallbacks = {};
 
 function uploadToGoogleDrive() {
-  console.log("uploadToGoogleDrive called. Total files:", uploadedFiles.length);
   var pending = [];
   for (var i = 0; i < uploadedFiles.length; i++) {
-    console.log("File", i, "driveUrl:", uploadedFiles[i].driveUrl);
     if (uploadedFiles[i].driveUrl === undefined) pending.push(i);
   }
-  console.log("Pending uploads:", pending.length);
   if (!pending.length) { renderFiles(); return; }
   var idx = pending[0];
   var f = uploadedFiles[idx];
-  uploadedFiles[idx].driveUrl = null; // mark as in-progress
+  uploadedFiles[idx].driveUrl = null; // mark in-progress
   var suffix = String.fromCharCode(65 + idx);
   var ext = f.name.indexOf(".") >= 0 ? f.name.split(".").pop() : "bin";
   var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + ext;
-  console.log("Starting upload for:", newName);
-  setUploadStatus("Reading file: " + f.name + "...");
+  setUploadStatus("Reading: " + f.name + "...");
 
   var reader = new FileReader();
   reader.onload = function(e) {
     var base64 = e.target.result.split(",")[1];
-    var totalChunks = Math.ceil(base64.length / CHUNK_SIZE);
-    var uploadId = "up_" + Date.now() + "_" + Math.floor(Math.random()*9999);
-    setUploadStatus("Uploading " + newName + " (0/" + totalChunks + " parts)...");
-    sendChunk(base64, 0, totalChunks, uploadId, newName, f.type || "application/octet-stream", idx, pending);
+    setUploadStatus("Uploading " + newName + "...");
+    iframePost({
+      action:   "uploadDirect",
+      token:    tok,
+      fileName: newName,
+      fileData: base64,
+      mimeType: f.type || "application/octet-stream"
+    }, function(res) {
+      if (res.error) {
+        setUploadStatus("Upload failed: " + res.error);
+        uploadedFiles[idx].driveUrl = "";
+        uploadedFiles[idx].driveName = newName;
+      } else {
+        uploadedFiles[idx].driveUrl  = res.url || "";
+        uploadedFiles[idx].driveName = newName;
+        setUploadStatus("Uploaded: " + newName);
+        setTimeout(function() { setUploadStatus(""); }, 3000);
+      }
+      renderFiles();
+      // Upload next file
+      var remaining = [];
+      for (var j = 0; j < uploadedFiles.length; j++) {
+        if (uploadedFiles[j].driveUrl === undefined) remaining.push(j);
+      }
+      if (remaining.length) setTimeout(uploadToGoogleDrive, 200);
+    });
   };
   reader.onerror = function() {
     setUploadStatus("Failed to read file.");
@@ -1314,52 +1332,66 @@ function uploadToGoogleDrive() {
   reader.readAsDataURL(f);
 }
 
-function sendChunk(base64, chunkNum, totalChunks, uploadId, fileName, mimeType, fileIdx, pending) {
-  var start = chunkNum * CHUNK_SIZE;
-  var end   = Math.min(start + CHUNK_SIZE, base64.length);
-  var chunk = base64.substring(start, end);
-  var isLast = (chunkNum === totalChunks - 1);
+function iframePost(data, callback) {
+  var cbId = "iup_" + Date.now() + "_" + Math.floor(Math.random()*9999);
+  uploadCallbacks[cbId] = callback;
 
-  setUploadStatus("Uploading " + fileName + " (" + (chunkNum+1) + "/" + totalChunks + " parts)...");
-  console.log("Sending chunk", chunkNum+1, "of", totalChunks, "size:", chunk.length, "chars");
+  // Create hidden iframe
+  var iframe = document.createElement("iframe");
+  iframe.name = cbId;
+  iframe.style.display = "none";
+  document.body.appendChild(iframe);
 
-  api({
-    action:      "uploadChunk",
-    uploadId:    uploadId,
-    fileName:    fileName,
-    mimeType:    mimeType,
-    chunk:       chunk,
-    chunkNum:    chunkNum,
-    totalChunks: totalChunks,
-    isLast:      isLast ? "1" : "0"
-  }, function(res) {
-    if (res.error) {
-      setUploadStatus("Upload failed: " + res.error);
-      uploadedFiles[fileIdx].driveUrl = "";
-      uploadedFiles[fileIdx].driveName = fileName;
-      renderFiles();
-      return;
+  // Create form targeting the iframe
+  var form = document.createElement("form");
+  form.method = "POST";
+  form.action = API;
+  form.target = cbId;
+  form.style.display = "none";
+
+  // Add all data as hidden inputs
+  var allData = {};
+  for (var k in data) { if (Object.prototype.hasOwnProperty.call(data,k)) allData[k] = data[k]; }
+  allData.iframeCallback = cbId;
+
+  for (var key in allData) {
+    if (Object.prototype.hasOwnProperty.call(allData, key)) {
+      var inp = document.createElement("input");
+      inp.type = "hidden";
+      inp.name = key;
+      inp.value = allData[key];
+      form.appendChild(inp);
     }
-    if (isLast) {
-      // All chunks sent, Apps Script assembled and saved the file
-      uploadedFiles[fileIdx].driveUrl  = res.url || "";
-      uploadedFiles[fileIdx].driveName = fileName;
-      setUploadStatus("Uploaded: " + fileName);
-      setTimeout(function() { setUploadStatus(""); }, 3000);
-      renderFiles();
-      // Upload next pending file
-      var remaining = [];
-      for (var j = 0; j < uploadedFiles.length; j++) {
-        if (uploadedFiles[j].driveUrl === undefined) remaining.push(j);
+  }
+
+  document.body.appendChild(form);
+
+  // Listen for response via message from iframe
+  var timer = setTimeout(function() {
+    cleanup();
+    callback({ error: "Upload timed out. File may be too large. Try a smaller file." });
+  }, 120000);
+
+  function cleanup() {
+    clearTimeout(timer);
+    if (iframe.parentNode) iframe.parentNode.removeChild(iframe);
+    if (form.parentNode) form.parentNode.removeChild(form);
+    delete uploadCallbacks[cbId];
+    window.removeEventListener("message", onMsg);
+  }
+
+  function onMsg(e) {
+    try {
+      var res = typeof e.data === "string" ? JSON.parse(e.data) : e.data;
+      if (res && res.cbId === cbId) {
+        cleanup();
+        callback(res);
       }
-      if (remaining.length) setTimeout(uploadToGoogleDrive, 300);
-    } else {
-      // Send next chunk
-      setTimeout(function() {
-        sendChunk(base64, chunkNum + 1, totalChunks, uploadId, fileName, mimeType, fileIdx, pending);
-      }, 100);
-    }
-  });
+    } catch(err) {}
+  }
+
+  window.addEventListener("message", onMsg);
+  form.submit();
 }
 
 function setUploadStatus(msg) {

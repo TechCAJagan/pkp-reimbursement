@@ -15,126 +15,108 @@ body{font-family:Arial,sans-serif;background:#f4f4f4;color:#111}
 .co-sub{font-size:12px;color:#6b7280;margin-top:3px}
 .doc-title{text-align:right}
 .doc-title h2{font-size:16px;font-weight:700;color:#1e3a5f;margin-bottom:4px}
-.doc-title .claim-id{font-size:13px;color:#6b7280;font-family:monospace}
+.cid-mono{font-size:13px;color:#6b7280;font-family:monospace}
 .meta-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:20px;background:#f9fafb;border-radius:7px;padding:14px 16px}
-.meta-item .meta-lbl{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#6b7280;margin-bottom:2px}
-.meta-item .meta-val{font-size:13px;font-weight:600;color:#111}
-.section-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#1e3a5f;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin-bottom:10px}
+.ml{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#6b7280;margin-bottom:2px}
+.mv{font-size:13px;font-weight:600;color:#111}
+.sec-title{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:0.07em;color:#1e3a5f;border-bottom:1px solid #e5e7eb;padding-bottom:6px;margin-bottom:10px;margin-top:18px}
 table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:12px}
 th{background:#1e3a5f;color:#fff;padding:8px 10px;text-align:left;font-size:11px;letter-spacing:0.05em}
 td{padding:7px 10px;border-bottom:1px solid #f3f4f6;color:#111}
 tr:nth-child(even) td{background:#f9fafb}
 .total-row td{font-weight:700;border-top:2px solid #1e3a5f;background:#e8f0fe}
-.annexure-table th{background:#374151}
-.status-chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#d1fae5;color:#065f46}
-.approval-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:16px}
-.approval-box{text-align:center}
-.approval-name{font-size:12px;font-weight:600;color:#111;margin-bottom:4px}
-.approval-role{font-size:10px;color:#6b7280;margin-bottom:20px}
-.approval-line{border-top:1px solid #374151;margin-top:4px;padding-top:4px;font-size:10px;color:#6b7280}
+.chip{display:inline-block;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;background:#d1fae5;color:#065f46}
+.sign-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:20px;border-top:1px solid #e5e7eb;padding-top:16px}
+.sign-box{text-align:center}
+.sign-name{font-size:12px;font-weight:600;margin-bottom:4px}
+.sign-role{font-size:10px;color:#6b7280;margin-bottom:20px}
+.sign-line{border-top:1px solid #374151;padding-top:4px;font-size:10px;color:#6b7280}
 .footer{margin-top:20px;padding-top:12px;border-top:1px solid #e5e7eb;font-size:10px;color:#9ca3af;text-align:center}
 .loading{text-align:center;padding:60px;color:#6b7280;font-size:14px}
-@media print{
-  .screen-bar{display:none!important}
-  body{background:#fff}
-  .page{box-shadow:none;margin:0;border-radius:0;padding:20px}
-}
+@media print{.screen-bar{display:none!important}body{background:#fff}.page{box-shadow:none;margin:0;border-radius:0;padding:20px}}
 </style>
 </head>
 <body>
-
 <div class="screen-bar" id="screenBar">
-  <span id="screenTitle">Loading claim...</span>
+  <span id="screenTitle">Loading...</span>
   <div>
     <button class="sec" onclick="window.close()">Close</button>
     <button onclick="window.print()">Print / Save PDF</button>
   </div>
 </div>
-
-<div class="page" id="printPage">
-  <div class="loading" id="loadingMsg">Loading claim details...</div>
-</div>
-
+<div class="page" id="pg"><div class="loading">Loading claim details...</div></div>
 <script>
-var API = "https://script.google.com/macros/s/AKfycbwbUXVKUKAFb7DWnkpsLDUEJsK4_cepH867tnCaZVdWrva6W94fBjpmAWToQbnVR7PIgg/exec";
-var COMPANY = "Pratapkaran Paul & Co.";
+var API = 'https://script.google.com/macros/s/AKfycbwIXyfDZ1qluP1n164k8O7x2iPexGiH5xPZrqI_9alXAtdcRC4L5yLkz5ZclDRIYCjesw/exec';
+var COMPANY = 'Pratapkaran Paul & Co.';
+var sess = {}, tok = '';
+try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = sessionStorage.getItem('pkp_token')||''; } catch(e){}
+if (!sess.role) { window.location.href = 'index.html'; }
 
-var sess = {};
-var tok = "";
-try { sess = JSON.parse(sessionStorage.getItem("pkp_user") || "{}"); tok = sessionStorage.getItem("pkp_token") || ""; } catch(e) {}
-if (!sess.role) { window.location.href = "index.html"; }
-
-var claimId = sessionStorage.getItem("printClaimId") || "";
-if (!claimId) { document.getElementById("loadingMsg").textContent = "No claim selected. Please go back and select a claim to print."; }
+var claimId = sessionStorage.getItem('printClaimId')||'';
+if (!claimId) { document.getElementById('pg').innerHTML = '<div class="loading">No claim selected.</div>'; }
 else { loadClaim(); }
 
 function api(params, cb) {
-  var name = "pkp" + Date.now() + Math.floor(Math.random() * 9999);
-  var done = false;
-  var timer = setTimeout(function() { if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); } }, 20000);
-  function cleanup() { delete window[name]; var s = document.getElementById("s_" + name); if (s && s.parentNode) s.parentNode.removeChild(s); }
-  window[name] = function(data) { if (!done) { done = true; clearTimeout(timer); cleanup(); cb(data); } };
-  var q = "callback=" + encodeURIComponent(name) + "&token=" + encodeURIComponent(tok);
-  for (var k in params) { if (Object.prototype.hasOwnProperty.call(params, k)) { q += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); } }
-  var sc = document.createElement("script"); sc.id = "s_" + name; sc.src = API + "?" + q;
-  sc.onerror = function() { if (!done) { done = true; clearTimeout(timer); cleanup(); cb({ error: "Network error." }); } };
+  var name='pkp'+Date.now(); var done=false;
+  var timer=setTimeout(function(){if(!done){done=true;cleanup();cb({error:'Timed out.'});}},20000);
+  function cleanup(){delete window[name];var s=document.getElementById('s_'+name);if(s&&s.parentNode)s.parentNode.removeChild(s);}
+  window[name]=function(data){if(!done){done=true;clearTimeout(timer);cleanup();cb(data);}};
+  var q='callback='+encodeURIComponent(name)+'&token='+encodeURIComponent(tok);
+  for(var k in params){if(Object.prototype.hasOwnProperty.call(params,k))q+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]);}
+  var sc=document.createElement('script');sc.id='s_'+name;sc.src=API+'?'+q;
+  sc.onerror=function(){if(!done){done=true;clearTimeout(timer);cleanup();cb({error:'Network error.'});}};
   document.body.appendChild(sc);
 }
 
-function fmtDate(d) { if (!d) return "-"; try { return new Date(d).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }); } catch(e) { return d; } }
-function fmtAmt(n) { var v = parseFloat(n) || 0; return "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits: 2 }); }
+function fmtD(d){if(!d)return '-';try{return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}catch(e){return d;}}
+function fmtA(n){var v=parseFloat(n)||0;return 'Rs. '+v.toLocaleString('en-IN',{minimumFractionDigits:2});}
 
-function loadClaim() {
-  api({ action: "getClaimDetail", claimId: claimId }, function(res) {
-    if (res.error) { document.getElementById("loadingMsg").textContent = "Error: " + res.error; return; }
-    renderPrint(res.claim);
+function loadClaim(){
+  api({action:'getClaimDetail',claimId:claimId},function(res){
+    if(res.error){document.getElementById('pg').innerHTML='<div class="loading">Error: '+res.error+'</div>';return;}
+    render(res.claim);
   });
 }
 
-function renderPrint(c) {
-  document.getElementById("screenTitle").textContent = "Print Summary: " + c.ClaimID;
-  var printDate = new Date().toLocaleDateString("en-IN", { day:"2-digit", month:"long", year:"numeric" });
-  var html = "";
-  html += "<div class='co-header'>";
-  html += "<div><div class='co-name'>" + COMPANY + "</div><div class='co-sub'>Reimbursement Management System</div></div>";
-  html += "<div class='doc-title'><h2>Reimbursement Claim Summary</h2><div class='claim-id'>" + c.ClaimID + "</div><div style='font-size:11px;color:#6b7280;margin-top:3px'>Printed: " + printDate + "</div></div>";
-  html += "</div>";
-
-  html += "<div class='meta-grid'>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Claimant</div><div class='meta-val'>" + (c.ClaimantName || c.ClaimantID || "-") + "</div></div>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Date of Expense</div><div class='meta-val'>" + fmtDate(c.DateOfExpense) + "</div></div>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Date Submitted</div><div class='meta-val'>" + fmtDate(c.DateClaimed) + "</div></div>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Client</div><div class='meta-val'>" + (c.ClientName || "-") + "</div></div>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Category</div><div class='meta-val'>" + (c.Category || "-") + "</div></div>";
-  html += "<div class='meta-item'><div class='meta-lbl'>Status</div><div class='meta-val'><span class='status-chip'>Finance Approved</span></div></div>";
-  html += "</div>";
-
-  html += "<div class='section-title'>Expense Details</div>";
-  html += "<table><thead><tr><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Sub-Nature</th><th>Description</th><th style='text-align:right'>Amount</th></tr></thead><tbody>";
-  html += "<tr><td>" + (c.MajorHead||"-") + "</td><td>" + (c.MinorHead||"-") + "</td><td>" + (c.Nature||"-") + "</td><td>" + (c.SubNature||"-") + "</td><td>" + (c.Description||"-") + "</td><td style='text-align:right;font-weight:600'>" + fmtAmt(c.Amount) + "</td></tr>";
-  html += "<tr class='total-row'><td colspan='5' style='text-align:right'>Total Claim Amount</td><td style='text-align:right'>" + fmtAmt(c.Amount) + "</td></tr>";
-  html += "</tbody></table>";
-
+function render(c) {
+  document.getElementById('screenTitle').textContent = 'Print: '+c.ClaimID;
+  var pd = new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'long',year:'numeric'});
+  var h = '';
+  h += '<div class="co-header">';
+  h += '<div><div class="co-name">'+COMPANY+'</div><div class="co-sub">Reimbursement Management System</div></div>';
+  h += '<div class="doc-title"><h2>Reimbursement Claim Summary</h2><div class="cid-mono">'+c.ClaimID+'</div><div style="font-size:11px;color:#6b7280;margin-top:3px">Printed: '+pd+'</div></div>';
+  h += '</div>';
+  h += '<div class="meta-grid">';
+  h += '<div><div class="ml">Claimant</div><div class="mv">'+(c.ClaimantName||c.ClaimantID||'-')+'</div></div>';
+  h += '<div><div class="ml">Date of Expense</div><div class="mv">'+fmtD(c.DateOfExpense)+'</div></div>';
+  h += '<div><div class="ml">Date Submitted</div><div class="mv">'+fmtD(c.DateClaimed)+'</div></div>';
+  h += '<div><div class="ml">Client</div><div class="mv">'+(c.ClientName||'-')+'</div></div>';
+  h += '<div><div class="ml">Category</div><div class="mv">'+(c.Category||'-')+'</div></div>';
+  h += '<div><div class="ml">Status</div><div class="mv"><span class="chip">Finance Approved</span></div></div>';
+  h += '</div>';
+  h += '<div class="sec-title">Expense Details</div>';
+  h += '<table><thead><tr><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Sub-Nature</th><th>Description</th><th style="text-align:right">Amount</th></tr></thead><tbody>';
+  h += '<tr><td>'+(c.MajorHead||'-')+'</td><td>'+(c.MinorHead||'-')+'</td><td>'+(c.Nature||'-')+'</td><td>'+(c.SubNature||'-')+'</td><td>'+(c.Description||'-')+'</td><td style="text-align:right;font-weight:600">'+fmtA(c.Amount)+'</td></tr>';
+  h += '<tr class="total-row"><td colspan="5" style="text-align:right">Total Claim Amount</td><td style="text-align:right">'+fmtA(c.Amount)+'</td></tr>';
+  h += '</tbody></table>';
   if (c.AttachmentRef) {
-    html += "<div class='section-title'>Annexure / Attachments</div>";
-    html += "<table class='annexure-table'><thead><tr><th>Ref No.</th><th>Description</th><th>Date</th></tr></thead><tbody>";
-    html += "<tr><td style='font-family:monospace'>" + c.AttachmentRef + "</td><td>Supporting documents for " + (c.MajorHead||"expense") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td></tr>";
-    html += "</tbody></table>";
+    h += '<div class="sec-title">Attachments / Annexure</div>';
+    h += '<table><thead><tr><th>Reference</th><th>Description</th><th>Date</th><th>Link</th></tr></thead><tbody>';
+    var refs = c.AttachmentRef.split(','); var urls = c.AttachmentURL ? c.AttachmentURL.split('|') : [];
+    for(var i=0;i<refs.length;i++){
+      var r=refs[i].trim(); var u=urls[i]?urls[i].trim():'';
+      h+='<tr><td style="font-family:monospace">'+r+'</td><td>Supporting document for '+(c.MajorHead||'expense')+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(u?'<a href="'+u+'" target="_blank">View</a>':'-')+'</td></tr>';
+    }
+    h += '</tbody></table>';
   }
-
-  if (c.ManagerRemarks) {
-    html += "<div class='section-title'>Manager Remarks</div><p style='font-size:12px;color:#374151;margin-bottom:16px;padding:10px;background:#f9fafb;border-radius:6px'>" + c.ManagerRemarks + "</p>";
-  }
-
-  html += "<div class='approval-grid'>";
-  html += "<div class='approval-box'><div class='approval-name'>" + (c.ClaimantName || "Claimant") + "</div><div class='approval-role'>Claimant</div><div class='approval-line'>Signature &amp; Date</div></div>";
-  html += "<div class='approval-box'><div class='approval-name'>" + (c.ManagerID || "Manager") + "</div><div class='approval-role'>Manager Approval</div><div class='approval-line'>" + fmtDate(c.DateManagerApproved) + "</div></div>";
-  html += "<div class='approval-box'><div class='approval-name'>Finance Manager</div><div class='approval-role'>Finance Approval</div><div class='approval-line'>Signature &amp; Date</div></div>";
-  html += "</div>";
-
-  html += "<div class='footer'>This is a system-generated document from " + COMPANY + " Reimbursement System. Claim ID: " + c.ClaimID + "</div>";
-
-  document.getElementById("printPage").innerHTML = html;
+  if (c.ManagerRemarks) h += '<div class="sec-title">Manager Remarks</div><p style="font-size:12px;padding:10px;background:#f9fafb;border-radius:6px;margin-bottom:14px">'+c.ManagerRemarks+'</p>';
+  h += '<div class="sign-grid">';
+  h += '<div class="sign-box"><div class="sign-name">'+(c.ClaimantName||'Claimant')+'</div><div class="sign-role">Claimant</div><div class="sign-line">Signature &amp; Date</div></div>';
+  h += '<div class="sign-box"><div class="sign-name">'+(c.ManagerID||'Manager')+'</div><div class="sign-role">Manager Approval</div><div class="sign-line">'+fmtD(c.DateManagerApproved)+'</div></div>';
+  h += '<div class="sign-box"><div class="sign-name">Finance Manager</div><div class="sign-role">Finance Approval</div><div class="sign-line">Signature &amp; Date</div></div>';
+  h += '</div>';
+  h += '<div class="footer">System-generated document | '+COMPANY+' | Claim: '+c.ClaimID+'</div>';
+  document.getElementById('pg').innerHTML = h;
 }
 </script>
 </body>

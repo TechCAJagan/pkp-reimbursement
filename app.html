@@ -4,1629 +4,853 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PKP Reimbursement</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{
-  --blue:#1e3a5f;--blue2:#2a5298;--blue3:#3b6fd4;--blue-lt:#e8f0fe;
-  --gold:#c9a84c;--gold-lt:#fef9ec;
-  --green:#065f46;--green-lt:#ecfdf5;
-  --red:#991b1b;--red-lt:#fef2f2;
-  --amber:#92400e;--amber-lt:#fef9ec;
-  --purple:#5b21b6;--purple-lt:#f5f3ff;
-  --gray:#374151;--gray-lt:#f9fafb;
-  --border:#e5e7eb;--muted:#6b7280;
-  --sidebar:240px;
-}
-body{font-family:"DM Sans",sans-serif;background:#f0f4f8;color:#111827;display:flex;min-height:100vh}
-/* SIDEBAR */
-.sidebar{width:var(--sidebar);background:var(--blue);min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
+:root{--blue:#1e3a5f;--blue2:#2a5298;--blue3:#3b6fd4;--blue-lt:#e8f0fe;--gold:#c9a84c;
+  --green:#065f46;--green-lt:#ecfdf5;--red:#991b1b;--red-lt:#fef2f2;
+  --amber:#92400e;--amber-lt:#fef9ec;--gray:#374151;--border:#e5e7eb;--muted:#6b7280;--sw:240px}
+body{font-family:"DM Sans",sans-serif;background:#f0f4f8;color:#111;display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:var(--blue);min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
 .s-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.s-company{font-size:11px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
-.s-name{font-size:16px;font-weight:700;color:#fff;line-height:1.2}
+.s-co{font-size:10px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.1em;text-transform:uppercase;margin-bottom:4px}
+.s-name{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
 .s-name span{color:var(--gold)}
-.nav-group{padding:12px 0 4px}
-.nav-group-label{padding:4px 18px 6px;font-size:10px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:rgba(255,255,255,0.35)}
-.nav-item{display:flex;align-items:center;gap:10px;padding:8px 18px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;user-select:none}
-.nav-item:hover{color:#fff;background:rgba(255,255,255,0.07)}
-.nav-item.active{color:#fff;background:rgba(255,255,255,0.12);border-left-color:var(--gold);font-weight:500}
-.nav-item .badge{margin-left:auto;background:var(--gold);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
+.nav{padding:12px 0}
+.ni{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;user-select:none}
+.ni:hover{color:#fff;background:rgba(255,255,255,0.07)}
+.ni.on{color:#fff;background:rgba(255,255,255,0.12);border-left-color:var(--gold);font-weight:500}
+.ni .nb{margin-left:auto;background:var(--gold);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
 .s-foot{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,0.1)}
 .s-user{display:flex;align-items:center;gap:10px}
-.s-avatar{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
-.s-uname{font-size:13px;font-weight:600;color:#fff}
-.s-urole{font-size:10px;color:rgba(255,255,255,0.45);margin-top:1px}
-.s-logout{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;margin-left:auto;font-size:14px;padding:4px}
-.s-logout:hover{color:var(--gold)}
-/* MAIN */
-.main{margin-left:var(--sidebar);flex:1;display:flex;flex-direction:column;min-height:100vh}
+.s-av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
+.s-un{font-size:13px;font-weight:600;color:#fff}
+.s-ur{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
+.s-lo{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;margin-left:auto;font-size:15px;padding:4px}
+.s-lo:hover{color:var(--gold)}
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
 .topbar{background:#fff;border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50;gap:12px}
 .topbar h1{font-size:18px;font-weight:700;color:var(--blue);flex:1}
-.role-tag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:0.04em}
-.rt-EMPLOYEE{background:#dbeafe;color:#1e40af}
-.rt-MANAGER{background:#d1fae5;color:#065f46}
-.rt-FINANCE_MGR{background:#fef3c7;color:#92400e}
-.rt-ACCOUNTS{background:#ede9fe;color:#5b21b6}
-.rt-ADMIN{background:#fee2e2;color:#991b1b}
-/* SECTION PANES */
-.pane{display:none;padding:24px 28px;flex:1}
-.pane.active{display:block}
-.pane-title{font-size:20px;font-weight:700;color:var(--blue);margin-bottom:18px}
-/* STAT CARDS */
-.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
-.stat-card{background:#fff;border-radius:10px;padding:16px 18px;border:1px solid var(--border)}
-.stat-card-lbl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px}
-.stat-card-val{font-size:26px;font-weight:700;color:var(--blue);line-height:1}
-.stat-card-sub{font-size:11px;color:var(--muted);margin-top:3px}
-.stat-card.s-green .stat-card-val{color:var(--green)}
-.stat-card.s-red .stat-card-val{color:var(--red)}
-.stat-card.s-amber .stat-card-val{color:var(--amber)}
-.stat-card.s-blue .stat-card-val{color:var(--blue2)}
-/* TABLE CARD */
-.tcard{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
-.tcard-hdr{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px}
-.tcard-hdr-title{font-size:15px;font-weight:600;color:var(--blue)}
-.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-.srch{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;outline:none;min-width:180px;background:#f9fafb}
+.rtag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.rt-EMPLOYEE{background:#dbeafe;color:#1e40af}.rt-MANAGER{background:#d1fae5;color:#065f46}
+.rt-FINANCE_MGR{background:#fef3c7;color:#92400e}.rt-ACCOUNTS{background:#ede9fe;color:#5b21b6}.rt-ADMIN{background:#fee2e2;color:#991b1b}
+.pane{display:none;padding:24px 28px}
+.pane.on{display:block}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.sc{background:#fff;border-radius:10px;padding:16px 18px;border:1px solid var(--border)}
+.sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px}
+.sv{font-size:26px;font-weight:700;color:var(--blue);line-height:1}
+.sv.green{color:var(--green)}.sv.red{color:var(--red)}.sv.amber{color:var(--amber)}
+.ss2{font-size:11px;color:var(--muted);margin-top:3px}
+.tc{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
+.th2{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.th2-title{font-size:15px;font-weight:600;color:var(--blue)}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.srch{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;outline:none;min-width:160px;background:#f9fafb}
 .srch:focus{border-color:var(--blue3);background:#fff}
 .fsel{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:#fff;outline:none;cursor:pointer}
-.twrap{overflow-x:auto}
+.tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);white-space:nowrap}
-td{padding:11px 13px;font-size:13px;color:#111827;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+td{padding:11px 13px;font-size:13px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafafa}
 .cid{font-family:monospace;font-size:11px;color:var(--muted)}
 .av{width:27px;height:27px;border-radius:50%;background:var(--blue-lt);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue2);margin-right:7px;vertical-align:middle}
 .amt{font-weight:600}
-/* BADGES */
 .badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
-.b-pend{background:#fef9ec;color:#92400e}
-.b-appr{background:#ecfdf5;color:#065f46}
-.b-rej{background:#fef2f2;color:#991b1b}
-.b-fin{background:#dbeafe;color:#1e40af}
-.b-paid{background:#d1fae5;color:#065f46}
-.b-closed{background:#ede9fe;color:#5b21b6}
-/* BUTTONS */
+.b-pm{background:#fef9ec;color:#92400e}.b-pf{background:#dbeafe;color:#1e40af}
+.b-af{background:#ecfdf5;color:#065f46}.b-rej{background:#fee2e2;color:#991b1b}
+.b-paid{background:#d1fae5;color:#065f46}.b-closed{background:#ede9fe;color:#5b21b6}
 .btn{padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:#374151;font-family:inherit;transition:all 0.15s;margin-right:3px}
 .btn:hover{border-color:var(--blue3);background:var(--blue-lt);color:var(--blue)}
 .btn-ok{border-color:#6ee7b7;color:var(--green);background:var(--green-lt)}
 .btn-ok:hover{background:#d1fae5}
 .btn-no{border-color:#fca5a5;color:var(--red);background:var(--red-lt)}
 .btn-no:hover{background:#fee2e2}
-.btn-pri{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:background 0.2s}
-.btn-pri:hover{background:var(--blue2)}
-.btn-pri:disabled{opacity:0.6;cursor:default}
-.btn-sec{background:#fff;color:var(--blue);border:1.5px solid var(--blue3);border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.btn-sec:hover{background:var(--blue-lt)}
+.bpri{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.bpri:hover{background:var(--blue2)}
+.bpri:disabled{opacity:0.6;cursor:default}
+.bsec{background:#fff;color:var(--blue);border:1.5px solid var(--blue3);border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
+.bsec:hover{background:var(--blue-lt)}
 .ghost{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 13px;font-family:inherit;font-size:12px;color:var(--gray);cursor:pointer}
 .ghost:hover{border-color:var(--blue3);color:var(--blue)}
 .empty{padding:48px;text-align:center;color:var(--muted);font-size:13px}
-/* FORM */
-.fg{display:grid;gap:14px}
-.fg2{grid-template-columns:1fr 1fr}
-.fg3{grid-template-columns:1fr 1fr 1fr}
-.sp2{grid-column:span 2}
-.sp3{grid-column:span 3}
+.fg{display:grid;gap:14px}.fg2{grid-template-columns:1fr 1fr}.fg3{grid-template-columns:1fr 1fr 1fr}
+.sp2{grid-column:span 2}.sp3{grid-column:span 3}
 .field{display:flex;flex-direction:column;gap:5px}
 .field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#374151}
 .req{color:var(--gold)}
-.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#111827;background:#fff;outline:none;transition:border-color 0.2s}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#111;background:#fff;outline:none;transition:border-color 0.2s;appearance:none}
 .field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue3)}
 .field textarea{resize:vertical;min-height:75px}
-/* FORM CARD */
 .fcard{background:#fff;border-radius:10px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden}
-.fcard-hdr{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
-.fcard-icon{width:30px;height:30px;border-radius:7px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
-.fcard-title{font-size:14px;font-weight:600;color:var(--blue)}
-.fcard-body{padding:16px 18px}
-/* CAT OPTIONS */
+.fc-hdr{padding:13px 18px;border-bottom:1px solid var(--border)}
+.fc-title{font-size:14px;font-weight:600;color:var(--blue)}
+.fc-body{padding:16px 18px}
 .cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
 .cat-opt{border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:#fff;transition:all 0.15s}
 .cat-opt:hover{border-color:var(--blue3)}
 .cat-opt.sel{border-color:var(--blue2);background:var(--blue-lt)}
 .cat-opt input[type=radio]{margin-top:2px;accent-color:var(--blue2);flex-shrink:0}
-.cat-lbl{font-size:13px;font-weight:500;color:#111827}
+.cat-lbl{font-size:13px;font-weight:500;color:#111}
 .cat-sub{font-size:11px;color:var(--muted);margin-top:1px}
 .amt-box{background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px}
-.amt-lbl{font-size:12px;color:var(--blue);font-weight:500}
 .amt-val{font-size:24px;font-weight:700;color:var(--blue)}
-/* DETAIL MODAL */
+.sub-bar{background:#fff;border-top:1px solid var(--border);padding:12px 28px;display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0}
 .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center}
 .overlay.on{display:flex}
-.modal{background:#fff;border-radius:14px;width:580px;max-width:96vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
-.m-hdr{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
-.m-title{font-size:17px;font-weight:700;color:var(--blue)}
-.m-close{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer;line-height:1}
-.m-close:hover{color:#111}
-.m-body{padding:16px 24px}
-.m-foot{padding:12px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.modal{background:#fff;border-radius:14px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.mhdr{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-size:17px;font-weight:700;color:var(--blue)}
+.mcls{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
+.mbdy{padding:16px 24px}
+.mft{padding:12px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
 .dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
 .di{background:#f9fafb;border-radius:7px;padding:9px 12px}
-.di-l{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:2px}
-.di-v{font-size:13px;color:#111827;font-weight:500}
-.di-full{grid-column:span 2}
-.info-bar{background:var(--amber-lt);border:1px solid #fde68a;border-radius:7px;padding:9px 13px;font-size:12px;color:var(--amber);margin-bottom:12px}
-/* TABS */
+.dl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:2px}
+.dv{font-size:13px;color:#111;font-weight:500}
+.df{grid-column:span 2}
+.ibar{background:var(--amber-lt);border:1px solid #fde68a;border-radius:7px;padding:9px 13px;font-size:12px;color:var(--amber);margin-bottom:12px}
 .tab-bar{display:flex;gap:3px;background:#f0f4f8;border-radius:8px;padding:3px;width:fit-content;margin-bottom:16px}
-.tab-btn{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit;transition:all 0.15s}
-.tab-btn.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
-/* REPORTS */
-.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:20px}
-.report-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 18px;cursor:pointer;transition:all 0.15s}
-.report-card:hover{border-color:var(--blue3);background:var(--blue-lt)}
-.report-card-icon{font-size:22px;margin-bottom:8px}
-.report-card-title{font-size:14px;font-weight:600;color:var(--blue)}
-.report-card-sub{font-size:11px;color:var(--muted);margin-top:3px}
-/* SUBMIT BAR */
-.sub-bar{background:#fff;border-top:1px solid var(--border);padding:12px 28px;display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0}
-/* TOAST */
+.tbb{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit}
+.tbb.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .toast{position:fixed;bottom:20px;right:20px;padding:11px 16px;border-radius:9px;font-size:13px;font-family:inherit;z-index:999;opacity:0;transform:translateY(12px);transition:all 0.3s;pointer-events:none;max-width:320px}
 .toast.show{opacity:1;transform:translateY(0)}
-.t-ok{background:#065f46;color:#fff}
-.t-err{background:#991b1b;color:#fff}
-.t-info{background:var(--blue);color:#fff}
-/* ATTACH */
-.drop-zone{border:2px dashed var(--border);border-radius:9px;padding:24px;text-align:center;cursor:pointer;position:relative;background:#f9fafb;transition:all 0.2s}
-.drop-zone:hover,.drop-zone.over{border-color:var(--blue3);background:var(--blue-lt)}
-.drop-zone input[type=file]{position:absolute;inset:0;width:100%;height:100%;opacity:0;cursor:pointer}
-.file-list{margin-top:10px;display:flex;flex-direction:column;gap:6px}
-.file-item{display:flex;align-items:center;gap:9px;padding:8px 12px;background:#fff;border:1px solid var(--border);border-radius:7px;font-size:12px}
-.file-ref{font-family:monospace;font-size:11px;color:var(--blue3);margin-left:auto}
-.file-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px}
-.file-del:hover{color:var(--red)}
-.att-ref-box{display:inline-block;background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:7px;padding:6px 12px;font-family:monospace;font-size:12px;color:var(--blue);margin-top:10px}
-.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:6px;vertical-align:middle}
-@keyframes spin{to{transform:rotate(360deg)}}
-.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.7);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
-.loading-overlay.on{display:flex}
-.loading-overlay .spinner-big{width:36px;height:36px;border:3px solid #bfdbfe;border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite}
-.loading-overlay p{font-size:14px;color:var(--blue);font-weight:500}
-/* PRINT BTN */
-@media print{.sidebar,.topbar,.sub-bar,.toast,.overlay{display:none!important}.main{margin-left:0!important}.pane{display:block!important}}
-</style></style>
+.t-ok{background:#065f46;color:#fff}.t-err{background:#991b1b;color:#fff}.t-info{background:var(--blue);color:#fff}
+</style>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-  <div class="s-logo">
-    <div class="s-company">PKP &amp; Associates</div>
-    <div class="s-name">Pratapkaran Paul &amp; Co.<br><span>Reimbursement</span></div>
-  </div>
-  <nav id="sideNav"></nav>
-  <div class="s-foot">
-    <div class="s-user">
-      <div class="s-avatar" id="sAvatar">U</div>
-      <div>
-        <div class="s-uname" id="sName">User</div>
-        <div class="s-urole" id="sRole">-</div>
-      </div>
-      <button class="s-logout" id="logoutBtn" title="Sign out" onclick="sessionStorage.clear();window.location.href='index.html'">&#9211;</button>
-    </div>
-  </div>
+<div class="s-logo"><div class="s-co">PKP &amp; Associates</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
+<nav class="nav" id="sideNav"></nav>
+<div class="s-foot"><div class="s-user"><div class="s-av" id="sAv">U</div><div><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div><button class="s-lo" id="loBtn" title="Logout">&#9211;</button></div></div>
 </aside>
 <main class="main">
-  <header class="topbar">
-    <h1 id="topTitle">Dashboard</h1>
-    <span class="role-tag" id="roleTag">-</span>
-    <button class="btn-pri" id="newClaimTopBtn" style="display:none" onclick="showPane('new-claim')">+ New Claim</button>
-  </header>
-
-  <!-- ══ PANE: DASHBOARD ══ -->
-  <div class="pane active" id="pane-dashboard">
-    <div class="pane-title" id="dashTitle">Dashboard</div>
-    <div class="stat-grid" id="dashStats"><div style="padding:20px;color:#6b7280;font-size:13px">Loading dashboard data...</div></div>
-    <div id="dashQuickActions"></div>
-    <div id="dashPendingSection"></div>
-  </div>
-
-  <!-- ══ PANE: NEW CLAIM ══ -->
-  <div class="pane" id="pane-new-claim">
-    <div class="pane-title">New Reimbursement Claim</div>
-    <div class="fcard">
-      <div class="fcard-hdr"><div class="fcard-icon">&#128197;</div><div class="fcard-title">Basic Details</div></div>
-      <div class="fcard-body">
-        <div class="fg fg2">
-          <div class="field"><label>Date of Expense <span class="req">*</span></label><input type="date" id="ncDate"></div>
-          <div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="ncClient" placeholder="e.g. ABC Corporation"></div>
-        </div>
-      </div>
-    </div>
-    <div class="fcard">
-      <div class="fcard-hdr"><div class="fcard-icon">&#128193;</div><div class="fcard-title">Expense Classification</div></div>
-      <div class="fcard-body">
-        <div class="fg fg3">
-          <div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select</option></select></div>
-          <div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select</option></select></div>
-          <div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select</option></select></div>
-          <div class="field sp2"><label>Sub-Nature</label><input type="text" id="ncSubNature" placeholder="Optional"></div>
-          <div class="field"><label>Amount (Rs.) <span class="req">*</span></label><input type="number" id="ncAmount" placeholder="0.00" min="0" step="0.01"></div>
-          <div class="field sp3"><label>Description <span class="req">*</span></label><textarea id="ncDesc" placeholder="Purpose, occasion, persons involved..."></textarea></div>
-        </div>
-      </div>
-    </div>
-    <div class="fcard">
-      <div class="fcard-hdr"><div class="fcard-icon">&#127991;</div><div class="fcard-title">Category</div></div>
-      <div class="fcard-body">
-        <div class="cat-grid">
-          <label class="cat-opt sel" id="nc-cat0"><input type="radio" name="nccat" value="Client Reimbursable" checked><div><div class="cat-lbl">Client Reimbursable</div><div class="cat-sub">Recover from client</div></div></label>
-          <label class="cat-opt" id="nc-cat1"><input type="radio" name="nccat" value="Non Reimbursable"><div><div class="cat-lbl">Non Reimbursable</div><div class="cat-sub">Firm bears the cost</div></div></label>
-          <label class="cat-opt" id="nc-cat2"><input type="radio" name="nccat" value="Drawings"><div><div class="cat-lbl">Drawings</div><div class="cat-sub">Partner drawings</div></div></label>
-          <label class="cat-opt" id="nc-cat3"><input type="radio" name="nccat" value="Firms Expenses"><div><div class="cat-lbl">Firms Expenses</div><div class="cat-sub">General overhead</div></div></label>
-        </div>
-        <div class="amt-box"><span class="amt-lbl">Claim Amount</span><span class="amt-val" id="ncAmtDisplay">Rs. 0.00</span></div>
-      </div>
-    </div>
-    <div class="fcard">
-      <div class="fcard-hdr"><div class="fcard-icon">&#128206;</div><div class="fcard-title">Proof of Expense</div></div>
-      <div class="fcard-body">
-        <div style="border:2px dashed var(--border);border-radius:9px;padding:24px;text-align:center;background:#f9fafb">
-          <div style="font-size:28px;margin-bottom:8px">&#128194;</div>
-          <div style="font-weight:600;font-size:14px;color:var(--blue);margin-bottom:6px">Attach Proof of Expense</div>
-          <div style="font-size:12px;color:var(--muted);margin-bottom:14px">PDF, JPG, PNG, Word, Excel files - stored in PKP central Drive</div>
-          <button class="btn-sec" id="openUploadBtn" type="button" onclick="openUploadWindow()">Open Upload Window</button>
-          <p style="font-size:11px;color:var(--muted);margin-top:8px">A small window will open. Select your files and upload there.</p>
-        </div>
-        <div id="ncAttRefBox" style="display:none;margin-top:10px"><div class="att-ref-box">Ref: <strong id="ncAttRefNo">-</strong></div></div>
-        <div id="uploadStatus" style="display:none;margin-top:8px;padding:8px 12px;background:var(--blue-lt);border-radius:7px;font-size:12px;color:var(--blue)"></div>
-        <div class="file-list" id="ncFileList"></div>
-      </div>
-    </div>
-    <div class="sub-bar"><button class="ghost" onclick="showPane('my-claims')">Cancel</button><button class="btn-pri" id="ncSubmitBtn" onclick="submitClaim()">Submit for Approval</button></div>
-  </div>
-
-  <!-- ══ PANE: MY CLAIMS ══ -->
-  <div class="pane" id="pane-my-claims">
-    <div class="pane-title">My Claims</div>
-    <div class="stat-grid" id="myClaimStats"></div>
-    <div class="tcard">
-      <div class="tcard-hdr">
-        <div class="tcard-hdr-title">All My Reimbursement Claims</div>
-        <div class="toolbar">
-          <input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMyClaims()">
-          <select class="fsel" id="mcStatus" onchange="filterMyClaims()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select>
-          <button class="ghost" onclick="exportCsv(myClaimsData,'my_claims')">Export CSV</button>
-          <button class="ghost" onclick="loadMyClaimsPane()">Refresh</button>
-        </div>
-      </div>
-      <div class="twrap"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div>
-    </div>
-  </div>
-
-  <!-- ══ PANE: MANAGER APPROVAL ══ -->
-  <div class="pane" id="pane-approvals">
-    <div class="pane-title">Manager Approvals</div>
-    <div class="stat-grid" id="approvalStats"></div>
-    <div class="tab-bar">
-      <button class="tab-btn on" id="apTab1" onclick="switchApTab('pending')">Pending</button>
-      <button class="tab-btn" id="apTab2" onclick="switchApTab('all')">All Team Claims</button>
-    </div>
-    <div class="tcard">
-      <div class="tcard-hdr">
-        <div class="tcard-hdr-title" id="apTableTitle">Pending Approvals</div>
-        <div class="toolbar">
-          <input class="srch" id="apSrch" placeholder="Search..." oninput="filterApprovals()">
-          <select class="fsel" id="apEmpFilter" onchange="filterApprovals()"><option value="">All Employees</option></select>
-          <button class="ghost" onclick="exportCsv(allTeamClaims,'team_claims')">Export CSV</button>
-          <button class="ghost" onclick="loadApprovals()">Refresh</button>
-        </div>
-      </div>
-      <div class="twrap"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div>
-    </div>
-  </div>
-
-  <!-- ══ PANE: FINANCE APPROVAL ══ -->
-  <div class="pane" id="pane-finance">
-    <div class="pane-title">Finance Approvals</div>
-    <div class="stat-grid" id="financeStats"></div>
-    <div class="tcard">
-      <div class="tcard-hdr">
-        <div class="tcard-hdr-title">Claims Pending Finance Approval</div>
-        <div class="toolbar">
-          <input class="srch" id="finSrch" placeholder="Search..." oninput="filterFinance()">
-          <button class="ghost" onclick="exportCsv(allFinanceClaims,'finance_claims')">Export CSV</button>
-          <button class="ghost" onclick="loadFinance()">Refresh</button>
-        </div>
-      </div>
-      <div class="twrap"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div>
-    </div>
-  </div>
-
-  <!-- ══ PANE: ACCOUNTS ══ -->
-  <div class="pane" id="pane-accounts">
-    <div class="pane-title">Accounts - Update Payment Details</div>
-    <div class="tcard">
-      <div class="tcard-hdr">
-        <div class="tcard-hdr-title">All Approved Claims</div>
-        <div class="toolbar">
-          <input class="srch" id="accSrch" placeholder="Search..." oninput="filterAccounts()">
-          <select class="fsel" id="accFilter" onchange="filterAccounts()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select>
-          <button class="ghost" onclick="exportCsv(allAccountsClaims,'accounts_claims')">Export CSV</button>
-          <button class="ghost" onclick="loadAccounts()">Refresh</button>
-        </div>
-      </div>
-      <div class="twrap"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div>
-    </div>
-  </div>
-
-  <!-- ══ PANE: REPORTS ══ -->
-  <div class="pane" id="pane-reports">
-    <div class="pane-title">Reports</div>
-    <div class="report-grid" id="reportCards"></div>
-    <div id="reportOutput"></div>
-  </div>
-
-  <!-- ══ PANE: USERS ══ -->
-  <div class="pane" id="pane-users">
-    <div class="pane-title">User Management</div>
-    <div class="tcard">
-      <div class="tcard-hdr">
-        <div class="tcard-hdr-title">All Employees</div>
-        <div class="toolbar">
-          <input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUsers()">
-          <button class="btn-pri" onclick="openAddUser()">+ Add Employee</button>
-          <button class="ghost" onclick="loadUsers()">Refresh</button>
-        </div>
-      </div>
-      <div class="twrap"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div>
-    </div>
-  </div>
-
+<header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">+ New Claim</button></header>
+<div class="pane on" id="pane-dashboard"><div style="font-size:20px;font-weight:700;color:var(--blue);margin-bottom:18px" id="dashTitle">Dashboard</div><div class="sg" id="dashStats"></div><div id="dashActions"></div><div id="dashPending"></div></div>
+<div class="pane" id="pane-new-claim">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">Basic Details</div></div><div class="fc-body"><div class="fg fg2">
+<div class="field"><label>Date of Expense <span class="req">*</span></label><input type="date" id="ncDate"></div>
+<div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="ncClient" placeholder="e.g. ABC Corporation"></div>
+</div></div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">Expense Classification</div></div><div class="fc-body"><div class="fg fg3">
+<div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select</option></select></div>
+<div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select</option></select></div>
+<div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select</option></select></div>
+<div class="field sp2"><label>Sub-Nature</label><input type="text" id="ncSub" placeholder="Optional"></div>
+<div class="field"><label>Amount (Rs.) <span class="req">*</span></label><input type="number" id="ncAmt" placeholder="0.00" min="0" step="0.01"></div>
+<div class="field sp3"><label>Description <span class="req">*</span></label><textarea id="ncDesc" placeholder="Purpose, occasion, persons involved..."></textarea></div>
+</div></div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">Category</div></div><div class="fc-body">
+<div class="cat-grid">
+<label class="cat-opt sel" id="cat0"><input type="radio" name="cat" value="Client Reimbursable" checked><div><div class="cat-lbl">Client Reimbursable</div><div class="cat-sub">Recover from client</div></div></label>
+<label class="cat-opt" id="cat1"><input type="radio" name="cat" value="Non Reimbursable"><div><div class="cat-lbl">Non Reimbursable</div><div class="cat-sub">Firm bears cost</div></div></label>
+<label class="cat-opt" id="cat2"><input type="radio" name="cat" value="Drawings"><div><div class="cat-lbl">Drawings</div><div class="cat-sub">Partner drawings</div></div></label>
+<label class="cat-opt" id="cat3"><input type="radio" name="cat" value="Firms Expenses"><div><div class="cat-lbl">Firms Expenses</div><div class="cat-sub">General overhead</div></div></label>
+</div>
+<div class="amt-box"><span style="font-size:13px;color:var(--blue);font-weight:500">Claim Amount</span><span class="amt-val" id="ncAmtD">Rs. 0.00</span></div>
+</div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">Attachment Reference (Optional)</div></div><div class="fc-body">
+<div class="field"><label>Attachment Reference No.</label><input type="text" id="ncAttRef" placeholder="e.g. PKP-ATT-2025-0001 (auto-generated on request)"></div>
+<div class="field"><label>Document Link (OneDrive/Drive shared link)</label><input type="text" id="ncAttURL" placeholder="Paste shareable link here"></div>
+<p style="font-size:12px;color:var(--muted);margin-top:8px">Upload your document to a shared folder and paste the link above. Or leave blank.</p>
+<button class="ghost" style="margin-top:10px" onclick="getRef()">Generate Reference Number</button>
+<span id="refStatus" style="font-size:12px;color:var(--blue);margin-left:10px"></span>
+</div></div>
+<div class="sub-bar"><button class="ghost" onclick="go('my-claims')">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">Submit for Approval</button></div>
+</div>
+<div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">Export CSV</button><button class="ghost" onclick="loadMC()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">Export CSV</button><button class="ghost" onclick="loadAP()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">Export CSV</button><button class="ghost" onclick="loadFIN()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">Export CSV</button><button class="ghost" onclick="loadACC()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-reports"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div><div id="rptOut"></div></div>
+<div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">+ Add Employee</button><button class="ghost" onclick="loadUSR()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 </main>
-
-<!-- ══ DETAIL MODAL ══ -->
-<div class="overlay" id="detailOverlay">
-  <div class="modal">
-    <div class="m-hdr"><div class="m-title" id="mTitle">Claim Details</div><button class="m-close" onclick="closeModal()">&#10005;</button></div>
-    <div class="m-body">
-      <div class="info-bar" id="mInfoBar" style="display:none"></div>
-      <div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px">
-        <div><div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div>
-        <div id="mBadge"></div>
-      </div>
-      <div class="dg" id="mDetails"></div>
-      <div id="mRemarksArea"></div>
-    </div>
-    <div class="m-foot" id="mFoot"></div>
-  </div>
-</div>
-
-<!-- ══ USER MODAL ══ -->
-<div class="overlay" id="userOverlay">
-  <div class="modal" style="width:480px">
-    <div class="m-hdr"><div class="m-title" id="uMTitle">Add Employee</div><button class="m-close" onclick="closeUserModal()">&#10005;</button></div>
-    <div class="m-body">
-      <input type="hidden" id="uEditId">
-      <div class="fg fg2">
-        <div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uName2" placeholder="Full name"></div>
-        <div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEmail" placeholder="email@company.com"></div>
-        <div class="field"><label id="uPwdLabel">Password <span class="req">*</span></label><input type="text" id="uPwd" placeholder="Set password"></div>
-        <div class="field"><label>Role <span class="req">*</span></label>
-          <select id="uRole"><option value="">Select Role</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">Finance Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select>
-        </div>
-        <div class="field"><label>Department</label><input type="text" id="uDept" placeholder="e.g. Audit"></div>
-        <div class="field sp2" id="uMgrRow"><label>Manager</label><select id="uMgr"><option value="">No Manager</option></select></div>
-        <div class="field" id="uStatusRow" style="display:none"><label>Status</label><select id="uStatus"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div>
-      </div>
-    </div>
-    <div class="m-foot"><button class="btn-sec" onclick="closeUserModal()">Cancel</button><button class="btn-pri" id="uSaveBtn" onclick="saveUser()">Add Employee</button></div>
-  </div>
-</div>
-
-<!-- ══ ACCOUNTS UPDATE MODAL ══ -->
-<div class="overlay" id="accOverlay">
-  <div class="modal" style="width:460px">
-    <div class="m-hdr"><div class="m-title" id="accMTitle">Update Payment Details</div><button class="m-close" onclick="closeAccModal()">&#10005;</button></div>
-    <div class="m-body">
-      <input type="hidden" id="accClaimId">
-      <div class="fg">
-        <div class="field"><label>Paid By (Employee ID)</label><input type="text" id="accPaidBy" placeholder="e.g. PKP001"></div>
-        <div class="field"><label>Date Paid by Firm</label><input type="date" id="accDatePaid"></div>
-        <div class="field"><label>Date Invoiced to Client</label><input type="date" id="accDateInvoiced"></div>
-        <div class="field"><label>Date Received from Client</label><input type="date" id="accDateReceived"></div>
-      </div>
-    </div>
-    <div class="m-foot"><button class="btn-sec" onclick="closeAccModal()">Cancel</button><button class="btn-pri" id="accSaveBtn" onclick="saveAccDetails()">Save Details</button></div>
-  </div>
-</div>
-
+<div class="overlay" id="detOv"><div class="modal"><div class="mhdr"><div class="mtitle" id="mTtl">Claim Details</div><button class="mcls" onclick="closeMod()">&#10005;</button></div><div class="mbdy"><div class="ibar" id="mIBar" style="display:none"></div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div><div id="mBdg"></div></div><div class="dg" id="mDets"></div><div id="mRem"></div></div><div class="mft" id="mFt"></div></div></div>
+<div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">Finance Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
+<div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId"><div class="fg"><div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div><div class="field"><label>Date Paid by Firm</label><input type="date" id="acDp"></div><div class="field"><label>Date Invoiced to Client</label><input type="date" id="acDi"></div><div class="field"><label>Date Received from Client</label><input type="date" id="acDr"></div></div></div><div class="mft"><button class="bsec" onclick="closeAccMod()">Cancel</button><button class="bpri" id="acSv" onclick="saveAcc()">Save</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
-// ══ CONFIG ══
-var API = "https://script.google.com/macros/s/AKfycbwbUXVKUKAFb7DWnkpsLDUEJsK4_cepH867tnCaZVdWrva6W94fBjpmAWToQbnVR7PIgg/exec";
-var COMPANY = "Pratapkaran Paul & Co.";
-var COMPANY_SHORT = "PKP";
 
-// ══ SESSION ══
-var sess = {};
-var tok = "";
-try { sess = JSON.parse(sessionStorage.getItem("pkp_user") || "{}"); tok = sessionStorage.getItem("pkp_token") || ""; } catch(e) {}
-if (!sess.role) { window.location.href = "index.html"; }
+var API = 'https://script.google.com/macros/s/AKfycbwIXyfDZ1qluP1n164k8O7x2iPexGiH5xPZrqI_9alXAtdcRC4L5yLkz5ZclDRIYCjesw/exec';
+var sess = {}, tok = '';
+var myData=[], teamData=[], finData=[], accData=[], usrData=[], rptData=[];
+var apCurTab = 'pending';
 
-// ══ STATE ══
-var myClaimsData = [];
-var allTeamClaims = [];
-var allFinanceClaims = [];
-var allAccountsClaims = [];
-var allUsers = [];
-var apCurrentTab = "pending";
-var uploadedFiles = [];
-var attRefValue = "";
-var currentModalClaim = null;
+try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = sessionStorage.getItem('pkp_token')||''; } catch(e){}
+if (!sess.role) { window.location.href = 'index.html'; }
 
-// ══ NAV CONFIG ══
+var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
 var NAV = {
-  EMPLOYEE: [
-    { id:"dashboard", label:"Dashboard", icon:"&#9776;" },
-    { id:"new-claim", label:"New Claim", icon:"+" },
-    { id:"my-claims", label:"My Claims", icon:"&#128203;" },
-    { id:"reports", label:"Reports", icon:"&#128200;" }
-  ],
-  MANAGER: [
-    { id:"dashboard", label:"Dashboard", icon:"&#9776;" },
-    { id:"approvals", label:"Pending Approvals", icon:"&#10003;", badgeId:"apBadge" },
-    { id:"my-claims", label:"My Claims", icon:"&#128203;" },
-    { id:"new-claim", label:"New Claim", icon:"+" },
-    { id:"reports", label:"Reports", icon:"&#128200;" }
-  ],
-  FINANCE_MGR: [
-    { id:"dashboard", label:"Dashboard", icon:"&#9776;" },
-    { id:"finance", label:"Finance Approvals", icon:"&#10003;", badgeId:"finBadge" },
-    { id:"reports", label:"Reports", icon:"&#128200;" }
-  ],
-  ACCOUNTS: [
-    { id:"dashboard", label:"Dashboard", icon:"&#9776;" },
-    { id:"accounts", label:"Update Payments", icon:"&#128179;" },
-    { id:"reports", label:"Reports", icon:"&#128200;" }
-  ],
-  ADMIN: [
-    { id:"dashboard", label:"Dashboard", icon:"&#9776;" },
-    { id:"approvals", label:"Manager Approvals", icon:"&#10003;" },
-    { id:"finance", label:"Finance Approvals", icon:"&#10003;" },
-    { id:"accounts", label:"Accounts Update", icon:"&#128179;" },
-    { id:"reports", label:"Reports", icon:"&#128200;" },
-    { id:"users", label:"User Management", icon:"&#128101;" },
-    { id:"new-claim", label:"New Claim", icon:"+" }
-  ]
+  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
+  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
+  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
+  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
+  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'new-claim',lbl:'New Claim'}]
 };
 
-var ROLE_LABELS = { EMPLOYEE:"Employee", MANAGER:"Manager", FINANCE_MGR:"Finance Manager", ACCOUNTS:"Accounts Team", ADMIN:"Administrator" };
-
-// ══ INIT ══
-
-function setQuickActions(btns) {
-  var wrap = document.createElement("div");
-  wrap.style.cssText = "display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px";
-  for (var i = 0; i < btns.length; i++) {
-    var b = document.createElement("button");
-    b.className = btns[i].cls;
-    b.textContent = btns[i].label;
-    (function(pane) {
-      b.addEventListener("click", function() { showPane(pane); });
-    })(btns[i].pane);
-    wrap.appendChild(b);
-  }
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashQuickActions").appendChild(wrap);
-}
-
 function init() {
-  // DEBUG: show session info
-  console.log("SESSION:", JSON.stringify(sess));
-  console.log("TOKEN:", tok ? tok.substring(0,10)+"..." : "MISSING");
-
-  if (!sess || !sess.role) {
-    document.body.innerHTML = "<div style='padding:40px;font-family:sans-serif'><h2 style='color:#991b1b'>Session Error</h2><p>No session found. <a href='index.html'>Click here to login again</a></p></div>";
-    return;
-  }
-
-  document.getElementById("sAvatar").textContent = (sess.name || "U").charAt(0).toUpperCase();
-  document.getElementById("sName").textContent = sess.name || "User";
-  document.getElementById("sRole").textContent = ROLE_LABELS[sess.role] || sess.role;
-  var tag = document.getElementById("roleTag");
-  tag.textContent = ROLE_LABELS[sess.role] || sess.role;
-  tag.className = "role-tag rt-" + sess.role;
-  if (sess.role === "EMPLOYEE" || sess.role === "MANAGER" || sess.role === "ADMIN") {
-    document.getElementById("newClaimTopBtn").style.display = "inline-flex";
-  }
+  document.getElementById('sAv').textContent = (sess.name||'U').charAt(0).toUpperCase();
+  document.getElementById('sNm').textContent = sess.name||'User';
+  document.getElementById('sRl').textContent = RLABELS[sess.role]||sess.role;
+  var rt = document.getElementById('rtag'); rt.textContent = RLABELS[sess.role]||sess.role; rt.className = 'rtag rt-'+sess.role;
+  if (sess.role==='EMPLOYEE'||sess.role==='MANAGER'||sess.role==='ADMIN') document.getElementById('ncBtn').style.display='inline-flex';
+  document.getElementById('loBtn').addEventListener('click', function(){ sessionStorage.clear(); window.location.href='index.html'; });
   buildNav();
-  initNewClaimForm();
-  showPane("dashboard");
-  loadDashboard();
-  document.getElementById("logoutBtn").addEventListener("click", function() { sessionStorage.clear(); window.location.href = "index.html"; });
+  go('dashboard');
+  setupNewClaim();
 }
 
 function buildNav() {
-  var items = NAV[sess.role] || NAV.EMPLOYEE;
-  var el = document.getElementById("sideNav");
-  var div = document.createElement("div");
-  div.className = "nav-group";
-  for (var i = 0; i < items.length; i++) {
+  var items = NAV[sess.role]||NAV.EMPLOYEE;
+  var nav = document.getElementById('sideNav');
+  nav.innerHTML = '';
+  for (var i=0; i<items.length; i++) {
     var it = items[i];
-    var item = document.createElement("div");
-    item.className = "nav-item";
-    item.id = "nav-" + it.id;
-    item.setAttribute("data-pane", it.id);
-    item.innerHTML = "<span>" + it.icon + "</span><span>" + it.label + "</span>";
-    if (it.badgeId) {
-      var badge = document.createElement("span");
-      badge.className = "badge";
-      badge.id = it.badgeId;
-      badge.style.display = "none";
-      badge.textContent = "0";
-      item.appendChild(badge);
-    }
-    (function(paneId) {
-      item.addEventListener("click", function() { showPane(paneId); });
-    })(it.id);
-    div.appendChild(item);
+    var d = document.createElement('div');
+    d.className = 'ni'; d.setAttribute('data-pane', it.id);
+    d.innerHTML = '<span>'+it.lbl+'</span>';
+    if (it.bid) d.innerHTML += '<span class="nb" id="'+it.bid+'" style="display:none">0</span>';
+    (function(pid){ d.addEventListener('click', function(){ go(pid); }); })(it.id);
+    nav.appendChild(d);
   }
-  el.innerHTML = "";
-  el.appendChild(div);
 }
 
-// ══ API CALL ══
+function go(id) {
+  document.querySelectorAll('.pane').forEach(function(p){ p.className='pane'; });
+  document.querySelectorAll('.ni').forEach(function(n){ n.className='ni'; });
+  var pane = document.getElementById('pane-'+id);
+  if (pane) pane.className='pane on';
+  var ni = document.querySelector('.ni[data-pane="'+id+'"]');
+  if (ni) ni.className='ni on';
+  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management'};
+  document.getElementById('topTitle').textContent = titles[id]||id;
+  if (id==='dashboard') loadDash();
+  if (id==='my-claims') loadMC();
+  if (id==='approvals') loadAP();
+  if (id==='finance') loadFIN();
+  if (id==='accounts') loadACC();
+  if (id==='reports') buildRpts();
+  if (id==='users') loadUSR();
+  if (id==='new-claim') resetNC();
+}
+
 function api(params, cb) {
-  var name = "pkp" + Date.now() + Math.floor(Math.random() * 9999);
+  var name = 'pkp'+Date.now()+Math.floor(Math.random()*9999);
   var done = false;
-  var isUpload = params && params.action === "uploadChunk";
-  var timeoutMs = isUpload ? 60000 : 25000;
-  var timer = setTimeout(function() { if (!done) { done = true; cleanup(); cb({ error: "Timed out." }); } }, timeoutMs);
-  function cleanup() { delete window[name]; var s = document.getElementById("s_" + name); if (s && s.parentNode) s.parentNode.removeChild(s); }
-  window[name] = function(data) { if (!done) { done = true; clearTimeout(timer); cleanup(); cb(data); } };
-  var q = "callback=" + encodeURIComponent(name) + "&token=" + encodeURIComponent(tok);
-  for (var k in params) { if (Object.prototype.hasOwnProperty.call(params, k)) { q += "&" + encodeURIComponent(k) + "=" + encodeURIComponent(params[k]); } }
-  var sc = document.createElement("script");
-  sc.id = "s_" + name; sc.src = API + "?" + q;
-  sc.onerror = function() {
-    if (!done) {
-      done = true; clearTimeout(timer); cleanup();
-      var urlLen = sc.src ? sc.src.length : 0;
-      console.error("JSONP error. URL length:", urlLen, "Action:", params.action || "");
-      cb({ error: "Network error (URL:" + urlLen + " chars). Action:" + (params.action||"") });
-    }
-  };
+  var timer = setTimeout(function(){ if(!done){done=true;cleanup();cb({error:'Timed out.'});} },25000);
+  function cleanup(){ delete window[name]; var s=document.getElementById('s_'+name); if(s&&s.parentNode) s.parentNode.removeChild(s); }
+  window[name] = function(data){ if(!done){done=true;clearTimeout(timer);cleanup();cb(data);} };
+  var q='callback='+encodeURIComponent(name)+'&token='+encodeURIComponent(tok);
+  for(var k in params){ if(Object.prototype.hasOwnProperty.call(params,k)) q+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }
+  var sc=document.createElement('script'); sc.id='s_'+name; sc.src=API+'?'+q;
+  sc.onerror=function(){ if(!done){done=true;clearTimeout(timer);cleanup();cb({error:'Network error.'});} };
   document.body.appendChild(sc);
 }
 
-// ══ TOAST ══
 function toast(msg, type) {
-  var el = document.getElementById("toast");
-  el.textContent = msg; el.className = "toast show t-" + (type || "info");
-  setTimeout(function() { el.className = "toast"; }, 4000);
+  var el=document.getElementById('toast'); el.textContent=msg; el.className='toast show t-'+(type||'info');
+  setTimeout(function(){ el.className='toast'; },4000);
 }
 
-// ══ PANE NAVIGATION ══
-function showPane(id) {
-  document.querySelectorAll(".pane").forEach(function(p) { p.className = "pane"; });
-  document.querySelectorAll(".nav-item").forEach(function(n) { n.className = "nav-item"; });
-  var pane = document.getElementById("pane-" + id);
-  if (pane) pane.className = "pane active";
-  var nav = document.getElementById("nav-" + id);
-  if (nav) nav.className = "nav-item active";
-  var titles = { "dashboard":"Dashboard","new-claim":"New Claim","my-claims":"My Claims","approvals":"Manager Approvals","finance":"Finance Approvals","accounts":"Accounts Update","reports":"Reports","users":"User Management" };
-  document.getElementById("topTitle").textContent = titles[id] || id;
-  if (id === "my-claims") loadMyClaimsPane();
-  if (id === "approvals") loadApprovals();
-  if (id === "finance") loadFinance();
-  if (id === "accounts") loadAccounts();
-  if (id === "reports") buildReports();
-  if (id === "users") loadUsers();
-  if (id === "new-claim") resetNewClaim();
+function fmtD(d){ if(!d) return '-'; try{ return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return d; } }
+function fmtA(n){ var v=parseFloat(n)||0; return 'Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2}); }
+function toDateInput(d){ if(!d) return ''; try{ var dt=new Date(d); if(isNaN(dt.getTime())) return ''; return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }catch(e){ return ''; } }
+
+function statusBadge(s){
+  var m={PENDING_MANAGER:['b-pm','Pending Manager'],PENDING_FINANCE:['b-pf','Pending Finance'],
+    APPROVED_FINANCE:['b-af','Finance Approved'],REJECTED_MANAGER:['b-rej','Rejected'],
+    REJECTED_FINANCE:['b-rej','Fin.Rejected'],PAID:['b-paid','Paid'],CLOSED:['b-closed','Closed']};
+  var info=m[s]||['b-pm',s||'-'];
+  return '<span class="badge '+info[0]+'">'+info[1]+'</span>';
 }
 
-// ══ HELPERS ══
-// Build clickable attachment links from pipe-separated URLs and comma-separated refs
-function buildAttLinks(urls, refs) {
-  if (!urls && !refs) return "<span style='color:var(--muted);font-size:11px'>-</span>";
-  var urlArr  = urls  ? String(urls).split("|")  : [];
-  var refArr  = refs  ? String(refs).split(",")  : [];
-  var html = "";
-  if (urlArr.length > 0 && urlArr[0]) {
-    for (var i = 0; i < urlArr.length; i++) {
-      var u = urlArr[i].trim();
-      var r = refArr[i] ? refArr[i].trim() : ("Attachment " + (i+1));
-      if (u) html += "<a href='" + u + "' target='_blank' style='display:inline-block;margin:1px 2px;padding:2px 7px;background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:4px;font-size:11px;font-family:monospace;color:var(--blue);text-decoration:none'>" + r + "</a>";
-    }
-  } else if (refs) {
-    html = "<span style='font-family:monospace;font-size:11px;color:var(--muted)'>" + refs + "</span>";
+function getStatus(c){ return c.FinanceApprovalStatus&&c.FinanceApprovalStatus!=='PENDING'?c.FinanceApprovalStatus:c.ManagerApprovalStatus||'PENDING_MANAGER'; }
+
+function attLink(url, ref) {
+  if (!url) return ref ? '<span style="font-family:monospace;font-size:11px;color:var(--muted)">'+ref+'</span>' : '-';
+  var urls = url.split('|'); var refs = ref ? ref.split(',') : [];
+  var html = '';
+  for (var i=0; i<urls.length; i++) {
+    var u = urls[i].trim(); var r = refs[i] ? refs[i].trim() : 'File '+(i+1);
+    if (u) html += '<a href="'+u+'" target="_blank" style="display:inline-block;margin:1px 2px;padding:2px 7px;background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:4px;font-size:11px;font-family:monospace;color:var(--blue);text-decoration:none">'+r+'</a>';
   }
-  return html || "<span style='color:var(--muted);font-size:11px'>-</span>";
+  return html || '-';
 }
 
-function fmtDate(d) { if (!d) return "-"; try { return new Date(d).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }); } catch(e) { return d; } }
-function toDateInput(d) {
-  if (!d) return "";
-  try {
-    var dt = new Date(d);
-    if (isNaN(dt.getTime())) return "";
-    var y = dt.getFullYear();
-    var m = String(dt.getMonth()+1).padStart(2,"0");
-    var day = String(dt.getDate()).padStart(2,"0");
-    return y + "-" + m + "-" + day;
-  } catch(e) { return ""; }
+function statCard(lbl, val, cls, sub) {
+  return '<div class="sc"><div class="sl">'+lbl+'</div><div class="sv'+(cls?' '+cls:'')+'" >'+val+'</div>'+(sub?'<div class="ss2">'+sub+'</div>':'')+'</div>';
 }
-function fmtAmt(n) { var v = parseFloat(n) || 0; return "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits: 2 }); }
-function statusBadge(s) {
-  var m = { PENDING_MANAGER:["b-pend","Pending Manager"], PENDING_FINANCE:["b-fin","Pending Finance"], APPROVED_FINANCE:["b-appr","Finance Approved"], REJECTED_MANAGER:["b-rej","Rejected"], REJECTED_FINANCE:["b-rej","Fin.Rejected"], PAID:["b-paid","Paid"], CLOSED:["b-closed","Closed"] };
-  var info = m[s] || ["b-pend", s || "-"];
-  return "<span class='badge " + info[0] + "'>" + info[1] + "</span>";
-}
-function getClaimStatus(c) { return c.FinanceApprovalStatus && c.FinanceApprovalStatus !== "PENDING" ? c.FinanceApprovalStatus : c.ManagerApprovalStatus || "PENDING_MANAGER"; }
 
-// ══ DASHBOARD ══
-function loadDashboard() {
+// ── DASHBOARD ──
+function loadDash() {
   var role = sess.role;
-  if (role === "EMPLOYEE") loadEmployeeDashboard();
-  else if (role === "MANAGER") loadManagerDashboard();
-  else if (role === "FINANCE_MGR") loadFinanceDashboard();
-  else if (role === "ACCOUNTS") loadAccountsDashboard();
-  else loadAdminDashboard();
+  document.getElementById('dashStats').innerHTML = '<div class="empty">Loading...</div>';
+  document.getElementById('dashActions').innerHTML = '';
+  document.getElementById('dashPending').innerHTML = '';
+  document.getElementById('dashTitle').textContent = 'Welcome, '+(sess.name||'');
+
+  var filter = (role==='EMPLOYEE') ? 'mine' : 'team';
+  api({action:'getClaims',filter:filter}, function(res) {
+    if (res.error) { document.getElementById('dashStats').innerHTML='<div class="empty" style="color:var(--red)">'+res.error+'</div>'; return; }
+    var claims = res.claims||[];
+    if (role==='EMPLOYEE') renderEmpDash(claims);
+    else if (role==='MANAGER') renderMgrDash(claims);
+    else if (role==='FINANCE_MGR') renderFinDash(claims);
+    else if (role==='ACCOUNTS') renderAccDash(claims);
+    else renderAdminDash(claims);
+  });
 }
 
-function renderDashStats(items) {
-  var html = "";
-  for (var i = 0; i < items.length; i++) {
-    var it = items[i];
-    html += "<div class='stat-card " + (it.cls || "") + "'><div class='stat-card-lbl'>" + it.lbl + "</div><div class='stat-card-val'>" + it.val + "</div><div class='stat-card-sub'>" + (it.sub || "") + "</div></div>";
+function makeActBtns(btns) {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px';
+  for (var i=0; i<btns.length; i++) {
+    var b = document.createElement('button');
+    b.className = btns[i][0]; b.textContent = btns[i][1];
+    (function(pid){ b.addEventListener('click', function(){ go(pid); }); })(btns[i][2]);
+    wrap.appendChild(b);
   }
-  document.getElementById("dashStats").innerHTML = html;
+  document.getElementById('dashActions').innerHTML = '';
+  document.getElementById('dashActions').appendChild(wrap);
 }
 
-function loadEmployeeDashboard() {
-  document.getElementById("dashTitle").textContent = "Welcome, " + (sess.name || "");
-  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading your summary...</div>";
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashPendingSection").innerHTML = "";
-  api({ action: "getClaims", filter: "mine" }, function(res) {
-    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
-    var claims = res.claims || [];
-    var total = 0, approved = 0, received = 0, pending = 0, rejected = 0;
-    for (var i = 0; i < claims.length; i++) {
-      var c = claims[i]; var amt = parseFloat(c.Amount) || 0;
-      total += amt;
-      var s = getClaimStatus(c);
-      if (s === "PENDING_MANAGER" || s === "PENDING_FINANCE") pending += amt;
-      else if (s === "APPROVED_FINANCE") approved += amt;
-      else if (s === "PAID" || s === "CLOSED") received += amt;
-      else if (s === "REJECTED_MANAGER" || s === "REJECTED_FINANCE") rejected += amt;
-    }
-    renderDashStats([
-      { lbl:"Total Claimed", val:fmtAmt(total), sub:claims.length + " claims" },
-      { lbl:"Pending Approval", val:fmtAmt(pending), sub:"Awaiting review", cls:"s-amber" },
-      { lbl:"Approved", val:fmtAmt(approved), sub:"Finance approved", cls:"s-blue" },
-      { lbl:"Received", val:fmtAmt(received), sub:"Paid by firm", cls:"s-green" },
-      { lbl:"Rejected", val:fmtAmt(rejected), sub:"Claims returned", cls:"s-red" }
-    ]);
-    setQuickActions([{label:"+ New Claim",pane:"new-claim",cls:"btn-pri"},{label:"View All Claims",pane:"my-claims",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
-    renderRecentClaims(claims.slice(0, 5));
-  });
+function renderEmpDash(claims) {
+  var total=0,pend=0,appr=0,rcvd=0,rej=0;
+  for (var i=0;i<claims.length;i++) {
+    var c=claims[i]; var amt=parseFloat(c.Amount)||0; total+=amt;
+    var s=getStatus(c);
+    if(s==='PENDING_MANAGER'||s==='PENDING_FINANCE') pend+=amt;
+    else if(s==='APPROVED_FINANCE') appr+=amt;
+    else if(s==='PAID'||s==='CLOSED') rcvd+=amt;
+    else if(s==='REJECTED_MANAGER'||s==='REJECTED_FINANCE') rej+=amt;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Total Claimed',fmtA(total),'',''+claims.length+' claims') +
+    statCard('Pending Approval',fmtA(pend),'amber','Awaiting review') +
+    statCard('Approved',fmtA(appr),'','Finance approved') +
+    statCard('Received',fmtA(rcvd),'green','Paid by firm') +
+    statCard('Rejected',fmtA(rej),'red','');
+  makeActBtns([['bpri','+ New Claim','new-claim'],['bsec','My Claims','my-claims'],['bsec','Reports','reports']]);
+  renderRecentTbl(claims.slice(0,5));
 }
 
-function loadManagerDashboard() {
-  document.getElementById("dashTitle").textContent = "Manager Dashboard";
-  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading team summary...</div>";
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashPendingSection").innerHTML = "";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
-    var claims = res.claims || [];
-    var pending = 0, pendAmt = 0, approved = 0, totalAmt = 0;
-    for (var i = 0; i < claims.length; i++) {
-      var c = claims[i]; totalAmt += parseFloat(c.Amount) || 0;
-      if (c.ManagerApprovalStatus === "PENDING_MANAGER") { pending++; pendAmt += parseFloat(c.Amount) || 0; }
-      else if (c.ManagerApprovalStatus !== "REJECTED_MANAGER") approved++;
-    }
-    renderDashStats([
-      { lbl:"Awaiting Your Approval", val:pending, sub:fmtAmt(pendAmt), cls:"s-amber" },
-      { lbl:"Approved This Month", val:approved, sub:"Sent to finance", cls:"s-green" },
-      { lbl:"Total Team Claims", val:claims.length, sub:"All time" },
-      { lbl:"Total Amount", val:fmtAmt(totalAmt), sub:"All claims", cls:"s-blue" }
-    ]);
-    if (pending > 0) { var b = document.getElementById("apBadge"); if (b) { b.textContent = pending; b.style.display = "inline-block"; } }
-    setQuickActions([{label:"Review Pending ( + pending + )",pane:"approvals",cls:"btn-pri"},{label:"+ My Claim",pane:"new-claim",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
-    renderPendingApprovalPreview(claims);
-  });
+function renderMgrDash(claims) {
+  var pend=0,pendAmt=0,appr=0,total=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; total+=parseFloat(c.Amount)||0;
+    if(c.ManagerApprovalStatus==='PENDING_MANAGER'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+    else if(c.ManagerApprovalStatus!=='REJECTED_MANAGER') appr++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Awaiting Approval',pend,'amber',fmtA(pendAmt)) +
+    statCard('Approved',appr,'green','') +
+    statCard('Total Team',claims.length,'',fmtA(total));
+  if(pend>0){var b=document.getElementById('apBdg');if(b){b.textContent=pend;b.style.display='inline-block';}}
+  makeActBtns([['bpri','Review Approvals ('+pend+')','approvals'],['bsec','+ My Claim','new-claim'],['bsec','Reports','reports']]);
+  renderPendingTbl(claims);
 }
 
-function loadFinanceDashboard() {
-  document.getElementById("dashTitle").textContent = "Finance Manager Dashboard";
-  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading finance summary...</div>";
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashPendingSection").innerHTML = "";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
-    var claims = res.claims || [];
-    var pending = 0, pendAmt = 0, approved = 0;
-    for (var i = 0; i < claims.length; i++) {
-      var c = claims[i];
-      if (c.ManagerApprovalStatus === "PENDING_FINANCE" || (c.FinanceApprovalStatus === "PENDING" && c.ManagerApprovalStatus !== "REJECTED_MANAGER")) { pending++; pendAmt += parseFloat(c.Amount) || 0; }
-      else if (c.FinanceApprovalStatus === "APPROVED_FINANCE") approved++;
-    }
-    renderDashStats([
-      { lbl:"Pending Finance Approval", val:pending, sub:fmtAmt(pendAmt), cls:"s-amber" },
-      { lbl:"Finance Approved", val:approved, sub:"This period", cls:"s-green" },
-      { lbl:"Total Claims", val:claims.length, sub:"All records" }
-    ]);
-    setQuickActions([{label:"Review Finance Approvals",pane:"finance",cls:"btn-pri"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
-  });
+function renderFinDash(claims) {
+  var pend=0,pendAmt=0,appr=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i];
+    if(c.ManagerApprovalStatus==='PENDING_FINANCE'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+    else if(c.FinanceApprovalStatus==='APPROVED_FINANCE') appr++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Pending Finance',pend,'amber',fmtA(pendAmt)) +
+    statCard('Finance Approved',appr,'green','') +
+    statCard('Total',claims.length,'','');
+  makeActBtns([['bpri','Finance Approvals','finance'],['bsec','Reports','reports']]);
 }
 
-function loadAccountsDashboard() {
-  document.getElementById("dashTitle").textContent = "Accounts Dashboard";
-  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading accounts summary...</div>";
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashPendingSection").innerHTML = "";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
-    var claims = res.claims || [];
-    var unpaid = 0, unpaidAmt = 0, uninvoiced = 0;
-    for (var i = 0; i < claims.length; i++) {
-      var c = claims[i];
-      if (c.FinanceApprovalStatus === "APPROVED_FINANCE" && !c.DatePaidByFirm) { unpaid++; unpaidAmt += parseFloat(c.Amount) || 0; }
-      if (c.Category === "Client Reimbursable" && c.FinanceApprovalStatus === "APPROVED_FINANCE" && !c.DateInvoicedToClient) uninvoiced++;
-    }
-    renderDashStats([
-      { lbl:"Pending Payment", val:unpaid, sub:fmtAmt(unpaidAmt), cls:"s-amber" },
-      { lbl:"Pending Invoice", val:uninvoiced, sub:"To client", cls:"s-blue" },
-      { lbl:"Total Records", val:claims.length, sub:"All claims" }
-    ]);
-    setQuickActions([{label:"Update Payments",pane:"accounts",cls:"btn-pri"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
-  });
+function renderAccDash(claims) {
+  var unpaid=0,unpaidAmt=0,uninv=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i];
+    if(c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DatePaidByFirm){unpaid++;unpaidAmt+=parseFloat(c.Amount)||0;}
+    if(c.Category==='Client Reimbursable'&&c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DateInvoicedToClient) uninv++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Pending Payment',unpaid,'amber',fmtA(unpaidAmt)) +
+    statCard('Pending Invoice',uninv,'','To client') +
+    statCard('Total Records',claims.length,'','');
+  makeActBtns([['bpri','Update Payments','accounts'],['bsec','Reports','reports']]);
 }
 
-function loadAdminDashboard() {
-  document.getElementById("dashTitle").textContent = "Admin Dashboard";
-  document.getElementById("dashStats").innerHTML = "<div class='empty'>Loading admin summary...</div>";
-  document.getElementById("dashQuickActions").innerHTML = "";
-  document.getElementById("dashPendingSection").innerHTML = "";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { document.getElementById("dashStats").innerHTML = "<div class='empty' style='color:#991b1b'>Error: " + res.error + "</div>"; return; }
-    var claims = res.claims || [];
-    var pendMgr = 0, pendFin = 0, paid = 0, totalAmt = 0;
-    for (var i = 0; i < claims.length; i++) {
-      var c = claims[i]; totalAmt += parseFloat(c.Amount) || 0;
-      if (c.ManagerApprovalStatus === "PENDING_MANAGER") pendMgr++;
-      if (c.ManagerApprovalStatus === "PENDING_FINANCE") pendFin++;
-      if (c.DatePaidByFirm) paid++;
-    }
-    renderDashStats([
-      { lbl:"Total Claims", val:claims.length, sub:fmtAmt(totalAmt) },
-      { lbl:"Pending Manager", val:pendMgr, sub:"Awaiting approval", cls:"s-amber" },
-      { lbl:"Pending Finance", val:pendFin, sub:"Awaiting finance", cls:"s-blue" },
-      { lbl:"Paid", val:paid, sub:"Settled", cls:"s-green" }
-    ]);
-    setQuickActions([{label:"Manager Approvals",pane:"approvals",cls:"btn-pri"},{label:"Finance Approvals",pane:"finance",cls:"btn-pri"},{label:"Accounts",pane:"accounts",cls:"btn-sec"},{label:"Users",pane:"users",cls:"btn-sec"},{label:"Reports",pane:"reports",cls:"btn-sec"}]);
-    renderPendingApprovalPreview(claims);
-  });
+function renderAdminDash(claims) {
+  var pm=0,pf=0,paid=0,total=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; total+=parseFloat(c.Amount)||0;
+    if(c.ManagerApprovalStatus==='PENDING_MANAGER') pm++;
+    if(c.ManagerApprovalStatus==='PENDING_FINANCE') pf++;
+    if(c.DatePaidByFirm) paid++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Total Claims',claims.length,'',fmtA(total)) +
+    statCard('Pending Manager',pm,'amber','') +
+    statCard('Pending Finance',pf,'','') +
+    statCard('Paid',paid,'green','');
+  makeActBtns([['bpri','Manager Approvals','approvals'],['bpri','Finance Approvals','finance'],['bsec','Accounts','accounts'],['bsec','Users','users'],['bsec','Reports','reports']]);
+  renderPendingTbl(claims);
 }
 
-function renderRecentClaims(claims) {
-  var el = document.getElementById("dashPendingSection");
-  if (!claims || claims.length === 0) { el.innerHTML = ""; return; }
-  var wrap = document.createElement("div"); wrap.className = "tcard";
-  var hdr = document.createElement("div"); hdr.className = "tcard-hdr";
-  var ttl = document.createElement("div"); ttl.className = "tcard-hdr-title"; ttl.textContent = "Recent Claims";
-  var vbtn = document.createElement("button"); vbtn.className = "ghost"; vbtn.textContent = "View All";
-  vbtn.addEventListener("click", function() { showPane("my-claims"); });
-  hdr.appendChild(ttl); hdr.appendChild(vbtn); wrap.appendChild(hdr);
-  var twrap = document.createElement("div"); twrap.className = "twrap";
-  var tbl = document.createElement("table");
-  tbl.innerHTML = "<thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead>";
-  var tbody = document.createElement("tbody");
-  for (var i = 0; i < claims.length; i++) {
-    var c = claims[i]; var s = getClaimStatus(c);
-    var tr = document.createElement("tr");
-    tr.innerHTML = "<td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td>";
+function renderRecentTbl(claims) {
+  if(!claims.length){document.getElementById('dashPending').innerHTML='';return;}
+  var html='<div class="tc"><div class="th2"><div class="th2-title">Recent Claims</div><button class="ghost" onclick="go('my-claims')">View All</button></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; var s=getStatus(c);
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td></tr>';
+  }
+  html+='</tbody></table></div></div>';
+  document.getElementById('dashPending').innerHTML=html;
+}
+
+function renderPendingTbl(claims) {
+  var pending=[];
+  for(var i=0;i<claims.length;i++){if(claims[i].ManagerApprovalStatus==='PENDING_MANAGER') pending.push(claims[i]);}
+  var el=document.getElementById('dashPending');
+  if(!pending.length){el.innerHTML='<div style="padding:16px;background:#fff;border-radius:10px;border:1px solid var(--border);color:var(--muted);font-size:13px">No pending approvals!</div>';return;}
+  var wrap=document.createElement('div'); wrap.className='tc';
+  var hdr=document.createElement('div'); hdr.className='th2';
+  hdr.innerHTML='<div class="th2-title">Pending Approvals ('+pending.length+')</div>';
+  var vb=document.createElement('button'); vb.className='ghost'; vb.textContent='View All';
+  vb.addEventListener('click',function(){go('approvals');}); hdr.appendChild(vb); wrap.appendChild(hdr);
+  var tw=document.createElement('div'); tw.className='tw';
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');
+  var shown=Math.min(pending.length,5);
+  for(var i=0;i<shown;i++){
+    var c=pending[i]; var tr=document.createElement('tr');
+    tr.innerHTML='<td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td></td>';
+    var td=tr.querySelector('td:last-child');
+    var ab=document.createElement('button'); ab.className='btn btn-ok'; ab.textContent='Approve'; ab.setAttribute('data-id',c.ClaimID);
+    ab.addEventListener('click',function(){qApprove(this.getAttribute('data-id'));});
+    var rb=document.createElement('button'); rb.className='btn btn-no'; rb.textContent='Reject'; rb.setAttribute('data-id',c.ClaimID);
+    rb.addEventListener('click',function(){qReject(this.getAttribute('data-id'));});
+    var vb2=document.createElement('button'); vb2.className='btn'; vb2.textContent='View'; vb2.setAttribute('data-id',c.ClaimID);
+    vb2.addEventListener('click',function(){viewClaim(this.getAttribute('data-id'),true,false);});
+    td.appendChild(ab); td.appendChild(rb); td.appendChild(vb2);
     tbody.appendChild(tr);
   }
-  tbl.appendChild(tbody); twrap.appendChild(tbl); wrap.appendChild(twrap);
-  el.innerHTML = ""; el.appendChild(wrap);
+  tbl.appendChild(tbody); tw.appendChild(tbl); wrap.appendChild(tw);
+  el.innerHTML=''; el.appendChild(wrap);
 }
 
-function renderPendingApprovalPreview(claims) {
-  var pending = [];
-  for (var i = 0; i < claims.length; i++) { if (claims[i].ManagerApprovalStatus === "PENDING_MANAGER") pending.push(claims[i]); }
-  var el = document.getElementById("dashPendingSection");
-  if (!pending.length) {
-    el.innerHTML = "<div style='padding:16px;background:#fff;border-radius:10px;border:1px solid var(--border);color:var(--muted);font-size:13px'>No pending approvals. All caught up!</div>";
-    return;
-  }
-  var wrap = document.createElement("div"); wrap.className = "tcard";
-  var hdr = document.createElement("div"); hdr.className = "tcard-hdr";
-  var ttl = document.createElement("div"); ttl.className = "tcard-hdr-title"; ttl.textContent = "Pending Approvals (" + pending.length + ")";
-  var vbtn = document.createElement("button"); vbtn.className = "ghost"; vbtn.textContent = "View All";
-  vbtn.addEventListener("click", function() { showPane("approvals"); });
-  hdr.appendChild(ttl); hdr.appendChild(vbtn); wrap.appendChild(hdr);
-  var twrap = document.createElement("div"); twrap.className = "twrap";
-  var tbl = document.createElement("table");
-  tbl.innerHTML = "<thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Action</th></tr></thead>";
-  var tbody = document.createElement("tbody");
-  var shown = Math.min(pending.length, 5);
-  for (var i = 0; i < shown; i++) {
-    var c = pending[i];
-    var tr = document.createElement("tr");
-    var td1 = "<td><span class='cid'>" + c.ClaimID + "</span></td>";
-    var td2 = "<td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td>";
-    var td3 = "<td>" + (c.ClientName || "-") + "</td>";
-    var td4 = "<td class='amt'>" + fmtAmt(c.Amount) + "</td>";
-    tr.innerHTML = td1 + td2 + td3 + td4 + "<td></td>";
-    var tdAction = tr.querySelector("td:last-child");
-    var appBtn = document.createElement("button");
-    appBtn.className = "btn btn-ok"; appBtn.textContent = "Approve";
-    appBtn.setAttribute("data-id", c.ClaimID);
-    appBtn.addEventListener("click", function() { quickApproveFromDash(this); });
-    var rejBtn = document.createElement("button");
-    rejBtn.className = "btn btn-no"; rejBtn.textContent = "Reject";
-    rejBtn.setAttribute("data-id", c.ClaimID);
-    rejBtn.addEventListener("click", function() { quickRejectFromDash(this); });
-    var viewBtn = document.createElement("button");
-    viewBtn.className = "btn"; viewBtn.textContent = "View";
-    viewBtn.setAttribute("data-id", c.ClaimID);
-    viewBtn.addEventListener("click", function() { viewClaimModal(this, true); });
-    tdAction.appendChild(appBtn); tdAction.appendChild(rejBtn); tdAction.appendChild(viewBtn);
-    tbody.appendChild(tr);
-  }
-  tbl.appendChild(tbody); twrap.appendChild(tbl); wrap.appendChild(twrap);
-  el.innerHTML = ""; el.appendChild(wrap);
+// ── MY CLAIMS ──
+function loadMC() {
+  document.getElementById('mcBody').innerHTML='<tr><td colspan="7"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'mine'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    myData=res.claims||[];
+    var total=0,pend=0,appr=0,rcvd=0;
+    for(var i=0;i<myData.length;i++){var c=myData[i];var amt=parseFloat(c.Amount)||0;total+=amt;var s=getStatus(c);if(s==='PENDING_MANAGER'||s==='PENDING_FINANCE')pend+=amt;else if(s==='APPROVED_FINANCE')appr+=amt;else if(s==='PAID'||s==='CLOSED')rcvd+=amt;}
+    document.getElementById('mcStats').innerHTML=statCard('Total',fmtA(total),'','')+statCard('Pending',fmtA(pend),'amber','')+statCard('Approved',fmtA(appr),'','')+statCard('Received',fmtA(rcvd),'green','');
+    filterMC();
+  });
 }
 
-// ══ MY CLAIMS ══
-function loadMyClaimsPane() {
-  document.getElementById("mcBody").innerHTML = "<tr><td colspan='7'><div class='empty'>Loading...</div></td></tr>";
-  api({ action: "getClaims", filter: "mine" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    myClaimsData = res.claims || [];
-    var total = 0, approved = 0, received = 0, pending = 0;
-    for (var i = 0; i < myClaimsData.length; i++) {
-      var c = myClaimsData[i]; var amt = parseFloat(c.Amount) || 0; total += amt;
-      var s = getClaimStatus(c);
-      if (s === "PENDING_MANAGER" || s === "PENDING_FINANCE") pending += amt;
-      else if (s === "APPROVED_FINANCE") approved += amt;
-      else if (s === "PAID" || s === "CLOSED") received += amt;
+function filterMC() {
+  var q=(document.getElementById('mcSrch').value||'').toLowerCase();
+  var sf=document.getElementById('mcSt').value;
+  var filtered=[]; for(var i=0;i<myData.length;i++){var c=myData[i];var s=getStatus(c);var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0;var ms=!sf||s===sf;if(mq&&ms)filtered.push(c);}
+  var html='';
+  if(!filtered.length){document.getElementById('mcBody').innerHTML='<tr><td colspan="7"><div class="empty">No claims found.</div></td></tr>';return;}
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var s=getStatus(c); var cid=(c.ClaimID||'').replace(/'/g,'');
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td>'+(c.MajorHead||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td>';
+    html+='<td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'<button class="btn" onclick="viewClaim(''+cid+'',false,false)">View</button>'+(s==='APPROVED_FINANCE'?'<button class="btn" onclick="printClaim(''+cid+'')">Print</button>':'')+'</td></tr>';
+  }
+  document.getElementById('mcBody').innerHTML=html;
+}
+
+// ── APPROVALS ──
+function loadAP() {
+  document.getElementById('apBody').innerHTML='<tr><td colspan="8"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    teamData=res.claims||[];
+    var pend=0,pendAmt=0,appr=0,rej=0;
+    var empMap={};
+    for(var i=0;i<teamData.length;i++){
+      var c=teamData[i];
+      if(c.ManagerApprovalStatus==='PENDING_MANAGER'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+      else if(c.ManagerApprovalStatus!=='REJECTED_MANAGER') appr++;
+      else rej++;
+      if(c.ClaimantID) empMap[c.ClaimantID]=c.ClaimantName||c.ClaimantID;
     }
-    document.getElementById("myClaimStats").innerHTML = "<div class='stat-card'><div class='stat-card-lbl'>Total Claimed</div><div class='stat-card-val'>" + fmtAmt(total) + "</div></div><div class='stat-card s-amber'><div class='stat-card-lbl'>Pending</div><div class='stat-card-val'>" + fmtAmt(pending) + "</div></div><div class='stat-card s-blue'><div class='stat-card-lbl'>Approved</div><div class='stat-card-val'>" + fmtAmt(approved) + "</div></div><div class='stat-card s-green'><div class='stat-card-lbl'>Received</div><div class='stat-card-val'>" + fmtAmt(received) + "</div></div>";
-    filterMyClaims();
+    document.getElementById('apStats').innerHTML=statCard('Pending',pend,'amber',fmtA(pendAmt))+statCard('Approved',appr,'green','')+statCard('Rejected',rej,'red','')+statCard('Total',teamData.length,'','');
+    if(pend>0){var b=document.getElementById('apBdg');if(b){b.textContent=pend;b.style.display='inline-block';}}
+    var sel=document.getElementById('apEmp'); sel.innerHTML='<option value="">All Employees</option>';
+    for(var id in empMap){var o=document.createElement('option');o.value=id;o.textContent=empMap[id];sel.appendChild(o);}
+    filterAP();
   });
 }
 
-function filterMyClaims() {
-  var q = (document.getElementById("mcSrch").value || "").toLowerCase();
-  var sf = document.getElementById("mcStatus").value;
-  var filtered = [];
-  for (var i = 0; i < myClaimsData.length; i++) {
-    var c = myClaimsData[i]; var s = getClaimStatus(c);
-    var mq = !q || (c.ClaimID || "").toLowerCase().indexOf(q) >= 0 || (c.ClientName || "").toLowerCase().indexOf(q) >= 0 || (c.MajorHead || "").toLowerCase().indexOf(q) >= 0;
-    var ms = !sf || s === sf;
-    if (mq && ms) filtered.push(c);
-  }
-  var html = "";
-  if (!filtered.length) { document.getElementById("mcBody").innerHTML = "<tr><td colspan='8'><div class='empty'>No claims found.</div></td></tr>"; return; }
-  for (var i = 0; i < filtered.length; i++) {
-    var c = filtered[i]; var s = getClaimStatus(c); var cid = (c.ClaimID || "").replace(/'/g, "");
-    var myAttLinks = buildAttLinks(c.AttachmentURL, c.AttachmentRef);
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td>" + (c.MajorHead || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td><td>" + myAttLinks + "<button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,false)'>View</button>" + (s === "APPROVED_FINANCE" ? "<button class='btn' data-id='" + cid + "' onclick='printClaim(this)'>Print</button>" : "") + "</td></tr>";
-  }
-  document.getElementById("mcBody").innerHTML = html;
+function apTab(tab) {
+  apCurTab=tab;
+  document.getElementById('apt1').className='tbb'+(tab==='pending'?' on':'');
+  document.getElementById('apt2').className='tbb'+(tab==='all'?' on':'');
+  document.getElementById('apTitle').textContent=tab==='pending'?'Pending Approvals':'All Team Claims';
+  filterAP();
 }
 
-// ══ APPROVALS ══
-function loadApprovals() {
-  document.getElementById("apBody").innerHTML = "<tr><td colspan='7'><div class='empty'>Loading...</div></td></tr>";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    allTeamClaims = res.claims || [];
-    var pending = 0, pendAmt = 0, approved = 0, rejected = 0;
-    var empMap = {};
-    for (var i = 0; i < allTeamClaims.length; i++) {
-      var c = allTeamClaims[i];
-      if (c.ManagerApprovalStatus === "PENDING_MANAGER") { pending++; pendAmt += parseFloat(c.Amount) || 0; }
-      else if (c.ManagerApprovalStatus !== "REJECTED_MANAGER") approved++;
-      else rejected++;
-      if (c.ClaimantID) empMap[c.ClaimantID] = c.ClaimantName || c.ClaimantID;
-    }
-    document.getElementById("approvalStats").innerHTML = "<div class='stat-card s-amber'><div class='stat-card-lbl'>Pending Approval</div><div class='stat-card-val'>" + pending + "</div><div class='stat-card-sub'>" + fmtAmt(pendAmt) + "</div></div><div class='stat-card s-green'><div class='stat-card-lbl'>Approved</div><div class='stat-card-val'>" + approved + "</div></div><div class='stat-card s-red'><div class='stat-card-lbl'>Rejected</div><div class='stat-card-val'>" + rejected + "</div></div><div class='stat-card s-blue'><div class='stat-card-lbl'>Total Team</div><div class='stat-card-val'>" + allTeamClaims.length + "</div></div>";
-    var empSel = document.getElementById("apEmpFilter");
-    empSel.innerHTML = "<option value=''>All Employees</option>";
-    for (var id in empMap) { var o = document.createElement("option"); o.value = id; o.textContent = empMap[id]; empSel.appendChild(o); }
-    if (pending > 0) { var b = document.getElementById("apBadge"); if (b) { b.textContent = pending; b.style.display = "inline-block"; } }
-    filterApprovals();
+function filterAP() {
+  var q=(document.getElementById('apSrch').value||'').toLowerCase();
+  var ef=document.getElementById('apEmp').value;
+  var filtered=[]; for(var i=0;i<teamData.length;i++){var c=teamData[i];if(apCurTab==='pending'&&c.ManagerApprovalStatus!=='PENDING_MANAGER')continue;var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;var me=!ef||c.ClaimantID===ef;if(mq&&me)filtered.push(c);}
+  var html='';
+  if(!filtered.length){document.getElementById('apBody').innerHTML='<tr><td colspan="8"><div class="empty">'+(apCurTab==='pending'?'No pending approvals!':'No claims.')+'</div></td></tr>';return;}
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var isPend=c.ManagerApprovalStatus==='PENDING_MANAGER'; var nm=c.ClaimantName||c.ClaimantID||'-'; var cid=(c.ClaimID||'').replace(/'/g,'');
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td><span class="av">'+nm.charAt(0).toUpperCase()+'</span>'+nm+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'</td><td>'+statusBadge(c.ManagerApprovalStatus)+'</td>';
+    html+='<td><button class="btn" onclick="viewClaim(''+cid+'','+isPend+',false)">View</button>'+(isPend?'<button class="btn btn-ok" onclick="qApprove(''+cid+'')">Approve</button><button class="btn btn-no" onclick="qReject(''+cid+'')">Reject</button>':'')+'</td></tr>';
+  }
+  document.getElementById('apBody').innerHTML=html;
+}
+
+function qApprove(id) {
+  if(!confirm('Approve claim '+id+'?')) return;
+  api({action:'managerApprove',claimId:id,status:'APPROVED',remarks:''},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast('Claim '+id+' approved!','ok'); loadAP(); loadDash();
+  });
+}
+function qReject(id) {
+  var reason=prompt('Reason for rejection (required):');
+  if(!reason||!reason.trim()) return;
+  api({action:'managerApprove',claimId:id,status:'REJECTED',remarks:reason},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast('Claim '+id+' rejected.','ok'); loadAP(); loadDash();
   });
 }
 
-function switchApTab(tab) {
-  apCurrentTab = tab;
-  document.getElementById("apTab1").className = tab === "pending" ? "tab-btn on" : "tab-btn";
-  document.getElementById("apTab2").className = tab === "all" ? "tab-btn on" : "tab-btn";
-  document.getElementById("apTableTitle").textContent = tab === "pending" ? "Pending Approvals" : "All Team Claims";
-  filterApprovals();
-}
-
-function filterApprovals() {
-  var q = (document.getElementById("apSrch").value || "").toLowerCase();
-  var ef = document.getElementById("apEmpFilter").value;
-  var filtered = [];
-  for (var i = 0; i < allTeamClaims.length; i++) {
-    var c = allTeamClaims[i];
-    if (apCurrentTab === "pending" && c.ManagerApprovalStatus !== "PENDING_MANAGER") continue;
-    var mq = !q || (c.ClaimID || "").toLowerCase().indexOf(q) >= 0 || (c.ClientName || "").toLowerCase().indexOf(q) >= 0 || (c.ClaimantName || "").toLowerCase().indexOf(q) >= 0;
-    var me = !ef || c.ClaimantID === ef;
-    if (mq && me) filtered.push(c);
-  }
-  var html = "";
-  if (!filtered.length) { document.getElementById("apBody").innerHTML = "<tr><td colspan='7'><div class='empty'>" + (apCurrentTab === "pending" ? "No pending approvals!" : "No claims found.") + "</div></td></tr>"; return; }
-  for (var i = 0; i < filtered.length; i++) {
-    var c = filtered[i]; var isPend = c.ManagerApprovalStatus === "PENDING_MANAGER";
-    var name = c.ClaimantName || c.ClaimantID || "-"; var init = name.charAt(0).toUpperCase();
-    var cid = (c.ClaimID || "").replace(/'/g, "");
-    var mgrAttLinks = buildAttLinks(c.AttachmentURL, c.AttachmentRef);
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td><span class='av'>" + init + "</span>" + name + "</td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(c.ManagerApprovalStatus) + "</td><td>" + mgrAttLinks + "</td><td>";
-    html += "<button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this," + isPend + ")'>View</button>";
-    if (isPend) { html += "<button class='btn btn-ok' data-id='" + cid + "' onclick='quickApproveDirect(this)'>Approve</button><button class='btn btn-no' data-id='" + cid + "' onclick='quickRejectDirect(this)'>Reject</button>"; }
-    html += "</td></tr>";
-  }
-  document.getElementById("apBody").innerHTML = html;
-}
-
-// ══ FINANCE ══
-function loadFinance() {
-  document.getElementById("finBody").innerHTML = "<tr><td colspan='8'><div class='empty'>Loading...</div></td></tr>";
-  api({ action: "getClaims", filter: "team" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    allFinanceClaims = (res.claims || []).filter(function(c) {
-      return c.ManagerApprovalStatus === "PENDING_FINANCE" &&
-             c.FinanceApprovalStatus !== "APPROVED_FINANCE" &&
-             c.FinanceApprovalStatus !== "REJECTED_FINANCE";
-    });
-    var total = 0;
-    for (var i = 0; i < allFinanceClaims.length; i++) total += parseFloat(allFinanceClaims[i].Amount) || 0;
-    document.getElementById("financeStats").innerHTML = "<div class='stat-card s-amber'><div class='stat-card-lbl'>Pending Finance Approval</div><div class='stat-card-val'>" + allFinanceClaims.length + "</div><div class='stat-card-sub'>" + fmtAmt(total) + "</div></div>";
-    filterFinance();
+// ── FINANCE ──
+function loadFIN() {
+  document.getElementById('finBody').innerHTML='<tr><td colspan="8"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    finData=(res.claims||[]).filter(function(c){return c.ManagerApprovalStatus==='PENDING_FINANCE'&&c.FinanceApprovalStatus!=='APPROVED_FINANCE'&&c.FinanceApprovalStatus!=='REJECTED_FINANCE';});
+    var total=0; for(var i=0;i<finData.length;i++) total+=parseFloat(finData[i].Amount)||0;
+    document.getElementById('finStats').innerHTML=statCard('Pending Finance',finData.length,'amber',fmtA(total));
+    filterFIN();
   });
 }
 
-function filterFinance() {
-  var q = (document.getElementById("finSrch").value || "").toLowerCase();
-  var filtered = allFinanceClaims.filter(function(c) { return !q || (c.ClaimID || "").toLowerCase().indexOf(q) >= 0 || (c.ClientName || "").toLowerCase().indexOf(q) >= 0 || (c.ClaimantName || "").toLowerCase().indexOf(q) >= 0; });
-  var html = "";
-  if (!filtered.length) { document.getElementById("finBody").innerHTML = "<tr><td colspan='8'><div class='empty'>No claims pending finance approval.</div></td></tr>"; return; }
-  for (var i = 0; i < filtered.length; i++) {
-    var c = filtered[i]; var cid = (c.ClaimID || "").replace(/'/g, "");
-    var attLink = buildAttLinks(c.AttachmentURL, c.AttachmentRef);
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td style='font-size:11px;color:var(--muted)'>" + (c.Category || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + attLink + "</td><td>";
-    html += "<button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,false,true)'>View</button>";
-    html += "<button class='btn btn-ok' data-id='" + cid + "' onclick='quickFinApprove(this)'>Approve</button>";
-    html += "<button class='btn btn-no' data-id='" + cid + "' onclick='quickFinReject(this)'>Reject</button>";
-    html += "</td></tr>";
+function filterFIN() {
+  var q=(document.getElementById('finSrch').value||'').toLowerCase();
+  var filtered=finData.filter(function(c){return !q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;});
+  var html='';
+  if(!filtered.length){document.getElementById('finBody').innerHTML='<tr><td colspan="8"><div class="empty">No pending finance approvals.</div></td></tr>';return;}
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var cid=(c.ClaimID||'').replace(/'/g,'');
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+attLink(c.AttachmentURL,c.AttachmentRef)+'</td>';
+    html+='<td><button class="btn" onclick="viewClaim(''+cid+'',false,true)">View</button><button class="btn btn-ok" onclick="qFinApprove(''+cid+'')">Approve</button><button class="btn btn-no" onclick="qFinReject(''+cid+'')">Reject</button></td></tr>';
   }
-  document.getElementById("finBody").innerHTML = html;
+  document.getElementById('finBody').innerHTML=html;
 }
 
-// ══ ACCOUNTS ══
-function loadAccounts() {
-  document.getElementById("accBody").innerHTML = "<tr><td colspan='9'><div class='empty'>Loading...</div></td></tr>";
-  api({ action: "getClaims", filter: "all" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    allAccountsClaims = (res.claims || []).filter(function(c) { return c.FinanceApprovalStatus === "APPROVED_FINANCE" || c.DatePaidByFirm; });
-    filterAccounts();
+function qFinApprove(id){if(!confirm('Finance approve '+id+'?'))return;api({action:'financeApprove',claimId:id,status:'APPROVED',remarks:''},function(res){if(res.error){toast(res.error,'err');return;}toast('Finance approved!','ok');loadFIN();});}
+function qFinReject(id){var r=prompt('Reason:');if(!r)return;api({action:'financeApprove',claimId:id,status:'REJECTED',remarks:r},function(res){if(res.error){toast(res.error,'err');return;}toast('Rejected.','ok');loadFIN();});}
+
+// ── ACCOUNTS ──
+function loadACC() {
+  document.getElementById('accBody').innerHTML='<tr><td colspan="9"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    accData=(res.claims||[]).filter(function(c){return c.FinanceApprovalStatus==='APPROVED_FINANCE'||c.DatePaidByFirm;});
+    filterACC();
   });
 }
 
-function filterAccounts() {
-  var q = (document.getElementById("accSrch").value || "").toLowerCase();
-  var f = document.getElementById("accFilter").value;
-  var filtered = allAccountsClaims.filter(function(c) {
-    var mq = !q || (c.ClaimID || "").toLowerCase().indexOf(q) >= 0 || (c.ClientName || "").toLowerCase().indexOf(q) >= 0 || (c.ClaimantName || "").toLowerCase().indexOf(q) >= 0;
-    var mf = !f || (f === "unpaid" && !c.DatePaidByFirm) || (f === "uninvoiced" && c.Category === "Client Reimbursable" && !c.DateInvoicedToClient) || (f === "unreceived" && c.DateInvoicedToClient && !c.DateReceivedFromClient);
-    return mq && mf;
+function filterACC() {
+  var q=(document.getElementById('accSrch').value||'').toLowerCase();
+  var f=document.getElementById('accFil').value;
+  var filtered=accData.filter(function(c){
+    var mq=!q||(c.ClaimID||'').toLowerCase().indexOf(q)>=0||(c.ClientName||'').toLowerCase().indexOf(q)>=0||(c.ClaimantName||'').toLowerCase().indexOf(q)>=0;
+    var mf=!f||(f==='unpaid'&&!c.DatePaidByFirm)||(f==='uninvoiced'&&c.Category==='Client Reimbursable'&&!c.DateInvoicedToClient)||(f==='unreceived'&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
+    return mq&&mf;
   });
-  var html = "";
-  if (!filtered.length) { document.getElementById("accBody").innerHTML = "<tr><td colspan='9'><div class='empty'>No records found.</div></td></tr>"; return; }
-  for (var i = 0; i < filtered.length; i++) {
-    var c = filtered[i]; var cid = (c.ClaimID || "").replace(/'/g, "");
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + (c.ClientName || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td style='font-size:11px;color:var(--muted)'>" + (c.Category || "-") + "</td>";
-    html += "<td>" + (c.DatePaidByFirm ? fmtDate(c.DatePaidByFirm) : "<span style='color:var(--amber)'>Pending</span>") + "</td>";
-    html += "<td>" + (c.DateInvoicedToClient ? fmtDate(c.DateInvoicedToClient) : (c.Category === "Client Reimbursable" ? "<span style='color:var(--amber)'>Pending</span>" : "-")) + "</td>";
-    html += "<td>" + (c.DateReceivedFromClient ? fmtDate(c.DateReceivedFromClient) : (c.DateInvoicedToClient ? "<span style='color:var(--amber)'>Pending</span>" : "-")) + "</td>";
-    html += "<td><button class='btn' data-id='" + cid + "' onclick='openAccModal(this)'>Update</button></td></tr>";
+  var html='';
+  if(!filtered.length){document.getElementById('accBody').innerHTML='<tr><td colspan="9"><div class="empty">No records.</div></td></tr>';return;}
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var cid=(c.ClaimID||'').replace(/'/g,'');
+    var pd=c.DatePaidByFirm?fmtD(c.DatePaidByFirm):'<span style="color:var(--amber)">Pending</span>';
+    var id2=c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):(c.Category==='Client Reimbursable'?'<span style="color:var(--amber)">Pending</span>':'-');
+    var rd=c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?'<span style="color:var(--amber)">Pending</span>':'-');
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td>'+pd+'</td><td>'+id2+'</td><td>'+rd+'</td><td><button class="btn" onclick="openAccMod(''+cid+'')">Update</button></td></tr>';
   }
-  document.getElementById("accBody").innerHTML = html;
+  document.getElementById('accBody').innerHTML=html;
 }
 
-function openAccModal(btn) {
-  var id = btn.getAttribute("data-id");
-  var c = null;
-  for (var i = 0; i < allAccountsClaims.length; i++) { if (allAccountsClaims[i].ClaimID === id) { c = allAccountsClaims[i]; break; } }
-  if (!c) return;
-  document.getElementById("accClaimId").value = id;
-  document.getElementById("accMTitle").textContent = "Update: " + id;
-  document.getElementById("accPaidBy").value = c.PaidBy || "";
-  document.getElementById("accDatePaid").value = toDateInput(c.DatePaidByFirm);
-  document.getElementById("accDateInvoiced").value = toDateInput(c.DateInvoicedToClient);
-  document.getElementById("accDateReceived").value = toDateInput(c.DateReceivedFromClient);
-  document.getElementById("accOverlay").className = "overlay on";
+function openAccMod(id) {
+  var c=null; for(var i=0;i<accData.length;i++){if(accData[i].ClaimID===id){c=accData[i];break;}}
+  if(!c) return;
+  document.getElementById('acId').value=id;
+  document.getElementById('acMTtl').textContent='Update: '+id;
+  document.getElementById('acPb').value=c.PaidBy||'';
+  document.getElementById('acDp').value=toDateInput(c.DatePaidByFirm);
+  document.getElementById('acDi').value=toDateInput(c.DateInvoicedToClient);
+  document.getElementById('acDr').value=toDateInput(c.DateReceivedFromClient);
+  document.getElementById('accOv').className='overlay on';
 }
-function closeAccModal() { document.getElementById("accOverlay").className = "overlay"; }
-function saveAccDetails() {
-  var btn = document.getElementById("accSaveBtn"); btn.disabled = true; btn.textContent = "Saving...";
-  api({ action:"updateAccountsDetails", claimId:document.getElementById("accClaimId").value, paidBy:document.getElementById("accPaidBy").value, datePaidByFirm:document.getElementById("accDatePaid").value, dateInvoicedToClient:document.getElementById("accDateInvoiced").value, dateReceivedFromClient:document.getElementById("accDateReceived").value }, function(res) {
-    btn.disabled = false; btn.textContent = "Save Details";
-    if (res.error) { toast(res.error, "err"); return; }
-    // Update local cache immediately so list shows updated values
-    var cid2 = document.getElementById("accClaimId").value;
-    for (var x = 0; x < allAccountsClaims.length; x++) {
-      if (allAccountsClaims[x].ClaimID === cid2) {
-        allAccountsClaims[x].PaidBy = document.getElementById("accPaidBy").value;
-        allAccountsClaims[x].DatePaidByFirm = document.getElementById("accDatePaid").value;
-        allAccountsClaims[x].DateInvoicedToClient = document.getElementById("accDateInvoiced").value;
-        allAccountsClaims[x].DateReceivedFromClient = document.getElementById("accDateReceived").value;
-        break;
-      }
-    }
-    toast("Details updated successfully!", "ok"); closeAccModal(); filterAccounts();
+function closeAccMod(){document.getElementById('accOv').className='overlay';}
+function saveAcc(){
+  var btn=document.getElementById('acSv'); btn.disabled=true; btn.textContent='Saving...';
+  api({action:'updateAccountsDetails',claimId:document.getElementById('acId').value,paidBy:document.getElementById('acPb').value,datePaidByFirm:document.getElementById('acDp').value,dateInvoicedToClient:document.getElementById('acDi').value,dateReceivedFromClient:document.getElementById('acDr').value},function(res){
+    btn.disabled=false; btn.textContent='Save';
+    if(res.error){toast(res.error,'err');return;}
+    // Update local cache
+    var cid=document.getElementById('acId').value;
+    for(var i=0;i<accData.length;i++){if(accData[i].ClaimID===cid){accData[i].PaidBy=document.getElementById('acPb').value;accData[i].DatePaidByFirm=document.getElementById('acDp').value;accData[i].DateInvoicedToClient=document.getElementById('acDi').value;accData[i].DateReceivedFromClient=document.getElementById('acDr').value;break;}}
+    toast('Updated!','ok'); closeAccMod(); filterACC();
   });
 }
 
-// ══ MODAL ══
-function getClaimById(id) {
-  var lists = [myClaimsData, allTeamClaims, allFinanceClaims, allAccountsClaims];
-  for (var l = 0; l < lists.length; l++) { for (var i = 0; i < lists[l].length; i++) { if (lists[l][i].ClaimID === id) return lists[l][i]; } }
+// ── CLAIM MODAL ──
+function findClaim(id) {
+  var lists=[myData,teamData,finData,accData];
+  for(var l=0;l<lists.length;l++){for(var i=0;i<lists[l].length;i++){if(lists[l][i].ClaimID===id) return lists[l][i];}}
   return null;
 }
 
-function viewClaimModal(btn, canApprove, isFinance) {
-  var id = btn.getAttribute("data-id");
-  var c = getClaimById(id);
-  if (!c) return;
-  currentModalClaim = c;
-  document.getElementById("mTitle").textContent = c.ClaimID;
-  document.getElementById("mAmt").textContent = fmtAmt(c.Amount);
-  document.getElementById("mBadge").innerHTML = statusBadge(getClaimStatus(c));
-  var ib = document.getElementById("mInfoBar");
-  if (canApprove) { ib.textContent = "This claim is awaiting your approval."; ib.style.display = "block"; }
-  else { ib.style.display = "none"; }
-  var fields = [["Claimant", c.ClaimantName || c.ClaimantID || "-"],["Date of Expense", fmtDate(c.DateOfExpense)],["Date Submitted", fmtDate(c.DateClaimed)],["Client", c.ClientName || "-"],["Major Head", c.MajorHead || "-"],["Minor Head", c.MinorHead || "-"],["Nature", c.Nature || "-"],["Category", c.Category || "-"]];
-  if (c.SubNature) fields.push(["Sub-Nature", c.SubNature]);
-  if (c.AttachmentRef || c.AttachmentURL) {
-    fields.push(["Attachments", buildAttLinks(c.AttachmentURL, c.AttachmentRef)]);
-  }
-  var dhtml = "";
-  for (var i = 0; i < fields.length; i++) { dhtml += "<div class='di'><div class='di-l'>" + fields[i][0] + "</div><div class='di-v'>" + fields[i][1] + "</div></div>"; }
-  dhtml += "<div class='di di-full'><div class='di-l'>Description</div><div class='di-v'>" + (c.Description || "-") + "</div></div>";
-  if (c.ManagerRemarks) dhtml += "<div class='di di-full'><div class='di-l'>Manager Remarks</div><div class='di-v'>" + c.ManagerRemarks + "</div></div>";
-  if (c.FinanceRemarks) dhtml += "<div class='di di-full'><div class='di-l'>Finance Remarks</div><div class='di-v'>" + c.FinanceRemarks + "</div></div>";
-  document.getElementById("mDetails").innerHTML = dhtml;
-  var ra = document.getElementById("mRemarksArea");
-  var mfoot = document.getElementById("mFoot");
-  mfoot.innerHTML = "";
-  var remarksHtml = "<div style='margin-top:10px'><label style='font-size:11px;font-weight:600;text-transform:uppercase;color:#374151;display:block;margin-bottom:5px'>Remarks</label><textarea id='mRemarks' style='width:100%;padding:9px 12px;border:1.5px solid #e5e7eb;border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;min-height:70px;outline:none' placeholder='Optional for approval, required for rejection'></textarea></div>";
-
-  function makeBtn(cls, txt, fn) {
-    var b = document.createElement("button");
-    b.className = cls; b.textContent = txt;
-    b.addEventListener("click", fn);
-    return b;
-  }
-
-  if (canApprove && !isFinance) {
-    ra.innerHTML = remarksHtml;
-    mfoot.appendChild(makeBtn("btn-sec", "Cancel", closeModal));
-    mfoot.appendChild(makeBtn("btn btn-no", "Reject", function() { doMgrAction("REJECTED"); }));
-    mfoot.appendChild(makeBtn("btn-pri", "Approve Claim", function() { doMgrAction("APPROVED"); }));
-  } else if (isFinance) {
-    ra.innerHTML = remarksHtml;
-    mfoot.appendChild(makeBtn("btn-sec", "Cancel", closeModal));
-    mfoot.appendChild(makeBtn("btn btn-no", "Reject", function() { doFinAction("REJECTED"); }));
-    mfoot.appendChild(makeBtn("btn-pri", "Finance Approve", function() { doFinAction("APPROVED"); }));
+function viewClaim(id, canApprove, isFinance) {
+  var c=findClaim(id); if(!c) return;
+  document.getElementById('mTtl').textContent=c.ClaimID;
+  document.getElementById('mAmt').textContent=fmtA(c.Amount);
+  document.getElementById('mBdg').innerHTML=statusBadge(getStatus(c));
+  var ib=document.getElementById('mIBar');
+  if(canApprove){ib.textContent='This claim awaits your approval.';ib.style.display='block';}else{ib.style.display='none';}
+  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
+  if(c.SubNature) fields.push(['Sub-Nature',c.SubNature]);
+  var dhtml=''; for(var i=0;i<fields.length;i++) dhtml+='<div class="di"><div class="dl">'+fields[i][0]+'</div><div class="dv">'+fields[i][1]+'</div></div>';
+  dhtml+='<div class="di df"><div class="dl">Description</div><div class="dv">'+(c.Description||'-')+'</div></div>';
+  if(c.AttachmentURL||c.AttachmentRef) dhtml+='<div class="di df"><div class="dl">Attachments</div><div class="dv">'+attLink(c.AttachmentURL,c.AttachmentRef)+'</div></div>';
+  if(c.ManagerRemarks) dhtml+='<div class="di df"><div class="dl">Manager Remarks</div><div class="dv">'+c.ManagerRemarks+'</div></div>';
+  if(c.FinanceRemarks) dhtml+='<div class="di df"><div class="dl">Finance Remarks</div><div class="dv">'+c.FinanceRemarks+'</div></div>';
+  document.getElementById('mDets').innerHTML=dhtml;
+  var rem=document.getElementById('mRem'); var ft=document.getElementById('mFt');
+  rem.innerHTML=''; ft.innerHTML='';
+  function mkBtn(cls,txt,fn){var b=document.createElement('button');b.className=cls;b.textContent=txt;b.addEventListener('click',fn);return b;}
+  if(canApprove&&!isFinance){
+    rem.innerHTML='<div style="margin-top:10px"><label style="font-size:11px;font-weight:600;text-transform:uppercase;color:#374151;display:block;margin-bottom:5px">Remarks</label><textarea id="mRem2" style="width:100%;padding:9px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;min-height:70px;outline:none" placeholder="Optional for approval, required for rejection"></textarea></div>';
+    ft.appendChild(mkBtn('bsec','Cancel',closeMod));
+    ft.appendChild(mkBtn('btn btn-no','Reject',function(){doMgrAction(id,'REJECTED');}));
+    ft.appendChild(mkBtn('bpri','Approve',function(){doMgrAction(id,'APPROVED');}));
+  } else if(isFinance){
+    rem.innerHTML='<div style="margin-top:10px"><label style="font-size:11px;font-weight:600;text-transform:uppercase;color:#374151;display:block;margin-bottom:5px">Remarks</label><textarea id="mRem2" style="width:100%;padding:9px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;min-height:70px;outline:none" placeholder="Optional for approval, required for rejection"></textarea></div>';
+    ft.appendChild(mkBtn('bsec','Cancel',closeMod));
+    ft.appendChild(mkBtn('btn btn-no','Reject',function(){doFinAction(id,'REJECTED');}));
+    ft.appendChild(mkBtn('bpri','Finance Approve',function(){doFinAction(id,'APPROVED');}));
   } else {
-    ra.innerHTML = "";
-    if (getClaimStatus(c) === "APPROVED_FINANCE") {
-      mfoot.appendChild(makeBtn("btn-sec", "Close", closeModal));
-      var pid = id;
-      mfoot.appendChild(makeBtn("btn-pri", "Print Summary", function() { printClaimById(pid); }));
-    } else {
-      mfoot.appendChild(makeBtn("btn-pri", "Close", closeModal));
-    }
+    ft.appendChild(mkBtn('bsec','Close',closeMod));
+    if(getStatus(c)==='APPROVED_FINANCE') ft.appendChild(mkBtn('bpri','Print Summary',function(){printClaim(id);}));
   }
-  document.getElementById("detailOverlay").className = "overlay on";
+  document.getElementById('detOv').className='overlay on';
 }
 
-function closeModal() { document.getElementById("detailOverlay").className = "overlay"; currentModalClaim = null; }
+function closeMod(){document.getElementById('detOv').className='overlay';}
 
-function doMgrAction(status) {
-  if (!currentModalClaim) return;
-  var remarks = (document.getElementById("mRemarks") || {}).value || "";
-  if (status === "REJECTED" && !remarks.trim()) { toast("Please enter a reason for rejection.", "err"); return; }
-  api({ action:"managerApprove", claimId:currentModalClaim.ClaimID, status:status, remarks:remarks }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    toast(status === "APPROVED" ? "Claim approved! Sent to Finance." : "Claim rejected.", "ok");
-    closeModal(); loadApprovals(); if (sess.role === "MANAGER" || sess.role === "ADMIN") loadManagerDashboard();
+function doMgrAction(id,status){
+  var rem=(document.getElementById('mRem2')||{}).value||'';
+  if(status==='REJECTED'&&!rem.trim()){toast('Please enter rejection reason.','err');return;}
+  api({action:'managerApprove',claimId:id,status:status,remarks:rem},function(res){if(res.error){toast(res.error,'err');return;}toast(status==='APPROVED'?'Approved! Sent to Finance.':'Rejected.','ok');closeMod();loadAP();loadDash();});
+}
+function doFinAction(id,status){
+  var rem=(document.getElementById('mRem2')||{}).value||'';
+  if(status==='REJECTED'&&!rem.trim()){toast('Please enter rejection reason.','err');return;}
+  api({action:'financeApprove',claimId:id,status:status,remarks:rem},function(res){if(res.error){toast(res.error,'err');return;}toast(status==='APPROVED'?'Finance approved!':'Rejected.','ok');closeMod();loadFIN();});
+}
+
+// ── NEW CLAIM ──
+var MINOR={Travel:['Air Travel','Train','Bus / Taxi','Own Vehicle','Metro / Local','Auto Rickshaw'],'Client Entertainment':['Lunch / Dinner','Breakfast','Gifts','Events','Hotel Hospitality'],Accommodation:['Hotel Stay','Guest House','Service Apartment'],Communication:['Mobile Recharge','Internet','Courier','Telephone'],'Office Supplies':['Stationery','Printing','Equipment','Software'],'Professional Fees':['Consultant','Legal','Audit Support','Valuation'],Miscellaneous:['Bank Charges','Subscription','Other']};
+var NATURE={'Air Travel':['Domestic','International'],Train:['Local','Outstation'],'Bus / Taxi':['Local','Outstation'],'Own Vehicle':['Local','Outstation'],'Metro / Local':['Within City'],'Hotel Stay':['Domestic','International'],'Lunch / Dinner':['Client Meeting','Team Meeting','Internal'],default:['Standard','Special','Recurring','One-time']};
+
+function setupNewClaim() {
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('ncDate').max=today;
+  var ms=document.getElementById('ncMajor');
+  var majorList=Object.keys(MINOR);
+  for(var i=0;i<majorList.length;i++){var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);}
+  ms.addEventListener('change',function(){
+    var opts=MINOR[this.value]||[]; var mn=document.getElementById('ncMinor');
+    mn.innerHTML='<option value="">Select</option>';
+    for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
+    document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
   });
-}
-
-function doFinAction(status) {
-  if (!currentModalClaim) return;
-  var remarks = (document.getElementById("mRemarks") || {}).value || "";
-  if (status === "REJECTED" && !remarks.trim()) { toast("Please enter a reason for rejection.", "err"); return; }
-  api({ action:"financeApprove", claimId:currentModalClaim.ClaimID, status:status, remarks:remarks }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    toast(status === "APPROVED" ? "Finance approved!" : "Claim rejected by finance.", "ok");
-    closeModal(); loadFinance();
+  document.getElementById('ncMinor').addEventListener('change',function(){
+    var opts=NATURE[this.value]||NATURE.default; var ns=document.getElementById('ncNature');
+    ns.innerHTML='<option value="">Select</option>';
+    for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
   });
-}
-
-function quickApproveFromDash(btn) {
-  var id = btn.getAttribute("data-id");
-  if (!confirm("Approve claim " + id + "?")) return;
-  btn.disabled = true;
-  api({ action:"managerApprove", claimId:id, status:"APPROVED", remarks:"" }, function(res) {
-    btn.disabled = false;
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Claim " + id + " approved!", "ok"); loadDashboard();
+  document.getElementById('ncAmt').addEventListener('input',function(){
+    var v=parseFloat(this.value)||0; document.getElementById('ncAmtD').textContent='Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2});
   });
+  var cats=document.querySelectorAll('.cat-opt');
+  for(var c=0;c<cats.length;c++){cats[c].addEventListener('click',function(){for(var x=0;x<cats.length;x++) cats[x].className='cat-opt';this.className='cat-opt sel';});}
 }
 
-function quickRejectFromDash(btn) {
-  var id = btn.getAttribute("data-id");
-  var reason = prompt("Reason for rejection (required):");
-  if (!reason || !reason.trim()) return;
-  btn.disabled = true;
-  api({ action:"managerApprove", claimId:id, status:"REJECTED", remarks:reason }, function(res) {
-    btn.disabled = false;
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Claim " + id + " rejected.", "ok"); loadDashboard();
-  });
+function resetNC(){
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('ncDate').value=today;
+  document.getElementById('ncClient').value='';
+  document.getElementById('ncMajor').value='';
+  document.getElementById('ncMinor').innerHTML='<option value="">Select</option>';
+  document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
+  document.getElementById('ncSub').value='';
+  document.getElementById('ncAmt').value='';
+  document.getElementById('ncDesc').value='';
+  document.getElementById('ncAmtD').textContent='Rs. 0.00';
+  document.getElementById('ncAttRef').value='';
+  document.getElementById('ncAttURL').value='';
+  document.getElementById('refStatus').textContent='';
+  var cats=document.querySelectorAll('.cat-opt');
+  for(var i=0;i<cats.length;i++) cats[i].className='cat-opt';
+  document.getElementById('cat0').className='cat-opt sel';
+  document.getElementById('cat0').querySelector('input').checked=true;
 }
 
-function quickApproveDirect(btn) {
-  var id = btn.getAttribute("data-id"); var c = getClaimById(id);
-  if (!confirm("Approve claim " + id + " for " + fmtAmt(c ? c.Amount : 0) + "?")) return;
-  btn.disabled = true; btn.textContent = "...";
-  api({ action:"managerApprove", claimId:id, status:"APPROVED", remarks:"" }, function(res) {
-    btn.disabled = false; btn.textContent = "Approve";
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Approved!", "ok"); loadApprovals();
-  });
-}
-
-function quickRejectDirect(btn) {
-  var id = btn.getAttribute("data-id");
-  var reason = prompt("Reason for rejection:");
-  if (!reason) return;
-  btn.disabled = true; btn.textContent = "...";
-  api({ action:"managerApprove", claimId:id, status:"REJECTED", remarks:reason }, function(res) {
-    btn.disabled = false; btn.textContent = "Reject";
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Claim rejected.", "ok"); loadApprovals();
-  });
-}
-
-function quickFinApprove(btn) {
-  var id = btn.getAttribute("data-id");
-  if (!confirm("Finance approve claim " + id + "?")) return;
-  btn.disabled = true; btn.textContent = "...";
-  api({ action:"financeApprove", claimId:id, status:"APPROVED", remarks:"" }, function(res) {
-    btn.disabled = false; btn.textContent = "Approve";
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Finance approved!", "ok"); loadFinance();
+function getRef(){
+  document.getElementById('refStatus').textContent='Generating...';
+  api({action:'getAttachmentRef'},function(res){
+    if(res.error){document.getElementById('refStatus').textContent='Error: '+res.error;return;}
+    document.getElementById('ncAttRef').value=res.ref;
+    document.getElementById('refStatus').textContent='Reference assigned!';
+    setTimeout(function(){document.getElementById('refStatus').textContent='';},3000);
   });
 }
 
-function quickFinReject(btn) {
-  var id = btn.getAttribute("data-id");
-  var reason = prompt("Reason for rejection:");
-  if (!reason) return;
-  btn.disabled = true; btn.textContent = "...";
-  api({ action:"financeApprove", claimId:id, status:"REJECTED", remarks:reason }, function(res) {
-    btn.disabled = false; btn.textContent = "Reject";
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Rejected.", "ok"); loadFinance();
+function submitClaim(){
+  var checks=[{id:'ncDate',n:'Date'},{id:'ncClient',n:'Client'},{id:'ncMajor',n:'Major Head'},{id:'ncMinor',n:'Minor Head'},{id:'ncNature',n:'Nature'},{id:'ncAmt',n:'Amount'},{id:'ncDesc',n:'Description'}];
+  for(var i=0;i<checks.length;i++){var el=document.getElementById(checks[i].id);if(!el.value||!el.value.trim()){toast('Please fill in: '+checks[i].n,'err');el.focus();return;}}
+  var catEl=document.querySelector('input[name=cat]:checked');
+  var btn=document.getElementById('ncSubmit');
+  if(btn.disabled) return;
+  btn.disabled=true; btn.textContent='Submitting...';
+  api({action:'submitClaim',dateExpense:document.getElementById('ncDate').value,clientName:document.getElementById('ncClient').value.trim(),majorHead:document.getElementById('ncMajor').value,minorHead:document.getElementById('ncMinor').value,nature:document.getElementById('ncNature').value,subNature:document.getElementById('ncSub').value.trim(),description:document.getElementById('ncDesc').value.trim(),amount:document.getElementById('ncAmt').value,category:catEl?catEl.value:'Non Reimbursable',attachmentRef:document.getElementById('ncAttRef').value.trim(),attachmentURL:document.getElementById('ncAttURL').value.trim()},function(res){
+    btn.disabled=false; btn.textContent='Submit for Approval';
+    if(res.error){toast('Error: '+res.error,'err');return;}
+    toast('Claim '+res.claimId+' submitted! Pending manager approval.','ok');
+    setTimeout(function(){go('my-claims');},2000);
   });
 }
 
-// ══ NEW CLAIM FORM ══
-var MINOR = { "Travel":["Air Travel","Train","Bus / Taxi","Own Vehicle","Metro / Local","Auto Rickshaw"], "Client Entertainment":["Lunch / Dinner","Breakfast","Gifts","Events","Hotel Hospitality"], "Accommodation":["Hotel Stay","Guest House","Service Apartment"], "Communication":["Mobile Recharge","Internet","Courier / Postage","Telephone"], "Office Supplies":["Stationery","Printing","Equipment","Software"], "Professional Fees":["Consultant","Legal","Audit Support","Valuation"], "Miscellaneous":["Bank Charges","Subscription","Other"] };
-var NATURE = { "Air Travel":["Domestic","International"], "Train":["Local","Outstation"], "Bus / Taxi":["Local","Outstation"], "Own Vehicle":["Local","Outstation"], "Metro / Local":["Within City"], "Hotel Stay":["Domestic","International"], "Lunch / Dinner":["Client Meeting","Team Meeting","Internal"], "default":["Standard","Special","Recurring","One-time"] };
-var majorList = ["Travel","Client Entertainment","Accommodation","Communication","Office Supplies","Professional Fees","Miscellaneous"];
+// ── REPORTS ──
+function buildRpts(){
+  var role=sess.role;
+  var cards=[{id:'summary',t:'Claims Summary',s:'All claims overview'},{id:'pending_manager',t:'Pending Manager',s:'Awaiting manager approval'},{id:'pending_finance',t:'Pending Finance',s:'Awaiting finance approval'},{id:'pending_payment',t:'Pending Payment',s:'Approved but not paid'},{id:'pending_receipt',t:'Pending Receipt',s:'Invoiced, not received'},{id:'clientwise',t:'Client-wise',s:'Grouped by client'}];
+  if(role==='ADMIN'||role==='FINANCE_MGR') cards.push({id:'employeewise',t:'Employee-wise',s:'Grouped by employee'});
+  var html=''; for(var i=0;i<cards.length;i++){var cd=cards[i];html+='<div style="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s" onclick="loadRpt(''+cd.id+'')" onmouseover="this.style.borderColor='var(--blue3)'" onmouseout="this.style.borderColor='var(--border)'"><div style="font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px">'+cd.t+'</div><div style="font-size:11px;color:var(--muted)">'+cd.s+'</div></div>';}
+  document.getElementById('rptCards').innerHTML=html;
+  document.getElementById('rptOut').innerHTML='';
+}
 
-function initNewClaimForm() {
-  var ms = document.getElementById("ncMajor");
-  for (var i = 0; i < majorList.length; i++) { var o = document.createElement("option"); o.value = majorList[i]; o.textContent = majorList[i]; ms.appendChild(o); }
-  ms.addEventListener("change", function() {
-    var opts = MINOR[this.value] || [];
-    var mn = document.getElementById("ncMinor"); mn.innerHTML = "<option value=''>Select</option>";
-    for (var i = 0; i < opts.length; i++) { var o = document.createElement("option"); o.value = opts[i]; o.textContent = opts[i]; mn.appendChild(o); }
-    document.getElementById("ncNature").innerHTML = "<option value=''>Select</option>";
+function loadRpt(rid){
+  document.getElementById('rptOut').innerHTML='<div class="empty">Loading...</div>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    var all=res.claims||[];
+    var filtered=[];
+    if(rid==='summary') filtered=all;
+    else if(rid==='pending_manager') filtered=all.filter(function(c){return c.ManagerApprovalStatus==='PENDING_MANAGER';});
+    else if(rid==='pending_finance') filtered=all.filter(function(c){return c.ManagerApprovalStatus==='PENDING_FINANCE';});
+    else if(rid==='pending_payment') filtered=all.filter(function(c){return c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DatePaidByFirm;});
+    else if(rid==='pending_receipt') filtered=all.filter(function(c){return c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
+    else if(rid==='clientwise') filtered=all.slice().sort(function(a,b){return (a.ClientName||'').localeCompare(b.ClientName||'');});
+    else if(rid==='employeewise') filtered=all.slice().sort(function(a,b){return (a.ClaimantName||'').localeCompare(b.ClaimantName||'');});
+    else filtered=all;
+    rptData=filtered;
+    renderRpt(rid,filtered);
   });
-  document.getElementById("ncMinor").addEventListener("change", function() {
-    var opts = NATURE[this.value] || NATURE["default"];
-    var ns = document.getElementById("ncNature"); ns.innerHTML = "<option value=''>Select</option>";
-    for (var i = 0; i < opts.length; i++) { var o = document.createElement("option"); o.value = opts[i]; o.textContent = opts[i]; ns.appendChild(o); }
+}
+
+function renderRpt(rid,data){
+  var total=0; for(var i=0;i<data.length;i++) total+=parseFloat(data[i].Amount)||0;
+  var wrap=document.createElement('div'); wrap.className='tc';
+  var hdr=document.createElement('div'); hdr.className='th2';
+  var ttl=document.createElement('div'); ttl.className='th2-title'; ttl.textContent=rid.replace(/_/g,' ')+' ('+data.length+' records - '+fmtA(total)+')';
+  var tb=document.createElement('div'); tb.className='tb';
+  var si=document.createElement('input'); si.className='srch'; si.placeholder='Search...'; si.style.width='160px';
+  si.addEventListener('input',function(){
+    var q=this.value.toLowerCase();
+    var rows=wrap.querySelectorAll('tbody tr');
+    for(var i=0;i<rows.length;i++) rows[i].style.display=rows[i].textContent.toLowerCase().indexOf(q)>=0?'':'none';
   });
-  document.getElementById("ncAmount").addEventListener("input", function() {
-    var v = parseFloat(this.value) || 0;
-    document.getElementById("ncAmtDisplay").textContent = "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits:2 });
+  var eb=document.createElement('button'); eb.className='ghost'; eb.textContent='Export CSV'; eb.addEventListener('click',function(){exportCSV(rptData,'report_'+rid);});
+  var pb=document.createElement('button'); pb.className='ghost'; pb.textContent='Print / PDF'; pb.addEventListener('click',function(){window.print();});
+  tb.appendChild(si); tb.appendChild(eb); tb.appendChild(pb);
+  hdr.appendChild(ttl); hdr.appendChild(tb); wrap.appendChild(hdr);
+  var tw=document.createElement('div'); tw.className='tw';
+  var tbl=document.createElement('table');
+  var html='<thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Major Head</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  if(!data.length) html+='<tr><td colspan="8"><div class="empty">No records.</div></td></tr>';
+  else for(var i=0;i<data.length;i++){var c=data[i];var s=getStatus(c);html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td>'+(c.MajorHead||'-')+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td></tr>';}
+  html+='</tbody>';
+  tbl.innerHTML=html; tw.appendChild(tbl); wrap.appendChild(tw);
+  document.getElementById('rptOut').innerHTML=''; document.getElementById('rptOut').appendChild(wrap);
+}
+
+// ── USERS ──
+function loadUSR(){
+  document.getElementById('usrBody').innerHTML='<tr><td colspan="7"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getEmployees'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    usrData=res.employees||[];
+    fillMgrDrop(); filterUSR();
   });
-  var cats = document.querySelectorAll(".cat-opt");
-  for (var c = 0; c < cats.length; c++) {
-    cats[c].addEventListener("click", function() {
-      for (var x = 0; x < cats.length; x++) cats[x].className = "cat-opt";
-      this.className = "cat-opt sel";
-    });
+}
+function fillMgrDrop(){var sel=document.getElementById('uMgr');sel.innerHTML='<option value="">No Manager</option>';for(var i=0;i<usrData.length;i++){var e=usrData[i];if(e.role==='MANAGER'||e.role==='ADMIN'||e.role==='FINANCE_MGR'){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.role+')';sel.appendChild(o);}}}
+function filterUSR(){
+  var q=(document.getElementById('usrSrch').value||'').toLowerCase();
+  var filtered=usrData.filter(function(e){return !q||(e.name||'').toLowerCase().indexOf(q)>=0||(e.email||'').toLowerCase().indexOf(q)>=0;});
+  var rlbl={EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Mgr',ACCOUNTS:'Accounts',ADMIN:'Admin'};
+  var html='';
+  for(var i=0;i<filtered.length;i++){
+    var e=filtered[i]; var act=String(e.isActive).toUpperCase()==='TRUE'; var uid=(e.id||'').replace(/'/g,'');
+    html+='<tr><td><span class="av">'+(e.name||'?').charAt(0).toUpperCase()+'</span>'+(e.name||'-')+'</td><td><span class="cid">'+e.id+'</span></td><td>'+(e.email||'-')+'</td>';
+    html+='<td><span class="badge '+(act?'b-af':'b-rej')+'">'+(rlbl[e.role]||e.role)+'</span></td><td>'+(e.department||'-')+'</td>';
+    html+='<td><span style="font-size:12px;font-weight:600;color:'+(act?'#065f46':'#991b1b')+'">'+(act?'Active':'Inactive')+'</span></td>';
+    html+='<td><button class="btn" onclick="openEditUser(''+uid+'')">Edit</button><button class="btn '+(act?'btn-no':'btn-ok')+'" onclick="togUser(''+uid+'','+act+')">'+(act?'Deactivate':'Activate')+'</button></td></tr>';
   }
-  // Upload via popup window - no drag/drop needed
+  document.getElementById('usrBody').innerHTML=html||'<tr><td colspan="7"><div class="empty">No users.</div></td></tr>';
+}
+function openAddUser(){document.getElementById('uMTtl').textContent='Add Employee';document.getElementById('uId').value='';document.getElementById('uNm').value='';document.getElementById('uEm').value='';document.getElementById('uPw').value='';document.getElementById('uRl').value='';document.getElementById('uDp').value='';document.getElementById('uMgr').value='';document.getElementById('uPwdL').innerHTML='Password <span class="req">*</span>';document.getElementById('uStRow').style.display='none';document.getElementById('uSv').textContent='Add Employee';document.getElementById('usrOv').className='overlay on';}
+function openEditUser(id){var e=null;for(var i=0;i<usrData.length;i++){if(usrData[i].id===id){e=usrData[i];break;}}if(!e)return;document.getElementById('uMTtl').textContent='Edit Employee';document.getElementById('uId').value=e.id;document.getElementById('uNm').value=e.name||'';document.getElementById('uEm').value=e.email||'';document.getElementById('uPw').value='';document.getElementById('uRl').value=e.role||'';document.getElementById('uDp').value=e.department||'';document.getElementById('uMgr').value=e.managerId||'';document.getElementById('uSt').value=String(e.isActive).toUpperCase()==='TRUE'?'TRUE':'FALSE';document.getElementById('uPwdL').innerHTML='New Password <small style="color:var(--muted)">(blank=keep)</small>';document.getElementById('uStRow').style.display='flex';document.getElementById('uSv').textContent='Save Changes';document.getElementById('usrOv').className='overlay on';}
+function closeUserMod(){document.getElementById('usrOv').className='overlay';}
+function saveUser(){
+  var eid=document.getElementById('uId').value,name=document.getElementById('uNm').value.trim(),email=document.getElementById('uEm').value.trim(),pwd=document.getElementById('uPw').value.trim(),role=document.getElementById('uRl').value,dept=document.getElementById('uDp').value.trim(),mgr=document.getElementById('uMgr').value,stat=document.getElementById('uSt').value;
+  if(!name||!email||!role){toast('Name, email and role required.','err');return;}
+  if(!eid&&!pwd){toast('Password required for new employee.','err');return;}
+  var btn=document.getElementById('uSv');btn.disabled=true;btn.textContent='Saving...';
+  var p={}; if(eid){p.action='updateEmployee';p.employeeId=eid;p.Name=name;p.Email=email;p.Role=role;p.Department=dept;p.ManagerID=mgr;p.IsActive=stat;if(pwd)p.Password=pwd;}else{p.action='addEmployee';p.name=name;p.email=email;p.password=pwd;p.role=role;p.department=dept;p.managerId=mgr;}
+  api(p,function(res){btn.disabled=false;btn.textContent=eid?'Save Changes':'Add Employee';if(res.error){toast(res.error,'err');return;}toast(eid?'Employee updated!':'Employee added! ID: '+res.id,'ok');closeUserMod();loadUSR();});
+}
+function togUser(id,isActive){if(!confirm((isActive?'Deactivate':'Activate')+' this employee?'))return;api({action:'updateEmployee',employeeId:id,IsActive:isActive?'FALSE':'TRUE'},function(res){if(res.error){toast(res.error,'err');return;}toast((isActive?'Deactivated.':'Activated.'),'ok');loadUSR();});}
+
+// ── EXPORT ──
+function exportCSV(data,fname){
+  if(!data||!data.length){toast('No data to export.','err');return;}
+  var keys=['ClaimID','ClaimantName','DateOfExpense','DateClaimed','ClientName','MajorHead','MinorHead','Nature','Category','Amount','ManagerApprovalStatus','FinanceApprovalStatus','DatePaidByFirm','DateInvoicedToClient','DateReceivedFromClient'];
+  var rows=[keys];
+  for(var i=0;i<data.length;i++){var row=[];for(var j=0;j<keys.length;j++) row.push(data[i][keys[j]]||'');rows.push(row);}
+  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=fname+'.csv';a.click();URL.revokeObjectURL(url);
+  toast('Exported!','ok');
 }
 
-function resetNewClaim() {
-  var today = new Date().toISOString().split("T")[0];
-  document.getElementById("ncDate").value = today;
-  document.getElementById("ncDate").max = today;
-  document.getElementById("ncClient").value = "";
-  document.getElementById("ncMajor").value = "";
-  document.getElementById("ncMinor").innerHTML = "<option value=''>Select</option>";
-  document.getElementById("ncNature").innerHTML = "<option value=''>Select</option>";
-  document.getElementById("ncSubNature").value = "";
-  document.getElementById("ncAmount").value = "";
-  document.getElementById("ncDesc").value = "";
-  document.getElementById("ncAmtDisplay").textContent = "Rs. 0.00";
-  uploadedFiles = []; attRefValue = "";
-  document.getElementById("ncFileList").innerHTML = "";
-  document.getElementById("ncAttRefBox").style.display = "none";
-  var cats = document.querySelectorAll(".cat-opt");
-  for (var i = 0; i < cats.length; i++) cats[i].className = "cat-opt";
-  document.getElementById("nc-cat0").className = "cat-opt sel";
-  document.getElementById("nc-cat0").querySelector("input").checked = true;
-}
+// ── PRINT ──
+function printClaim(id){ sessionStorage.setItem('printClaimId',id); window.open('print.html','_blank'); }
 
-// ── UPLOAD VIA APPS SCRIPT POPUP WINDOW ──
-// Global callback called by the upload popup when done
-window.receiveUploadResult = function(uploaded, claimId) {
-  if (!uploaded || !uploaded.length) return;
-  // Store uploaded file info
-  var refs = [];
-  var urls = [];
-  for (var i = 0; i < uploaded.length; i++) {
-    refs.push(uploaded[i].ref);
-    urls.push(uploaded[i].url);
-    uploadedFiles.push({ name: uploaded[i].name, driveUrl: uploaded[i].url, ref: uploaded[i].ref });
-  }
-  attRefValue = refs[0].split("-A")[0].split("-B")[0].split("-C")[0]; // base ref
-  document.getElementById("ncAttRefNo").textContent = refs.join(", ");
-  document.getElementById("ncAttRefBox").style.display = "block";
-  setUploadStatus("Uploaded: " + refs.join(", "));
-  setTimeout(function() { setUploadStatus(""); }, 4000);
-  renderFiles();
+// ── CLOSE OVERLAYS ──
+document.getElementById('detOv').addEventListener('click',function(e){if(e.target===this)closeMod();});
+document.getElementById('usrOv').addEventListener('click',function(e){if(e.target===this)closeUserMod();});
+document.getElementById('accOv').addEventListener('click',function(e){if(e.target===this)closeAccMod();});
 
-  // If claim already submitted, save the links
-  if (claimId) {
-    api({ action:"saveAttachmentLink", claimId:claimId, attachmentRef:refs.join(", "), attachmentURL:urls.join("|") }, function(){});
-  }
-};
-
-function openUploadWindow() {
-  // First get an attachment reference number
-  if (!attRefValue) {
-    api({ action:"getAttachmentRef" }, function(res) {
-      if (!res.error) { attRefValue = res.ref; document.getElementById("ncAttRefNo").textContent = res.ref; }
-      else { attRefValue = "PKP-ATT-" + new Date().getFullYear() + "-" + Date.now().toString().slice(-4); }
-      document.getElementById("ncAttRefBox").style.display = "block";
-      doOpenUploadWindow();
-    });
-  } else {
-    doOpenUploadWindow();
-  }
-}
-
-function doOpenUploadWindow() {
-  var url = API + "?action=getUploadPage&claimRef=" + encodeURIComponent(attRefValue) + "&token=" + encodeURIComponent(tok);
-  var popup = window.open(url, "PKP_Upload", "width=540,height=600,scrollbars=yes,resizable=yes");
-  if (!popup) {
-    toast("Popup blocked! Please allow popups for this site in your browser settings.", "err");
-    return;
-  }
-  setUploadStatus("Upload window opened. Complete upload there and return here.");
-}
-
-function addFiles(files) {
-  // Legacy - not used in popup approach
-}
-
-function setUploadStatus(msg) {
-  var el = document.getElementById("uploadStatus");
-  if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
-}
-
-function renderFiles() {
-  var list = document.getElementById("ncFileList");
-  list.innerHTML = "";
-  for (var i = 0; i < uploadedFiles.length; i++) {
-    var f = uploadedFiles[i];
-    var ref = (attRefValue || "PKP-ATT-PENDING") + "-" + String.fromCharCode(65 + i);
-    var item = document.createElement("div"); item.className = "file-item";
-    var nameSpan = document.createElement("span"); nameSpan.textContent = f.driveName || f.name;
-    var sizeSpan = document.createElement("span"); sizeSpan.style.cssText = "color:var(--muted);font-size:11px;margin-left:8px"; sizeSpan.textContent = (f.size/1024).toFixed(0) + " KB";
-    var refSpan = document.createElement("span"); refSpan.className = "file-ref";
-    if (f.driveUrl) {
-      var link = document.createElement("a"); link.href = f.driveUrl; link.target = "_blank"; link.textContent = ref; link.style.color = "var(--blue3)"; link.style.fontFamily = "monospace"; link.style.fontSize = "11px";
-      refSpan.appendChild(link);
-    } else {
-      refSpan.textContent = f.driveUrl === "" ? ref + " (upload failed)" : ref + " (uploading...)";
-    }
-    var delBtn = document.createElement("button"); delBtn.className = "file-del"; delBtn.textContent = "x";
-    (function(fi) { delBtn.addEventListener("click", function() {
-      uploadedFiles.splice(fi, 1);
-      if (!uploadedFiles.length) { document.getElementById("ncAttRefBox").style.display = "none"; attRefValue = ""; }
-      renderFiles();
-    }); })(i);
-    item.appendChild(nameSpan); item.appendChild(sizeSpan); item.appendChild(refSpan); item.appendChild(delBtn);
-    list.appendChild(item);
-  }
-}
-
-function submitClaim() {
-  var checks = [{id:"ncDate",n:"Date"},{id:"ncClient",n:"Client"},{id:"ncMajor",n:"Major Head"},{id:"ncMinor",n:"Minor Head"},{id:"ncNature",n:"Nature"},{id:"ncAmount",n:"Amount"},{id:"ncDesc",n:"Description"}];
-  for (var i = 0; i < checks.length; i++) {
-    var el = document.getElementById(checks[i].id);
-    if (!el.value || !el.value.trim()) { toast("Please fill in: " + checks[i].n, "err"); el.focus(); return; }
-  }
-  var catEl = document.querySelector("input[name=nccat]:checked");
-  var btn = document.getElementById("ncSubmitBtn");
-  if (btn.disabled) return; // prevent double submit
-  btn.disabled = true; btn.textContent = "Submitting... Please wait";
-  btn.style.opacity = "0.7";
-  var driveUrls = [];
-  for (var fi = 0; fi < uploadedFiles.length; fi++) { if (uploadedFiles[fi].driveUrl) driveUrls.push(uploadedFiles[fi].driveUrl); }
-  api({ action:"submitClaim", dateExpense:document.getElementById("ncDate").value, clientName:document.getElementById("ncClient").value.trim(), majorHead:document.getElementById("ncMajor").value, minorHead:document.getElementById("ncMinor").value, nature:document.getElementById("ncNature").value, subNature:document.getElementById("ncSubNature").value.trim(), description:document.getElementById("ncDesc").value.trim(), amount:document.getElementById("ncAmount").value, category:catEl ? catEl.value : "Non Reimbursable", attachmentRef:attRefValue || "", attachmentURL:driveUrls.join(", ") },
-  function(res) {
-    btn.disabled = false; btn.textContent = "Submit for Approval";
-    if (res.error) {
-      toast("Error: " + res.error, "err");
-      btn.disabled = false; btn.textContent = "Submit for Approval"; btn.style.opacity = "1";
-      return;
-    }
-    toast("Claim " + res.claimId + " submitted! Pending manager approval.", "ok");
-    setTimeout(function() { showPane("my-claims"); }, 2000);
-  });
-}
-
-// ══ PRINT ══
-function printClaimById(id) { sessionStorage.setItem("printClaimId", id); window.open("print.html", "_blank"); }
-function printClaim(btn) { printClaimById(btn.getAttribute("data-id")); }
-
-// ══ REPORTS ══
-function buildReports() {
-  var role = sess.role;
-  var cards = [
-    { id:"summary", title:"Claims Summary", sub:"All claims with status overview", icon:"&#128203;" },
-    { id:"pending_manager", title:"Pending Manager Approval", sub:"Claims waiting for manager", icon:"&#9201;" },
-    { id:"pending_finance", title:"Pending Finance Approval", sub:"Manager approved, awaiting finance", icon:"&#9201;" },
-    { id:"pending_payment", title:"Pending Payment", sub:"Approved but not yet paid", icon:"&#128179;" },
-    { id:"pending_receipt", title:"Pending Client Receipt", sub:"Invoiced but not received", icon:"&#128196;" },
-    { id:"clientwise", title:"Client-wise Report", sub:"Claims grouped by client", icon:"&#127970;" }
-  ];
-  if (role === "ADMIN" || role === "FINANCE_MGR") {
-    cards.push({ id:"employeewise", title:"Employee-wise Report", sub:"Claims grouped by employee", icon:"&#128100;" });
-  }
-  var html = "";
-  for (var i = 0; i < cards.length; i++) {
-    var cd = cards[i];
-    html += "<div class='report-card' data-rid='" + cd.id + "' onclick='loadReport(this)'><div class='report-card-icon'>" + cd.icon + "</div><div class='report-card-title'>" + cd.title + "</div><div class='report-card-sub'>" + cd.sub + "</div></div>";
-  }
-  document.getElementById("reportCards").innerHTML = html;
-  document.getElementById("reportOutput").innerHTML = "";
-}
-
-var reportSortCol = "";
-var reportSortAsc = true;
-var reportCurrentData = [];
-var reportCurrentRid = "";
-
-function loadReport(card) {
-  var rid = card.getAttribute("data-rid");
-  reportCurrentRid = rid;
-  document.querySelectorAll(".report-card").forEach(function(c) { c.style.borderColor = ""; c.style.background = ""; });
-  card.style.borderColor = "var(--blue3)"; card.style.background = "var(--blue-lt)";
-  document.getElementById("reportOutput").innerHTML = "<div class='empty'>Loading report...</div>";
-  api({ action:"getClaims", filter:"team" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    var all = res.claims || [];
-    var filtered = [];
-    if (rid === "summary") filtered = all;
-    else if (rid === "pending_manager") filtered = all.filter(function(c) { return c.ManagerApprovalStatus === "PENDING_MANAGER"; });
-    else if (rid === "pending_finance") filtered = all.filter(function(c) { return c.ManagerApprovalStatus === "PENDING_FINANCE"; });
-    else if (rid === "pending_payment") filtered = all.filter(function(c) { return (c.FinanceApprovalStatus === "APPROVED_FINANCE" || c.FinanceApprovalStatus === "APPROVED") && !c.DatePaidByFirm; });
-    else if (rid === "pending_receipt") filtered = all.filter(function(c) { return c.Category === "Client Reimbursable" && c.DateInvoicedToClient && !c.DateReceivedFromClient; });
-    else if (rid === "clientwise") {
-      filtered = all.slice().sort(function(a,b) { return (a.ClientName||"").localeCompare(b.ClientName||""); });
-    }
-    else if (rid === "employeewise") {
-      filtered = all.slice().sort(function(a,b) { return (a.ClaimantName||"").localeCompare(b.ClaimantName||""); });
-    }
-    else filtered = all;
-    reportCurrentData = filtered;
-    reportSortCol = ""; reportSortAsc = true;
-    renderReport(rid, filtered);
-  });
-}
-
-function sortReport(col) {
-  if (reportSortCol === col) { reportSortAsc = !reportSortAsc; }
-  else { reportSortCol = col; reportSortAsc = true; }
-  var sorted = reportCurrentData.slice().sort(function(a,b) {
-    var va = a[col] || ""; var vb = b[col] || "";
-    if (col === "Amount") { va = parseFloat(va)||0; vb = parseFloat(vb)||0; return reportSortAsc ? va-vb : vb-va; }
-    return reportSortAsc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
-  });
-  renderReport(reportCurrentRid, sorted);
-}
-
-function filterReport() {
-  var q = (document.getElementById("reportSrch") ? document.getElementById("reportSrch").value : "").toLowerCase();
-  var cf = document.getElementById("reportCatFilter") ? document.getElementById("reportCatFilter").value : "";
-  var filtered = reportCurrentData.filter(function(c) {
-    var mq = !q || (c.ClaimID||"").toLowerCase().indexOf(q)>=0 || (c.ClientName||"").toLowerCase().indexOf(q)>=0 || (c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
-    var mc = !cf || (c.Category||"") === cf;
-    return mq && mc;
-  });
-  renderReport(reportCurrentRid, filtered);
-}
-
-function sortArrow(col) {
-  if (reportSortCol !== col) return " <span style='color:#d1d5db'>&#8597;</span>";
-  return reportSortAsc ? " <span style='color:var(--blue3)'>&#8593;</span>" : " <span style='color:var(--blue3)'>&#8595;</span>";
-}
-
-function renderReport(rid, data) {
-  var totalAmt = 0; for (var i = 0; i < data.length; i++) totalAmt += parseFloat(data[i].Amount) || 0;
-  var rcard = document.createElement("div"); rcard.className = "tcard";
-  var rhdr = document.createElement("div"); rhdr.className = "tcard-hdr";
-  var rtitle = document.createElement("div"); rtitle.className = "tcard-hdr-title";
-  rtitle.textContent = "Report: " + rid.replace(/_/g," ") + " (" + data.length + " records - " + fmtAmt(totalAmt) + ")";
-  var rtoolbar = document.createElement("div"); rtoolbar.className = "toolbar";
-  var srchIn = document.createElement("input"); srchIn.className = "srch"; srchIn.id = "reportSrch"; srchIn.placeholder = "Search..."; srchIn.style.width = "160px";
-  srchIn.addEventListener("input", filterReport);
-  var catSel = document.createElement("select"); catSel.className = "fsel"; catSel.id = "reportCatFilter";
-  catSel.innerHTML = "<option value=''>All Categories</option><option value='Client Reimbursable'>Client Reimbursable</option><option value='Non Reimbursable'>Non Reimbursable</option><option value='Drawings'>Drawings</option><option value='Firms Expenses'>Firms Expenses</option>";
-  catSel.addEventListener("change", filterReport);
-  var exportBtn = document.createElement("button"); exportBtn.className = "ghost"; exportBtn.textContent = "Export CSV";
-  exportBtn.addEventListener("click", function() { exportCsv(reportCurrentData, "report_" + rid); });
-  var printBtn2 = document.createElement("button"); printBtn2.className = "ghost"; printBtn2.textContent = "Print / PDF";
-  printBtn2.addEventListener("click", printReport);
-  rtoolbar.appendChild(srchIn); rtoolbar.appendChild(catSel); rtoolbar.appendChild(exportBtn); rtoolbar.appendChild(printBtn2);
-  rhdr.appendChild(rtitle); rhdr.appendChild(rtoolbar); rcard.appendChild(rhdr);
-  var html = "";
-  if (!data.length) { html += "<div class='empty'>No records found.</div></div>"; document.getElementById("reportOutput").innerHTML = html; return; }
-  html += "<div class='twrap'><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Major Head</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead><tbody>";
-  for (var i = 0; i < data.length; i++) {
-    var c = data[i]; var s = getClaimStatus(c);
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td>" + (c.MajorHead || "-") + "</td><td style='font-size:11px;color:var(--muted)'>" + (c.Category || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td></tr>";
-  }
-  html += "</tbody></table></div></div>";
-  window.reportData = data;
-  var twrap2 = document.createElement("div"); twrap2.className = "twrap";
-  twrap2.innerHTML = html;
-  rcard.appendChild(twrap2);
-  document.getElementById("reportOutput").innerHTML = "";
-  document.getElementById("reportOutput").appendChild(rcard);
-}
-
-function printReport() { window.print(); }
-
-// ══ USERS ══
-function loadUsers() {
-  document.getElementById("usrBody").innerHTML = "<tr><td colspan='7'><div class='empty'>Loading...</div></td></tr>";
-  api({ action:"getEmployees" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    allUsers = res.employees || [];
-    fillManagerDropdown();
-    filterUsers();
-  });
-}
-
-function fillManagerDropdown() {
-  var sel = document.getElementById("uMgr"); sel.innerHTML = "<option value=''>No Manager</option>";
-  for (var i = 0; i < allUsers.length; i++) {
-    var e = allUsers[i];
-    if (e.role === "MANAGER" || e.role === "ADMIN" || e.role === "FINANCE_MGR") {
-      var o = document.createElement("option"); o.value = e.id; o.textContent = e.name + " (" + e.role + ")"; sel.appendChild(o);
-    }
-  }
-}
-
-function filterUsers() {
-  var q = (document.getElementById("usrSrch").value || "").toLowerCase();
-  var filtered = allUsers.filter(function(e) { return !q || (e.name||"").toLowerCase().indexOf(q)>=0 || (e.email||"").toLowerCase().indexOf(q)>=0 || (e.id||"").toLowerCase().indexOf(q)>=0; });
-  var mmap = {}; for (var i = 0; i < allUsers.length; i++) mmap[allUsers[i].id] = allUsers[i].name;
-  var rlbl = { EMPLOYEE:"Employee", MANAGER:"Manager", FINANCE_MGR:"Finance Mgr", ACCOUNTS:"Accounts", ADMIN:"Admin" };
-  var rcls = { EMPLOYEE:"rt-EMPLOYEE", MANAGER:"rt-MANAGER", FINANCE_MGR:"rt-FINANCE_MGR", ACCOUNTS:"rt-ACCOUNTS", ADMIN:"rt-ADMIN" };
-  var html = "";
-  for (var i = 0; i < filtered.length; i++) {
-    var e = filtered[i]; var act = String(e.isActive).toUpperCase() === "TRUE"; var uid = (e.id||"").replace(/'/g,"");
-    html += "<tr><td><span class='av'>" + (e.name||"?").charAt(0).toUpperCase() + "</span>" + (e.name||"-") + "</td><td><span class='cid'>" + e.id + "</span></td><td>" + (e.email||"-") + "</td><td><span class='role-tag " + (rcls[e.role]||"") + "'>" + (rlbl[e.role]||e.role) + "</span></td><td>" + (e.department||"-") + "</td><td><span style='font-size:12px;font-weight:600;color:" + (act?"#065f46":"#991b1b") + "'>" + (act?"Active":"Inactive") + "</span></td><td><button class='btn' data-uid='" + uid + "' onclick='openEditUser(this)'>Edit</button><button class='btn " + (act?"btn-no":"btn-ok") + "' data-uid='" + uid + "' data-act='" + act + "' onclick='toggleUser(this)'>" + (act?"Deactivate":"Activate") + "</button></td></tr>";
-  }
-  document.getElementById("usrBody").innerHTML = html || "<tr><td colspan='7'><div class='empty'>No users found.</div></td></tr>";
-}
-
-function openAddUser() {
-  document.getElementById("uMTitle").textContent = "Add Employee";
-  document.getElementById("uEditId").value = "";
-  document.getElementById("uName2").value = ""; document.getElementById("uEmail").value = "";
-  document.getElementById("uPwd").value = ""; document.getElementById("uRole").value = "";
-  document.getElementById("uDept").value = ""; document.getElementById("uMgr").value = "";
-  document.getElementById("uPwdLabel").innerHTML = "Password <span class='req'>*</span>";
-  document.getElementById("uStatusRow").style.display = "none";
-  document.getElementById("uSaveBtn").textContent = "Add Employee";
-  document.getElementById("userOverlay").className = "overlay on";
-}
-
-function openEditUser(btn) {
-  var uid = btn.getAttribute("data-uid");
-  var e = null; for (var i = 0; i < allUsers.length; i++) { if (allUsers[i].id === uid) { e = allUsers[i]; break; } }
-  if (!e) return;
-  document.getElementById("uMTitle").textContent = "Edit Employee";
-  document.getElementById("uEditId").value = e.id;
-  document.getElementById("uName2").value = e.name || ""; document.getElementById("uEmail").value = e.email || "";
-  document.getElementById("uPwd").value = ""; document.getElementById("uRole").value = e.role || "";
-  document.getElementById("uDept").value = e.department || ""; document.getElementById("uMgr").value = e.managerId || "";
-  document.getElementById("uStatus").value = String(e.isActive).toUpperCase() === "TRUE" ? "TRUE" : "FALSE";
-  document.getElementById("uPwdLabel").innerHTML = "New Password <small style='color:var(--muted)'>(blank = keep)</small>";
-  document.getElementById("uStatusRow").style.display = "flex";
-  document.getElementById("uSaveBtn").textContent = "Save Changes";
-  document.getElementById("userOverlay").className = "overlay on";
-}
-
-function closeUserModal() { document.getElementById("userOverlay").className = "overlay"; }
-
-function saveUser() {
-  var eid = document.getElementById("uEditId").value;
-  var name = document.getElementById("uName2").value.trim();
-  var email = document.getElementById("uEmail").value.trim();
-  var pwd = document.getElementById("uPwd").value.trim();
-  var role = document.getElementById("uRole").value;
-  var dept = document.getElementById("uDept").value.trim();
-  var mgr = document.getElementById("uMgr").value;
-  var stat = document.getElementById("uStatus").value;
-  if (!name || !email || !role) { toast("Name, email and role are required.", "err"); return; }
-  if (!eid && !pwd) { toast("Password required for new employee.", "err"); return; }
-  var btn = document.getElementById("uSaveBtn"); btn.disabled = true; btn.textContent = "Saving...";
-  var p = {};
-  if (eid) { p.action="updateEmployee"; p.employeeId=eid; p.Name=name; p.Email=email; p.Role=role; p.Department=dept; p.ManagerID=mgr; p.IsActive=stat; if(pwd) p.Password=pwd; }
-  else { p.action="addEmployee"; p.name=name; p.email=email; p.password=pwd; p.role=role; p.department=dept; p.managerId=mgr; }
-  api(p, function(res) {
-    btn.disabled = false; btn.textContent = eid ? "Save Changes" : "Add Employee";
-    if (res.error) { toast(res.error, "err"); return; }
-    toast(eid ? "Employee updated!" : "Employee added! ID: " + res.id, "ok");
-    closeUserModal(); loadUsers();
-  });
-}
-
-function toggleUser(btn) {
-  var uid = btn.getAttribute("data-uid"); var act = btn.getAttribute("data-act") === "true";
-  if (!confirm((act?"Deactivate":"Activate") + " this employee?")) return;
-  api({ action:"updateEmployee", employeeId:uid, IsActive:act?"FALSE":"TRUE" }, function(res) {
-    if (res.error) { toast(res.error, "err"); return; }
-    toast("Employee " + (act?"deactivated":"activated") + ".", "ok"); loadUsers();
-  });
-}
-
-// ══ EXPORT CSV ══
-function exportCsv(data, filename) {
-  if (!data || !data.length) { toast("No data to export.", "err"); return; }
-  var keys = ["ClaimID","ClaimantName","DateOfExpense","DateClaimed","ClientName","MajorHead","MinorHead","Nature","Category","Amount","ManagerApprovalStatus","FinanceApprovalStatus","DatePaidByFirm","DateInvoicedToClient","DateReceivedFromClient","Description"];
-  var rows = [keys];
-  for (var i = 0; i < data.length; i++) { var row = []; for (var j = 0; j < keys.length; j++) { row.push(data[i][keys[j]] || ""); } rows.push(row); }
-  var csv = rows.map(function(r) { return r.map(function(v) { return '"' + String(v).replace(/"/g,'""') + '"'; }).join(","); }).join("\n");
-  var blob = new Blob([csv], { type:"text/csv" }); var url = URL.createObjectURL(blob);
-  var a = document.createElement("a"); a.href = url; a.download = filename + ".csv"; a.click(); URL.revokeObjectURL(url);
-  toast("Exported as CSV.", "ok");
-}
-
-// ══ CLOSE OVERLAYS ON BG CLICK ══
-document.getElementById("detailOverlay").addEventListener("click", function(e) { if (e.target===this) closeModal(); });
-document.getElementById("userOverlay").addEventListener("click", function(e) { if (e.target===this) closeUserModal(); });
-document.getElementById("accOverlay").addEventListener("click", function(e) { if (e.target===this) closeAccModal(); });
-
-// ══ START ══
 init();
+
 </script>
 </body>
 </html>

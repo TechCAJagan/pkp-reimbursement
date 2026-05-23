@@ -176,6 +176,12 @@ tr:hover td{background:#fafafa}
 .file-del{background:none;border:none;color:var(--muted);cursor:pointer;font-size:13px;padding:2px}
 .file-del:hover{color:var(--red)}
 .att-ref-box{display:inline-block;background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:7px;padding:6px 12px;font-family:monospace;font-size:12px;color:var(--blue);margin-top:10px}
+.spinner{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,0.3);border-top-color:#fff;border-radius:50%;animation:spin 0.7s linear infinite;margin-right:6px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+.loading-overlay{position:fixed;inset:0;background:rgba(255,255,255,0.7);z-index:500;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px}
+.loading-overlay.on{display:flex}
+.loading-overlay .spinner-big{width:36px;height:36px;border:3px solid #bfdbfe;border-top-color:var(--blue);border-radius:50%;animation:spin 0.8s linear infinite}
+.loading-overlay p{font-size:14px;color:var(--blue);font-weight:500}
 /* PRINT BTN */
 @media print{.sidebar,.topbar,.sub-bar,.toast,.overlay{display:none!important}.main{margin-left:0!important}.pane{display:block!important}}
 </style></style>
@@ -255,7 +261,7 @@ tr:hover td{background:#fafafa}
       <div class="fcard-body">
         <div class="drop-zone" id="ncDropZone"><input type="file" multiple accept=".pdf,.jpg,.jpeg,.png" id="ncFileInput"><div style="font-size:28px;margin-bottom:8px">&#128194;</div><div style="font-weight:600;font-size:14px;color:var(--blue)">Drop files or click to upload</div><div style="font-size:12px;color:var(--muted);margin-top:4px">PDF, JPG, PNG</div></div>
         <div id="ncAttRefBox" style="display:none"><div class="att-ref-box">Ref: <strong id="ncAttRefNo">-</strong></div></div>
-        <div class="file-list" id="ncFileList"></div>
+        <div id="uploadStatus" style="display:none;margin-top:8px;padding:8px 12px;background:var(--blue-lt);border-radius:7px;font-size:12px;color:var(--blue)"></div><div class="file-list" id="ncFileList"></div>
       </div>
     </div>
     <div class="sub-bar"><button class="ghost" onclick="showPane('my-claims')">Cancel</button><button class="btn-pri" id="ncSubmitBtn" onclick="submitClaim()">Submit for Approval</button></div>
@@ -594,6 +600,17 @@ function showPane(id) {
 
 // ══ HELPERS ══
 function fmtDate(d) { if (!d) return "-"; try { return new Date(d).toLocaleDateString("en-IN", { day:"2-digit", month:"short", year:"numeric" }); } catch(e) { return d; } }
+function toDateInput(d) {
+  if (!d) return "";
+  try {
+    var dt = new Date(d);
+    if (isNaN(dt.getTime())) return "";
+    var y = dt.getFullYear();
+    var m = String(dt.getMonth()+1).padStart(2,"0");
+    var day = String(dt.getDate()).padStart(2,"0");
+    return y + "-" + m + "-" + day;
+  } catch(e) { return ""; }
+}
 function fmtAmt(n) { var v = parseFloat(n) || 0; return "Rs. " + v.toLocaleString("en-IN", { minimumFractionDigits: 2 }); }
 function statusBadge(s) {
   var m = { PENDING_MANAGER:["b-pend","Pending Manager"], PENDING_FINANCE:["b-fin","Pending Finance"], APPROVED_FINANCE:["b-appr","Finance Approved"], REJECTED_MANAGER:["b-rej","Rejected"], REJECTED_FINANCE:["b-rej","Fin.Rejected"], PAID:["b-paid","Paid"], CLOSED:["b-closed","Closed"] };
@@ -804,11 +821,15 @@ function renderPendingApprovalPreview(claims) {
     appBtn.className = "btn btn-ok"; appBtn.textContent = "Approve";
     appBtn.setAttribute("data-id", c.ClaimID);
     appBtn.addEventListener("click", function() { quickApproveFromDash(this); });
+    var rejBtn = document.createElement("button");
+    rejBtn.className = "btn btn-no"; rejBtn.textContent = "Reject";
+    rejBtn.setAttribute("data-id", c.ClaimID);
+    rejBtn.addEventListener("click", function() { quickRejectFromDash(this); });
     var viewBtn = document.createElement("button");
     viewBtn.className = "btn"; viewBtn.textContent = "View";
     viewBtn.setAttribute("data-id", c.ClaimID);
     viewBtn.addEventListener("click", function() { viewClaimModal(this, true); });
-    tdAction.appendChild(appBtn); tdAction.appendChild(viewBtn);
+    tdAction.appendChild(appBtn); tdAction.appendChild(rejBtn); tdAction.appendChild(viewBtn);
     tbody.appendChild(tr);
   }
   tbl.appendChild(tbody); twrap.appendChild(tbl); wrap.appendChild(twrap);
@@ -848,7 +869,8 @@ function filterMyClaims() {
   if (!filtered.length) { document.getElementById("mcBody").innerHTML = "<tr><td colspan='7'><div class='empty'>No claims found.</div></td></tr>"; return; }
   for (var i = 0; i < filtered.length; i++) {
     var c = filtered[i]; var s = getClaimStatus(c); var cid = (c.ClaimID || "").replace(/'/g, "");
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td>" + (c.MajorHead || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td><td><button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,false)'>View</button>" + (s === "APPROVED_FINANCE" ? "<button class='btn' data-id='" + cid + "' onclick='printClaim(this)'>Print</button>" : "") + "</td></tr>";
+    var attBtn = c.AttachmentURL ? "<a href='" + c.AttachmentURL + "' target='_blank' class='btn' style='text-decoration:none'>Attachment</a>" : "";
+    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td>" + (c.MajorHead || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + statusBadge(s) + "</td><td><button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,false)'>View</button>" + (s === "APPROVED_FINANCE" ? "<button class='btn' data-id='" + cid + "' onclick='printClaim(this)'>Print</button>" : "") + attBtn + "</td></tr>";
   }
   document.getElementById("mcBody").innerHTML = html;
 }
@@ -913,9 +935,13 @@ function filterApprovals() {
 // ══ FINANCE ══
 function loadFinance() {
   document.getElementById("finBody").innerHTML = "<tr><td colspan='8'><div class='empty'>Loading...</div></td></tr>";
-  api({ action: "getClaims", filter: "all" }, function(res) {
+  api({ action: "getClaims", filter: "team" }, function(res) {
     if (res.error) { toast(res.error, "err"); return; }
-    allFinanceClaims = (res.claims || []).filter(function(c) { return c.ManagerApprovalStatus === "PENDING_FINANCE"; });
+    allFinanceClaims = (res.claims || []).filter(function(c) {
+      return c.ManagerApprovalStatus === "PENDING_FINANCE" &&
+             c.FinanceApprovalStatus !== "APPROVED_FINANCE" &&
+             c.FinanceApprovalStatus !== "REJECTED_FINANCE";
+    });
     var total = 0;
     for (var i = 0; i < allFinanceClaims.length; i++) total += parseFloat(allFinanceClaims[i].Amount) || 0;
     document.getElementById("financeStats").innerHTML = "<div class='stat-card s-amber'><div class='stat-card-lbl'>Pending Finance Approval</div><div class='stat-card-val'>" + allFinanceClaims.length + "</div><div class='stat-card-sub'>" + fmtAmt(total) + "</div></div>";
@@ -930,7 +956,8 @@ function filterFinance() {
   if (!filtered.length) { document.getElementById("finBody").innerHTML = "<tr><td colspan='8'><div class='empty'>No claims pending finance approval.</div></td></tr>"; return; }
   for (var i = 0; i < filtered.length; i++) {
     var c = filtered[i]; var cid = (c.ClaimID || "").replace(/'/g, "");
-    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td style='font-size:11px;color:var(--muted)'>" + (c.Category || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td><span style='font-family:monospace;font-size:11px;color:var(--blue3)'>" + (c.AttachmentRef || "-") + "</span></td><td>";
+    var attLink = c.AttachmentURL ? "<a href='" + c.AttachmentURL + "' target='_blank' style='font-family:monospace;font-size:11px;color:var(--blue3)'>" + (c.AttachmentRef || "View") + "</a>" : (c.AttachmentRef ? "<span style='font-family:monospace;font-size:11px;color:var(--muted)'>" + c.AttachmentRef + "</span>" : "-");
+    html += "<tr><td><span class='cid'>" + c.ClaimID + "</span></td><td>" + (c.ClaimantName || c.ClaimantID || "-") + "</td><td>" + fmtDate(c.DateOfExpense) + "</td><td>" + (c.ClientName || "-") + "</td><td style='font-size:11px;color:var(--muted)'>" + (c.Category || "-") + "</td><td class='amt'>" + fmtAmt(c.Amount) + "</td><td>" + attLink + "</td><td>";
     html += "<button class='btn' data-id='" + cid + "' onclick='viewClaimModal(this,false,true)'>View</button>";
     html += "<button class='btn btn-ok' data-id='" + cid + "' onclick='quickFinApprove(this)'>Approve</button>";
     html += "<button class='btn btn-no' data-id='" + cid + "' onclick='quickFinReject(this)'>Reject</button>";
@@ -978,9 +1005,9 @@ function openAccModal(btn) {
   document.getElementById("accClaimId").value = id;
   document.getElementById("accMTitle").textContent = "Update: " + id;
   document.getElementById("accPaidBy").value = c.PaidBy || "";
-  document.getElementById("accDatePaid").value = c.DatePaidByFirm || "";
-  document.getElementById("accDateInvoiced").value = c.DateInvoicedToClient || "";
-  document.getElementById("accDateReceived").value = c.DateReceivedFromClient || "";
+  document.getElementById("accDatePaid").value = toDateInput(c.DatePaidByFirm);
+  document.getElementById("accDateInvoiced").value = toDateInput(c.DateInvoicedToClient);
+  document.getElementById("accDateReceived").value = toDateInput(c.DateReceivedFromClient);
   document.getElementById("accOverlay").className = "overlay on";
 }
 function closeAccModal() { document.getElementById("accOverlay").className = "overlay"; }
@@ -989,7 +1016,18 @@ function saveAccDetails() {
   api({ action:"updateAccountsDetails", claimId:document.getElementById("accClaimId").value, paidBy:document.getElementById("accPaidBy").value, datePaidByFirm:document.getElementById("accDatePaid").value, dateInvoicedToClient:document.getElementById("accDateInvoiced").value, dateReceivedFromClient:document.getElementById("accDateReceived").value }, function(res) {
     btn.disabled = false; btn.textContent = "Save Details";
     if (res.error) { toast(res.error, "err"); return; }
-    toast("Details updated successfully!", "ok"); closeAccModal(); loadAccounts();
+    // Update local cache immediately so list shows updated values
+    var cid2 = document.getElementById("accClaimId").value;
+    for (var x = 0; x < allAccountsClaims.length; x++) {
+      if (allAccountsClaims[x].ClaimID === cid2) {
+        allAccountsClaims[x].PaidBy = document.getElementById("accPaidBy").value;
+        allAccountsClaims[x].DatePaidByFirm = document.getElementById("accDatePaid").value;
+        allAccountsClaims[x].DateInvoicedToClient = document.getElementById("accDateInvoiced").value;
+        allAccountsClaims[x].DateReceivedFromClient = document.getElementById("accDateReceived").value;
+        break;
+      }
+    }
+    toast("Details updated successfully!", "ok"); closeAccModal(); filterAccounts();
   });
 }
 
@@ -1087,6 +1125,18 @@ function quickApproveFromDash(btn) {
     btn.disabled = false;
     if (res.error) { toast(res.error, "err"); return; }
     toast("Claim " + id + " approved!", "ok"); loadDashboard();
+  });
+}
+
+function quickRejectFromDash(btn) {
+  var id = btn.getAttribute("data-id");
+  var reason = prompt("Reason for rejection (required):");
+  if (!reason || !reason.trim()) return;
+  btn.disabled = true;
+  api({ action:"managerApprove", claimId:id, status:"REJECTED", remarks:reason }, function(res) {
+    btn.disabled = false;
+    if (res.error) { toast(res.error, "err"); return; }
+    toast("Claim " + id + " rejected.", "ok"); loadDashboard();
   });
 }
 
@@ -1202,26 +1252,72 @@ function addFiles(files) {
   if (first) {
     api({ action:"getAttachmentRef" }, function(res) {
       if (!res.error) { attRefValue = res.ref; document.getElementById("ncAttRefNo").textContent = res.ref; }
-      renderFiles();
+      uploadToGoogleDrive();
     });
-  } else { renderFiles(); }
+  } else { uploadToGoogleDrive(); }
   document.getElementById("ncAttRefBox").style.display = "block";
 }
 
-function renderFiles() {
-  var html = ""; var base = attRefValue || "PKP-ATT-PENDING";
+function uploadToGoogleDrive() {
+  var pending = [];
   for (var i = 0; i < uploadedFiles.length; i++) {
-    var f = uploadedFiles[i]; var ref = base + "-" + String.fromCharCode(65 + i);
-    html += "<div class='file-item'><span>" + f.name + "</span><span style='color:var(--muted);font-size:11px;margin-left:8px'>" + (f.size/1024).toFixed(0) + " KB</span><span class='file-ref'>" + ref + "</span><button class='file-del' data-idx='" + i + "'>x</button></div>";
+    if (!uploadedFiles[i].driveUrl) pending.push(i);
   }
-  document.getElementById("ncFileList").innerHTML = html;
-  var btns = document.querySelectorAll(".file-del");
-  for (var d = 0; d < btns.length; d++) {
-    btns[d].addEventListener("click", function() {
-      uploadedFiles.splice(parseInt(this.getAttribute("data-idx")), 1);
+  if (!pending.length) { renderFiles(); return; }
+  var idx = pending[0];
+  var f = uploadedFiles[idx];
+  var suffix = String.fromCharCode(65 + idx);
+  var newName = (attRefValue || "PKP-ATT") + "-" + suffix + "." + f.name.split(".").pop();
+  setUploadStatus("Uploading " + newName + "...");
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var base64 = e.target.result.split(",")[1];
+    api({ action:"uploadToDrive", fileName:newName, fileData:base64, mimeType:f.type || "application/octet-stream", attachmentRef:attRefValue }, function(res) {
+      if (res.error) {
+        setUploadStatus("Upload failed: " + res.error);
+        uploadedFiles[idx].driveUrl = "";
+        uploadedFiles[idx].driveName = newName;
+      } else {
+        uploadedFiles[idx].driveUrl = res.url || "";
+        uploadedFiles[idx].driveName = newName;
+        setUploadStatus("");
+      }
+      renderFiles();
+      if (pending.length > 1) { setTimeout(uploadToGoogleDrive, 500); }
+    });
+  };
+  reader.readAsDataURL(f);
+}
+
+function setUploadStatus(msg) {
+  var el = document.getElementById("uploadStatus");
+  if (el) { el.textContent = msg; el.style.display = msg ? "block" : "none"; }
+}
+
+function renderFiles() {
+  var list = document.getElementById("ncFileList");
+  list.innerHTML = "";
+  for (var i = 0; i < uploadedFiles.length; i++) {
+    var f = uploadedFiles[i];
+    var ref = (attRefValue || "PKP-ATT-PENDING") + "-" + String.fromCharCode(65 + i);
+    var item = document.createElement("div"); item.className = "file-item";
+    var nameSpan = document.createElement("span"); nameSpan.textContent = f.driveName || f.name;
+    var sizeSpan = document.createElement("span"); sizeSpan.style.cssText = "color:var(--muted);font-size:11px;margin-left:8px"; sizeSpan.textContent = (f.size/1024).toFixed(0) + " KB";
+    var refSpan = document.createElement("span"); refSpan.className = "file-ref";
+    if (f.driveUrl) {
+      var link = document.createElement("a"); link.href = f.driveUrl; link.target = "_blank"; link.textContent = ref; link.style.color = "var(--blue3)"; link.style.fontFamily = "monospace"; link.style.fontSize = "11px";
+      refSpan.appendChild(link);
+    } else {
+      refSpan.textContent = f.driveUrl === "" ? ref + " (upload failed)" : ref + " (uploading...)";
+    }
+    var delBtn = document.createElement("button"); delBtn.className = "file-del"; delBtn.textContent = "x";
+    (function(fi) { delBtn.addEventListener("click", function() {
+      uploadedFiles.splice(fi, 1);
       if (!uploadedFiles.length) { document.getElementById("ncAttRefBox").style.display = "none"; attRefValue = ""; }
       renderFiles();
-    });
+    }); })(i);
+    item.appendChild(nameSpan); item.appendChild(sizeSpan); item.appendChild(refSpan); item.appendChild(delBtn);
+    list.appendChild(item);
   }
 }
 
@@ -1232,11 +1328,20 @@ function submitClaim() {
     if (!el.value || !el.value.trim()) { toast("Please fill in: " + checks[i].n, "err"); el.focus(); return; }
   }
   var catEl = document.querySelector("input[name=nccat]:checked");
-  var btn = document.getElementById("ncSubmitBtn"); btn.disabled = true; btn.textContent = "Submitting...";
-  api({ action:"submitClaim", dateExpense:document.getElementById("ncDate").value, clientName:document.getElementById("ncClient").value.trim(), majorHead:document.getElementById("ncMajor").value, minorHead:document.getElementById("ncMinor").value, nature:document.getElementById("ncNature").value, subNature:document.getElementById("ncSubNature").value.trim(), description:document.getElementById("ncDesc").value.trim(), amount:document.getElementById("ncAmount").value, category:catEl ? catEl.value : "Non Reimbursable", attachmentRef:attRefValue || "", attachmentURL:"" },
+  var btn = document.getElementById("ncSubmitBtn");
+  if (btn.disabled) return; // prevent double submit
+  btn.disabled = true; btn.textContent = "Submitting... Please wait";
+  btn.style.opacity = "0.7";
+  var driveUrls = [];
+  for (var fi = 0; fi < uploadedFiles.length; fi++) { if (uploadedFiles[fi].driveUrl) driveUrls.push(uploadedFiles[fi].driveUrl); }
+  api({ action:"submitClaim", dateExpense:document.getElementById("ncDate").value, clientName:document.getElementById("ncClient").value.trim(), majorHead:document.getElementById("ncMajor").value, minorHead:document.getElementById("ncMinor").value, nature:document.getElementById("ncNature").value, subNature:document.getElementById("ncSubNature").value.trim(), description:document.getElementById("ncDesc").value.trim(), amount:document.getElementById("ncAmount").value, category:catEl ? catEl.value : "Non Reimbursable", attachmentRef:attRefValue || "", attachmentURL:driveUrls.join(", ") },
   function(res) {
     btn.disabled = false; btn.textContent = "Submit for Approval";
-    if (res.error) { toast("Error: " + res.error, "err"); return; }
+    if (res.error) {
+      toast("Error: " + res.error, "err");
+      btn.disabled = false; btn.textContent = "Submit for Approval"; btn.style.opacity = "1";
+      return;
+    }
     toast("Claim " + res.claimId + " submitted! Pending manager approval.", "ok");
     setTimeout(function() { showPane("my-claims"); }, 2000);
   });
@@ -1269,12 +1374,17 @@ function buildReports() {
   document.getElementById("reportOutput").innerHTML = "";
 }
 
+var reportSortCol = "";
+var reportSortAsc = true;
+var reportCurrentData = [];
+var reportCurrentRid = "";
+
 function loadReport(card) {
   var rid = card.getAttribute("data-rid");
-  document.querySelectorAll(".report-card").forEach(function(c) { c.style.borderColor = ""; });
-  card.style.borderColor = "var(--blue3)";
+  reportCurrentRid = rid;
+  document.querySelectorAll(".report-card").forEach(function(c) { c.style.borderColor = ""; c.style.background = ""; });
+  card.style.borderColor = "var(--blue3)"; card.style.background = "var(--blue-lt)";
   document.getElementById("reportOutput").innerHTML = "<div class='empty'>Loading report...</div>";
-  var filter = (rid === "pending_manager" || rid === "pending_finance" || rid === "pending_payment" || rid === "pending_receipt") ? "all" : "all";
   api({ action:"getClaims", filter:"team" }, function(res) {
     if (res.error) { toast(res.error, "err"); return; }
     var all = res.claims || [];
@@ -1282,12 +1392,46 @@ function loadReport(card) {
     if (rid === "summary") filtered = all;
     else if (rid === "pending_manager") filtered = all.filter(function(c) { return c.ManagerApprovalStatus === "PENDING_MANAGER"; });
     else if (rid === "pending_finance") filtered = all.filter(function(c) { return c.ManagerApprovalStatus === "PENDING_FINANCE"; });
-    else if (rid === "pending_payment") filtered = all.filter(function(c) { return c.FinanceApprovalStatus === "APPROVED_FINANCE" && !c.DatePaidByFirm; });
-    else if (rid === "pending_receipt") filtered = all.filter(function(c) { return c.DateInvoicedToClient && !c.DateReceivedFromClient; });
-    else if (rid === "clientwise") filtered = all;
-    else if (rid === "employeewise") filtered = all;
+    else if (rid === "pending_payment") filtered = all.filter(function(c) { return (c.FinanceApprovalStatus === "APPROVED_FINANCE" || c.FinanceApprovalStatus === "APPROVED") && !c.DatePaidByFirm; });
+    else if (rid === "pending_receipt") filtered = all.filter(function(c) { return c.Category === "Client Reimbursable" && c.DateInvoicedToClient && !c.DateReceivedFromClient; });
+    else if (rid === "clientwise") {
+      filtered = all.slice().sort(function(a,b) { return (a.ClientName||"").localeCompare(b.ClientName||""); });
+    }
+    else if (rid === "employeewise") {
+      filtered = all.slice().sort(function(a,b) { return (a.ClaimantName||"").localeCompare(b.ClaimantName||""); });
+    }
+    else filtered = all;
+    reportCurrentData = filtered;
+    reportSortCol = ""; reportSortAsc = true;
     renderReport(rid, filtered);
   });
+}
+
+function sortReport(col) {
+  if (reportSortCol === col) { reportSortAsc = !reportSortAsc; }
+  else { reportSortCol = col; reportSortAsc = true; }
+  var sorted = reportCurrentData.slice().sort(function(a,b) {
+    var va = a[col] || ""; var vb = b[col] || "";
+    if (col === "Amount") { va = parseFloat(va)||0; vb = parseFloat(vb)||0; return reportSortAsc ? va-vb : vb-va; }
+    return reportSortAsc ? String(va).localeCompare(String(vb)) : String(vb).localeCompare(String(va));
+  });
+  renderReport(reportCurrentRid, sorted);
+}
+
+function filterReport() {
+  var q = (document.getElementById("reportSrch") ? document.getElementById("reportSrch").value : "").toLowerCase();
+  var cf = document.getElementById("reportCatFilter") ? document.getElementById("reportCatFilter").value : "";
+  var filtered = reportCurrentData.filter(function(c) {
+    var mq = !q || (c.ClaimID||"").toLowerCase().indexOf(q)>=0 || (c.ClientName||"").toLowerCase().indexOf(q)>=0 || (c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
+    var mc = !cf || (c.Category||"") === cf;
+    return mq && mc;
+  });
+  renderReport(reportCurrentRid, filtered);
+}
+
+function sortArrow(col) {
+  if (reportSortCol !== col) return " <span style='color:#d1d5db'>&#8597;</span>";
+  return reportSortAsc ? " <span style='color:var(--blue3)'>&#8593;</span>" : " <span style='color:var(--blue3)'>&#8595;</span>";
 }
 
 function renderReport(rid, data) {
@@ -1297,11 +1441,16 @@ function renderReport(rid, data) {
   var rtitle = document.createElement("div"); rtitle.className = "tcard-hdr-title";
   rtitle.textContent = "Report: " + rid.replace(/_/g," ") + " (" + data.length + " records - " + fmtAmt(totalAmt) + ")";
   var rtoolbar = document.createElement("div"); rtoolbar.className = "toolbar";
+  var srchIn = document.createElement("input"); srchIn.className = "srch"; srchIn.id = "reportSrch"; srchIn.placeholder = "Search..."; srchIn.style.width = "160px";
+  srchIn.addEventListener("input", filterReport);
+  var catSel = document.createElement("select"); catSel.className = "fsel"; catSel.id = "reportCatFilter";
+  catSel.innerHTML = "<option value=''>All Categories</option><option value='Client Reimbursable'>Client Reimbursable</option><option value='Non Reimbursable'>Non Reimbursable</option><option value='Drawings'>Drawings</option><option value='Firms Expenses'>Firms Expenses</option>";
+  catSel.addEventListener("change", filterReport);
   var exportBtn = document.createElement("button"); exportBtn.className = "ghost"; exportBtn.textContent = "Export CSV";
-  exportBtn.addEventListener("click", function() { exportCsv(window.reportData, "report_" + rid); });
+  exportBtn.addEventListener("click", function() { exportCsv(reportCurrentData, "report_" + rid); });
   var printBtn2 = document.createElement("button"); printBtn2.className = "ghost"; printBtn2.textContent = "Print / PDF";
   printBtn2.addEventListener("click", printReport);
-  rtoolbar.appendChild(exportBtn); rtoolbar.appendChild(printBtn2);
+  rtoolbar.appendChild(srchIn); rtoolbar.appendChild(catSel); rtoolbar.appendChild(exportBtn); rtoolbar.appendChild(printBtn2);
   rhdr.appendChild(rtitle); rhdr.appendChild(rtoolbar); rcard.appendChild(rhdr);
   var html = "";
   if (!data.length) { html += "<div class='empty'>No records found.</div></div>"; document.getElementById("reportOutput").innerHTML = html; return; }

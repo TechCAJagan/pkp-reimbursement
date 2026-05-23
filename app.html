@@ -877,21 +877,48 @@ function loadUSR(){
 function fillMgrDrop(){var sel=document.getElementById('uMgr');sel.innerHTML='<option value="">No Manager</option>';for(var i=0;i<usrData.length;i++){var e=usrData[i];if(e.role==='MANAGER'||e.role==='ADMIN'||e.role==='FINANCE_MGR'){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.role+')';sel.appendChild(o);}}}
 function filterUSR(){
   var q=(document.getElementById("usrSrch").value||"").toLowerCase();
-  var filtered=usrData.filter(function(e){return !q||(e.name||"").toLowerCase().indexOf(q)>=0||(e.email||"").toLowerCase().indexOf(q)>=0;});
+  var filtered=usrData.filter(function(e){
+    return !q||(e.name||"").toLowerCase().indexOf(q)>=0||(e.email||"").toLowerCase().indexOf(q)>=0;
+  });
   var rlbl={EMPLOYEE:"Employee",MANAGER:"Manager",FINANCE_MGR:"Finance Mgr",ACCOUNTS:"Accounts",ADMIN:"Admin"};
   var tb=document.getElementById("usrBody");
   tb.innerHTML="";
-  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"7\"><div class=\"empty\">No users.</div></td></tr>";return;}
-  for(var i=0;i<filtered.length;i++){
-    var e=filtered[i]; var act=String(e.isActive).toUpperCase()==="TRUE";
+  if(!filtered.length){
     var tr=document.createElement("tr");
-    tr.innerHTML="<td><span class=\"av\">"+(e.name||"?").charAt(0).toUpperCase()+"</span>"+(e.name||"-")+"</td><td><span class=\"cid\">"+e.id+"</span></td><td>"+(e.email||"-")+"</td><td><span class=\"badge \"+(act?"b-af":"b-rej")+"\">"+(rlbl[e.role]||e.role)+"</span></td><td>"+(e.department||"-")+"</td><td><span style=\"font-size:12px;font-weight:600;color:"+(act?"#065f46":"#991b1b")+"\">"+(act?"Active":"Inactive")+"</span></td><td></td>";
-    var td=tr.querySelector("td:last-child");
+    tr.innerHTML="<td colspan=\"7\"><div class=\"empty\">No users.</div></td>";
+    tb.appendChild(tr); return;
+  }
+  for(var i=0;i<filtered.length;i++){
+    var e=filtered[i];
+    var act=String(e.isActive).toUpperCase()==="TRUE";
+    var badgeCls=act?"b-af":"b-rej";
+    var statusColor=act?"#065f46":"#991b1b";
+    var statusText=act?"Active":"Inactive";
+    var roleText=rlbl[e.role]||e.role;
+    var initial=(e.name||"?").charAt(0).toUpperCase();
+    var tr=document.createElement("tr");
+    var td1=document.createElement("td");
+    var av=document.createElement("span"); av.className="av"; av.textContent=initial;
+    td1.appendChild(av); td1.appendChild(document.createTextNode(e.name||"-"));
+    var td2=document.createElement("td");
+    var cidSp=document.createElement("span"); cidSp.className="cid"; cidSp.textContent=e.id;
+    td2.appendChild(cidSp);
+    var td3=document.createElement("td"); td3.textContent=e.email||"-";
+    var td4=document.createElement("td");
+    var roleSp=document.createElement("span"); roleSp.className="badge "+badgeCls; roleSp.textContent=roleText;
+    td4.appendChild(roleSp);
+    var td5=document.createElement("td"); td5.textContent=e.department||"-";
+    var td6=document.createElement("td");
+    var stSp=document.createElement("span"); stSp.style.cssText="font-size:12px;font-weight:600;color:"+statusColor; stSp.textContent=statusText;
+    td6.appendChild(stSp);
+    var td7=document.createElement("td");
     var eb=document.createElement("button"); eb.className="btn"; eb.textContent="Edit";
     (function(id){ eb.addEventListener("click",function(){ openEditUser(id); }); })(e.id);
-    var tb2=document.createElement("button"); tb2.className="btn "+(act?"btn-no":"btn-ok"); tb2.textContent=act?"Deactivate":"Activate";
-    (function(id,a){ tb2.addEventListener("click",function(){ togUser(id,a); }); })(e.id,act);
-    td.appendChild(eb); td.appendChild(tb2);
+    var deb=document.createElement("button"); deb.className="btn "+(act?"btn-no":"btn-ok"); deb.textContent=act?"Deactivate":"Activate";
+    (function(id,a){ deb.addEventListener("click",function(){ togUser(id,a); }); })(e.id,act);
+    td7.appendChild(eb); td7.appendChild(deb);
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+    tr.appendChild(td5); tr.appendChild(td6); tr.appendChild(td7);
     tb.appendChild(tr);
   }
 }

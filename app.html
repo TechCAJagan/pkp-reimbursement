@@ -165,10 +165,39 @@ tr:hover td{background:#fafafa}
 <div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">Export CSV</button><button class="ghost" onclick="loadFIN()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">Export CSV</button><button class="ghost" onclick="loadACC()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-reports"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div><div id="rptOut"></div></div>
+<div class="pane" id="pane-types">
+<div class="tc"><div class="th2"><div class="th2-title">Reimbursement Types</div>
+<div class="tb"><input class="srch" id="typeSrch" placeholder="Search..." oninput="filterTypes()">
+<select class="fsel" id="typeFilter" onchange="filterTypes()"><option value="">All</option><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select>
+<button class="bpri" onclick="openAddType()">+ Add Type</button>
+<button class="ghost" onclick="loadTypes()">Refresh</button></div></div>
+<div class="tw"><table><thead><tr><th>ID</th><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="typesBody"><tr><td colspan="6"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+
 <div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">+ Add Employee</button><button class="ghost" onclick="loadUSR()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 </main>
 <div class="overlay" id="detOv"><div class="modal"><div class="mhdr"><div class="mtitle" id="mTtl">Claim Details</div><button class="mcls" onclick="closeMod()">&#10005;</button></div><div class="mbdy"><div class="ibar" id="mIBar" style="display:none"></div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div><div id="mBdg"></div></div><div class="dg" id="mDets"></div><div id="mRem"></div></div><div class="mft" id="mFt"></div></div></div>
 <div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">Finance Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
+<div class="overlay" id="typeOv">
+<div class="modal" style="width:460px">
+<div class="mhdr"><div class="mtitle" id="typeMTtl">Add Type</div><button class="mcls" onclick="closeTypeMod()">&#10005;</button></div>
+<div class="mbdy">
+<input type="hidden" id="typeId">
+<div class="fg">
+<div class="field"><label>Major Head <span class="req">*</span></label>
+<input type="text" id="typeMajor" placeholder="e.g. Travel, Client Entertainment" list="majorSugg">
+<datalist id="majorSugg"></datalist></div>
+<div class="field"><label>Minor Head <span class="req">*</span></label>
+<input type="text" id="typeMinor" placeholder="e.g. Air Travel, Hotel Stay"></div>
+<div class="field"><label>Nature <span class="req">*</span></label>
+<input type="text" id="typeNature" placeholder="e.g. Domestic, Local"></div>
+<div class="field" id="typeStRow" style="display:none"><label>Status</label>
+<select id="typeSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div>
+</div></div>
+<div class="mft"><button class="bsec" onclick="closeTypeMod()">Cancel</button>
+<button class="bpri" id="typeSvBtn" onclick="saveType()">Add Type</button></div>
+</div></div>
+
 <div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId"><div class="fg"><div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div><div class="field"><label>Date Paid by Firm</label><input type="date" id="acDp"></div><div class="field"><label>Date Invoiced to Client</label><input type="date" id="acDi"></div><div class="field"><label>Date Received from Client</label><input type="date" id="acDr"></div></div></div><div class="mft"><button class="bsec" onclick="closeAccMod()">Cancel</button><button class="bpri" id="acSv" onclick="saveAcc()">Save</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
@@ -187,7 +216,7 @@ var NAV = {
   MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
   FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
   ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
-  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'new-claim',lbl:'New Claim'}]
+  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
 };
 
 function init() {
@@ -224,7 +253,7 @@ function go(id) {
   if (pane) pane.className='pane on';
   var ni = document.querySelector('.ni[data-pane="'+id+'"]');
   if (ni) ni.className='ni on';
-  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management'};
+  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management',types:'Reimbursement Types'};
   document.getElementById('topTitle').textContent = titles[id]||id;
   if (id==='dashboard') loadDash();
   if (id==='my-claims') loadMC();
@@ -233,6 +262,7 @@ function go(id) {
   if (id==='accounts') loadACC();
   if (id==='reports') buildRpts();
   if (id==='users') loadUSR();
+  if (id==='types') loadTypes();
   if (id==='new-claim') resetNC();
 }
 
@@ -727,16 +757,39 @@ function doFinAction(id,status){
 }
 
 // ── NEW CLAIM ──
-var MINOR={Travel:['Air Travel','Train','Bus / Taxi','Own Vehicle','Metro / Local','Auto Rickshaw'],'Client Entertainment':['Lunch / Dinner','Breakfast','Gifts','Events','Hotel Hospitality'],Accommodation:['Hotel Stay','Guest House','Service Apartment'],Communication:['Mobile Recharge','Internet','Courier','Telephone'],'Office Supplies':['Stationery','Printing','Equipment','Software'],'Professional Fees':['Consultant','Legal','Audit Support','Valuation'],Miscellaneous:['Bank Charges','Subscription','Other']};
-var NATURE={'Air Travel':['Domestic','International'],Train:['Local','Outstation'],'Bus / Taxi':['Local','Outstation'],'Own Vehicle':['Local','Outstation'],'Metro / Local':['Within City'],'Hotel Stay':['Domestic','International'],'Lunch / Dinner':['Client Meeting','Team Meeting','Internal'],default:['Standard','Special','Recurring','One-time']};
+// Types loaded from sheet - built dynamically
+var MINOR={};
+var NATURE={'default':['Standard','Special','Recurring','One-time']};
+var ALL_TYPES=[];
+
+function loadTypeData(cb) {
+  if (ALL_TYPES.length > 0) { if(cb) cb(); return; }
+  api({action:'getReimbursementTypes'}, function(res) {
+    if (res.error || !res.types) { if(cb) cb(); return; }
+    ALL_TYPES = res.types.filter(function(t){ return t.isActive === 'TRUE'; });
+    buildTypeMap();
+    if (cb) cb();
+  });
+}
+
+function buildTypeMap() {
+  MINOR = {};
+  for (var i=0; i<ALL_TYPES.length; i++) {
+    var t = ALL_TYPES[i];
+    if (!MINOR[t.majorHead]) MINOR[t.majorHead] = [];
+    if (MINOR[t.majorHead].indexOf(t.minorHead) < 0) MINOR[t.majorHead].push(t.minorHead);
+    if (t.nature) {
+      if (!NATURE[t.minorHead]) NATURE[t.minorHead] = [];
+      if (NATURE[t.minorHead].indexOf(t.nature) < 0) NATURE[t.minorHead].push(t.nature);
+    }
+  }
+}
 
 function setupNewClaim() {
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('ncCancel').addEventListener('click', function(){ go('my-claims'); });
   document.getElementById('ncDate').max=today;
   var ms=document.getElementById('ncMajor');
-  var majorList=Object.keys(MINOR);
-  for(var i=0;i<majorList.length;i++){var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);}
   ms.addEventListener('change',function(){
     var opts=MINOR[this.value]||[]; var mn=document.getElementById('ncMinor');
     mn.innerHTML='<option value="">Select</option>';
@@ -744,7 +797,7 @@ function setupNewClaim() {
     document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
   });
   document.getElementById('ncMinor').addEventListener('change',function(){
-    var opts=NATURE[this.value]||NATURE.default; var ns=document.getElementById('ncNature');
+    var opts=NATURE[this.value]||NATURE['default']; var ns=document.getElementById('ncNature');
     ns.innerHTML='<option value="">Select</option>';
     for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
   });
@@ -759,7 +812,6 @@ function resetNC(){
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('ncDate').value=today;
   document.getElementById('ncClient').value='';
-  document.getElementById('ncMajor').value='';
   document.getElementById('ncMinor').innerHTML='<option value="">Select</option>';
   document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
   document.getElementById('ncSub').value='';
@@ -771,8 +823,14 @@ function resetNC(){
   document.getElementById('refStatus').textContent='';
   var cats=document.querySelectorAll('.cat-opt');
   for(var i=0;i<cats.length;i++) cats[i].className='cat-opt';
-  document.getElementById('cat0').className='cat-opt sel';
-  document.getElementById('cat0').querySelector('input').checked=true;
+  if(document.getElementById('cat0')) document.getElementById('cat0').className='cat-opt sel';
+  // Rebuild major dropdown from loaded types
+  loadTypeData(function(){
+    var ms=document.getElementById('ncMajor');
+    ms.innerHTML='<option value="">Select</option>';
+    var majorList=Object.keys(MINOR);
+    for(var i=0;i<majorList.length;i++){var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);}
+  });
 }
 
 function getRef(){
@@ -935,6 +993,120 @@ function saveUser(){
 }
 function togUser(id,isActive){if(!confirm((isActive?'Deactivate':'Activate')+' this employee?'))return;api({action:'updateEmployee',employeeId:id,IsActive:isActive?'FALSE':'TRUE'},function(res){if(res.error){toast(res.error,'err');return;}toast((isActive?'Deactivated.':'Activated.'),'ok');loadUSR();});}
 
+
+// ── TYPES MANAGEMENT ──
+var allTypes = [];
+
+function loadTypes() {
+  document.getElementById('typesBody').innerHTML='<tr><td colspan="6"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getReimbursementTypes'}, function(res) {
+    if (res.error) { toast(res.error,'err'); return; }
+    allTypes = res.types || [];
+    ALL_TYPES = [];
+    buildTypeMap();
+    filterTypes();
+    // Update major suggestions datalist
+    var dl = document.getElementById('majorSugg');
+    if (dl) {
+      var majors = Object.keys(MINOR);
+      dl.innerHTML = '';
+      for(var i=0;i<majors.length;i++){var o=document.createElement('option');o.value=majors[i];dl.appendChild(o);}
+    }
+  });
+}
+
+function filterTypes() {
+  var q=(document.getElementById('typeSrch')?document.getElementById('typeSrch').value||'':'').toLowerCase();
+  var f=document.getElementById('typeFilter')?document.getElementById('typeFilter').value:'';
+  var filtered=allTypes.filter(function(t){
+    var mq=!q||(t.majorHead||'').toLowerCase().indexOf(q)>=0||(t.minorHead||'').toLowerCase().indexOf(q)>=0||(t.nature||'').toLowerCase().indexOf(q)>=0;
+    var mf=!f||t.isActive===f;
+    return mq&&mf;
+  });
+  var tb=document.getElementById('typesBody');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="empty">No types found.</div></td></tr>';return;}
+  tb.innerHTML='';
+  for(var i=0;i<filtered.length;i++){
+    var t=filtered[i];
+    var act=t.isActive==='TRUE';
+    var tr=document.createElement('tr');
+    var td1=document.createElement('td'); td1.innerHTML='<span class="cid">'+t.id+'</span>'; 
+    var td2=document.createElement('td'); td2.textContent=t.majorHead;
+    var td3=document.createElement('td'); td3.textContent=t.minorHead;
+    var td4=document.createElement('td'); td4.textContent=t.nature;
+    var td5=document.createElement('td');
+    var sp=document.createElement('span');
+    sp.style.cssText='font-size:12px;font-weight:600;color:'+(act?'#065f46':'#991b1b');
+    sp.textContent=act?'Active':'Inactive';
+    td5.appendChild(sp);
+    var td6=document.createElement('td');
+    var eb=document.createElement('button'); eb.className='btn'; eb.textContent='Edit';
+    (function(tid){ eb.addEventListener('click',function(){ openEditType(tid); }); })(t.id);
+    var tb2=document.createElement('button'); tb2.className='btn '+(act?'btn-no':'btn-ok'); tb2.textContent=act?'Deactivate':'Activate';
+    (function(tid,a){ tb2.addEventListener('click',function(){ toggleType(tid,a); }); })(t.id,act);
+    td6.appendChild(eb); td6.appendChild(tb2);
+    tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);tr.appendChild(td4);tr.appendChild(td5);tr.appendChild(td6);
+    tb.appendChild(tr);
+  }
+}
+
+function openAddType() {
+  document.getElementById('typeMTtl').textContent='Add Reimbursement Type';
+  document.getElementById('typeId').value='';
+  document.getElementById('typeMajor').value='';
+  document.getElementById('typeMinor').value='';
+  document.getElementById('typeNature').value='';
+  document.getElementById('typeStRow').style.display='none';
+  document.getElementById('typeSvBtn').textContent='Add Type';
+  document.getElementById('typeOv').className='overlay on';
+}
+
+function openEditType(id) {
+  var t=null; for(var i=0;i<allTypes.length;i++){if(allTypes[i].id===id){t=allTypes[i];break;}}
+  if(!t) return;
+  document.getElementById('typeMTtl').textContent='Edit Type';
+  document.getElementById('typeId').value=t.id;
+  document.getElementById('typeMajor').value=t.majorHead;
+  document.getElementById('typeMinor').value=t.minorHead;
+  document.getElementById('typeNature').value=t.nature;
+  document.getElementById('typeSt').value=t.isActive;
+  document.getElementById('typeStRow').style.display='flex';
+  document.getElementById('typeSvBtn').textContent='Save Changes';
+  document.getElementById('typeOv').className='overlay on';
+}
+
+function closeTypeMod() { document.getElementById('typeOv').className='overlay'; }
+
+function saveType() {
+  var major=document.getElementById('typeMajor').value.trim();
+  var minor=document.getElementById('typeMinor').value.trim();
+  var nature=document.getElementById('typeNature').value.trim();
+  var typeId=document.getElementById('typeId').value;
+  if(!major||!minor||!nature){toast('All fields are required.','err');return;}
+  var btn=document.getElementById('typeSvBtn'); btn.disabled=true; btn.textContent='Saving...';
+  var p={action:'saveReimbursementType',majorHead:major,minorHead:minor,nature:nature};
+  if(typeId) p.typeId=typeId;
+  if(typeId) p.isActive=document.getElementById('typeSt').value;
+  api(p,function(res){
+    btn.disabled=false; btn.textContent=typeId?'Save Changes':'Add Type';
+    if(res.error){toast(res.error,'err');return;}
+    toast(typeId?'Type updated!':'Type added!','ok');
+    closeTypeMod();
+    ALL_TYPES=[];  // force reload
+    loadTypes();
+  });
+}
+
+function toggleType(id, isActive) {
+  if(!confirm((isActive?'Deactivate':'Activate')+' this type?')) return;
+  api({action:'saveReimbursementType',typeId:id,isActive:isActive?'FALSE':'TRUE'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast(isActive?'Deactivated.':'Activated.','ok');
+    ALL_TYPES=[];  // force reload
+    loadTypes();
+  });
+}
+
 // ── EXPORT ──
 function exportCSV(data,fname){
   if(!data||!data.length){toast('No data to export.','err');return;}
@@ -953,7 +1125,10 @@ function printClaim(id){ sessionStorage.setItem('printClaimId',id); window.open(
 document.getElementById('detOv').addEventListener('click',function(e){if(e.target===this)closeMod();});
 document.getElementById('usrOv').addEventListener('click',function(e){if(e.target===this)closeUserMod();});
 document.getElementById('accOv').addEventListener('click',function(e){if(e.target===this)closeAccMod();});
+document.getElementById('typeOv').addEventListener('click',function(e){if(e.target===this)closeTypeMod();});
 
+// Preload types when app starts
+loadTypeData(null);
 init();
 
 </script>

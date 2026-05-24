@@ -69,11 +69,7 @@ body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;background:
 .alert.ok{background:var(--green-lt);color:var(--green);border:1px solid #6ee7b7;display:block}
 .alert.err{background:var(--red-lt);color:var(--red);border:1px solid #fca5a5;display:block}
 
-/* ── STRENGTH BAR ── */
-.strength-wrap{margin-top:6px}
-.strength-bar{height:4px;background:#e5e5ea;border-radius:2px;overflow:hidden;margin-bottom:4px}
-.strength-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.3s;width:0%}
-.strength-label{font-size:11px;color:var(--muted)}
+
 
 /* ── TOAST ── */
 .toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-family:inherit;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;border-left:3px solid var(--gold)}
@@ -142,11 +138,8 @@ body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;background:
         </div>
         <div class="field">
           <label>New Password</label>
-          <input type="password" id="newPwd" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkStrength()">
-          <div class="strength-wrap">
-            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
-            <div class="strength-label" id="strengthLabel"></div>
-          </div>
+          <input type="password" id="newPwd" placeholder="At least 8 characters" autocomplete="new-password">
+
         </div>
         <div class="field">
           <label>Confirm New Password</label>
@@ -236,37 +229,12 @@ function loadProfile() {
   });
 }
 
-function checkStrength() {
-  var pwd = document.getElementById('newPwd').value;
-  var fill = document.getElementById('strengthFill');
-  var lbl  = document.getElementById('strengthLabel');
-  if (!pwd) { fill.style.width='0%'; lbl.textContent=''; return; }
-  var score = 0;
-  if (pwd.length >= 8)  score++;
-  if (pwd.length >= 12) score++;
-  if (/[A-Z]/.test(pwd)) score++;
-  if (/[0-9]/.test(pwd)) score++;
-  if (/[^A-Za-z0-9]/.test(pwd)) score++;
-  var levels = [
-    {w:'20%',c:'#dc2626',l:'Very weak'},
-    {w:'40%',c:'#f97316',l:'Weak'},
-    {w:'60%',c:'#eab308',l:'Fair'},
-    {w:'80%',c:'#22c55e',l:'Strong'},
-    {w:'100%',c:'#16a34a',l:'Very strong'}
-  ];
-  var lv = levels[Math.min(score,4)];
-  fill.style.width = lv.w;
-  fill.style.background = lv.c;
-  lbl.textContent = lv.l;
-  lbl.style.color = lv.c;
-}
+
 
 function clearPwForm() {
   document.getElementById('curPwd').value = '';
   document.getElementById('newPwd').value = '';
   document.getElementById('cnfPwd').value = '';
-  document.getElementById('strengthFill').style.width = '0%';
-  document.getElementById('strengthLabel').textContent = '';
   document.getElementById('pwAlert').className = 'alert';
 }
 
@@ -286,7 +254,6 @@ function changePassword() {
 
   if (!cur)           { showAlert('Please enter your current password.', 'err'); return; }
   if (!nw)            { showAlert('Please enter a new password.', 'err'); return; }
-  if (nw.length < 6)  { showAlert('New password must be at least 6 characters.', 'err'); return; }
   if (nw !== cnf)     { showAlert('New passwords do not match.', 'err'); return; }
   if (cur === nw)     { showAlert('New password must be different from current.', 'err'); return; }
 

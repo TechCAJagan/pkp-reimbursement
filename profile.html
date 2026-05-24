@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My Profile — PKP Reimbursement</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1a1a2e;--blue2:#2d2d4e;--blue3:#4a4a8a;
+  --gold:#c9a84c;--gold2:#e8c96a;
+  --border:#dddde8;--muted:#7070a0;
+  --green:#0a5c36;--green-lt:#e8f8f0;
+  --red:#8b1a1a;--red-lt:#fdf2f2;
+}
+body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;background:#f0f0f5;color:#1a1a2e;min-height:100vh;display:flex;flex-direction:column}
+
+/* ── TOP BAR ── */
+.topbar{background:#1a1a2e;padding:0 28px;height:56px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid rgba(201,168,76,0.2)}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.back-btn{background:none;border:1px solid rgba(201,168,76,0.3);color:rgba(255,255,255,0.7);padding:6px 14px;border-radius:7px;font-family:inherit;font-size:12px;cursor:pointer;transition:all 0.2s}
+.back-btn:hover{border-color:var(--gold);color:var(--gold)}
+.topbar-title{color:#fff;font-size:16px;font-weight:600;font-family:"Palatino Linotype",serif;letter-spacing:0.02em}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-co{font-size:11px;color:rgba(201,168,76,0.6);letter-spacing:0.08em;font-style:italic}
+
+/* ── MAIN LAYOUT ── */
+.container{max-width:720px;margin:32px auto;padding:0 20px;width:100%}
+
+/* ── PROFILE CARD ── */
+.profile-card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:20px;box-shadow:0 2px 12px rgba(26,26,46,0.06)}
+.profile-header{background:linear-gradient(135deg,#1a1a2e 0%,#2d2d4e 100%);padding:28px 28px 20px;display:flex;align-items:center;gap:18px}
+.profile-av{width:64px;height:64px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:#1a1a2e;flex-shrink:0;border:3px solid rgba(201,168,76,0.4)}
+.profile-info{flex:1}
+.profile-name{font-size:20px;font-weight:600;color:#fff;margin-bottom:4px;font-family:"Palatino Linotype",serif}
+.profile-role{font-size:12px;color:rgba(201,168,76,0.8);letter-spacing:0.06em}
+.profile-id{font-size:11px;color:rgba(255,255,255,0.4);margin-top:3px;font-family:monospace}
+
+/* ── INFO GRID ── */
+.info-grid{display:grid;grid-template-columns:1fr 1fr;gap:0;padding:0}
+.info-item{padding:16px 24px;border-bottom:1px solid var(--border)}
+.info-item:nth-child(odd){border-right:1px solid var(--border)}
+.info-item:last-child,.info-item:nth-last-child(2):nth-child(odd){border-bottom:none}
+.info-label{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:5px}
+.info-value{font-size:14px;color:#1a1a2e;font-weight:500}
+.info-value.mono{font-family:monospace;font-size:13px}
+.span2{grid-column:span 2;border-right:none!important}
+
+/* ── PASSWORD CARD ── */
+.pw-card{background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;box-shadow:0 2px 12px rgba(26,26,46,0.06)}
+.pw-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px}
+.pw-icon{font-size:18px}
+.pw-title{font-size:15px;font-weight:600;color:#1a1a2e;font-family:"Palatino Linotype",serif}
+.pw-body{padding:20px 24px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:#1a1a2e;margin-bottom:7px}
+.field input{width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:9px;font-family:inherit;font-size:13px;color:#1a1a2e;outline:none;transition:border-color 0.2s;background:#fff}
+.field input:focus{border-color:var(--blue3);box-shadow:0 0 0 3px rgba(74,74,138,0.08)}
+.pw-footer{padding:0 24px 20px;display:flex;gap:10px;justify-content:flex-end}
+.btn-pri{background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;border:none;border-radius:9px;padding:10px 22px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px rgba(26,26,46,0.2)}
+.btn-pri:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(26,26,46,0.3)}
+.btn-pri:disabled{opacity:0.6;cursor:default;transform:none}
+.btn-sec{background:#fff;color:#1a1a2e;border:1.5px solid var(--border);border-radius:9px;padding:10px 22px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.btn-sec:hover{border-color:var(--blue3);background:#f4f4f8}
+
+/* ── ALERTS ── */
+.alert{padding:11px 16px;border-radius:9px;font-size:13px;margin-bottom:16px;display:none}
+.alert.ok{background:var(--green-lt);color:var(--green);border:1px solid #6ee7b7;display:block}
+.alert.err{background:var(--red-lt);color:var(--red);border:1px solid #fca5a5;display:block}
+
+/* ── STRENGTH BAR ── */
+.strength-wrap{margin-top:6px}
+.strength-bar{height:4px;background:#e5e5ea;border-radius:2px;overflow:hidden;margin-bottom:4px}
+.strength-fill{height:100%;border-radius:2px;transition:width 0.3s,background 0.3s;width:0%}
+.strength-label{font-size:11px;color:var(--muted)}
+
+/* ── TOAST ── */
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-family:inherit;z-index:999;opacity:0;transform:translateY(10px);transition:all 0.3s;pointer-events:none;border-left:3px solid var(--gold)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* ── LOADING ── */
+.loading{text-align:center;padding:60px 20px;color:var(--muted);font-size:14px}
+.loading-spinner{width:32px;height:32px;border:3px solid #e5e5ea;border-top-color:var(--blue3);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:600px){
+  .info-grid{grid-template-columns:1fr}
+  .info-item{border-right:none!important}
+  .info-item:last-child{border-bottom:none}
+  .span2{grid-column:span 1}
+  .container{padding:0 12px;margin:20px auto}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-left">
+    <button class="back-btn" onclick="goBack()">← Back</button>
+    <span class="topbar-title">My Profile</span>
+  </div>
+  <div class="topbar-right">
+    <span class="topbar-co">Pratapkaran Paul &amp; Co.</span>
+  </div>
+</div>
+
+<div class="container">
+  <div id="loadingDiv" class="loading">
+    <div class="loading-spinner"></div>
+    Loading profile...
+  </div>
+
+  <div id="profileContent" style="display:none">
+
+    <!-- Profile Card -->
+    <div class="profile-card">
+      <div class="profile-header">
+        <div class="profile-av" id="profAv">U</div>
+        <div class="profile-info">
+          <div class="profile-name" id="profName">-</div>
+          <div class="profile-role" id="profRole">-</div>
+          <div class="profile-id" id="profId">-</div>
+        </div>
+      </div>
+      <div class="info-grid" id="infoGrid">
+        <!-- filled by JS -->
+      </div>
+    </div>
+
+    <!-- Change Password Card -->
+    <div class="pw-card">
+      <div class="pw-header">
+        <span class="pw-icon">🔐</span>
+        <span class="pw-title">Change Password</span>
+      </div>
+      <div class="pw-body">
+        <div class="alert" id="pwAlert"></div>
+        <div class="field">
+          <label>Current Password</label>
+          <input type="password" id="curPwd" placeholder="Enter your current password" autocomplete="current-password">
+        </div>
+        <div class="field">
+          <label>New Password</label>
+          <input type="password" id="newPwd" placeholder="At least 8 characters" autocomplete="new-password" oninput="checkStrength()">
+          <div class="strength-wrap">
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            <div class="strength-label" id="strengthLabel"></div>
+          </div>
+        </div>
+        <div class="field">
+          <label>Confirm New Password</label>
+          <input type="password" id="cnfPwd" placeholder="Re-enter new password" autocomplete="new-password">
+        </div>
+      </div>
+      <div class="pw-footer">
+        <button class="btn-sec" onclick="clearPwForm()">Clear</button>
+        <button class="btn-pri" id="savePwBtn" onclick="changePassword()">🔒 Update Password</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var API = 'https://script.google.com/macros/s/AKfycbzz-toxODXS8280oTFNgSfhheCV4Zhkobx4dE1DKTECGzIPHrJ3jr1LHdlk50sxDoXZBg/exec';
+var sess = {}, tok = '';
+try {
+  sess = JSON.parse(sessionStorage.getItem('pkp_user') || '{}');
+  tok  = sessionStorage.getItem('pkp_token') || '';
+} catch(e) {}
+if (!sess || !sess.role) { window.location.href = 'index.html'; }
+
+var ROLE_LABELS = {
+  EMPLOYEE:'Employee', MANAGER:'Manager',
+  FINANCE_MGR:'Finance Manager', ACCOUNTS:'Accounts Team', ADMIN:'Administrator'
+};
+
+function goBack() { window.location.href = 'app.html'; }
+
+function api(params, cb) {
+  var name = 'pkp' + Date.now() + Math.floor(Math.random()*9999);
+  var done = false;
+  var timer = setTimeout(function(){ if(!done){done=true;cleanup();cb({error:'Timed out.'});} }, 20000);
+  function cleanup(){ delete window[name]; var s=document.getElementById('s_'+name); if(s&&s.parentNode) s.parentNode.removeChild(s); }
+  window[name] = function(data){ if(!done){done=true;clearTimeout(timer);cleanup();cb(data);} };
+  var q = 'callback='+encodeURIComponent(name)+'&token='+encodeURIComponent(tok);
+  for(var k in params){ if(Object.prototype.hasOwnProperty.call(params,k)) q+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }
+  var sc = document.createElement('script'); sc.id='s_'+name; sc.src=API+'?'+q;
+  sc.onerror = function(){ if(!done){done=true;clearTimeout(timer);cleanup();cb({error:'Network error.'});} };
+  document.body.appendChild(sc);
+}
+
+function toast(msg, type) {
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.className = 'toast show';
+  el.style.borderLeftColor = type === 'ok' ? '#c9a84c' : '#dc2626';
+  setTimeout(function(){ el.className = 'toast'; }, 3500);
+}
+
+function loadProfile() {
+  api({ action: 'getProfile' }, function(res) {
+    document.getElementById('loadingDiv').style.display = 'none';
+    if (res.error) {
+      document.getElementById('profileContent').innerHTML = '<div style="padding:40px;text-align:center;color:#8b1a1a">' + res.error + '</div>';
+      document.getElementById('profileContent').style.display = 'block';
+      return;
+    }
+    var p = res.profile;
+    // Header
+    document.getElementById('profAv').textContent = (p.name || 'U').charAt(0).toUpperCase();
+    document.getElementById('profName').textContent = p.name || '-';
+    document.getElementById('profRole').textContent = ROLE_LABELS[p.role] || p.role;
+    document.getElementById('profId').textContent = 'ID: ' + p.id;
+    // Info grid
+    var grid = document.getElementById('infoGrid');
+    var fields = [
+      ['Employee ID', '<span class="mono">' + (p.id||'-') + '</span>'],
+      ['Department',  p.department || 'Not specified'],
+      ['Email',       p.email || '-'],
+      ['Reporting Manager', p.managerName || (p.managerId ? p.managerId : 'No Manager')],
+      ['Role',        ROLE_LABELS[p.role] || p.role],
+      ['Account Status', p.isActive === 'TRUE' ? '<span style="color:#0a5c36;font-weight:600">Active</span>' : '<span style="color:#8b1a1a;font-weight:600">Inactive</span>'],
+      ['Last Login',  p.lastLogin ? new Date(p.lastLogin).toLocaleString('en-IN') : 'Not recorded'],
+      ['Member Since', p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '-'],
+    ];
+    var html = '';
+    for(var i=0;i<fields.length;i++){
+      html += '<div class="info-item'+(i===fields.length-1&&fields.length%2!==0?' span2':'')+'"><div class="info-label">'+fields[i][0]+'</div><div class="info-value">'+fields[i][1]+'</div></div>';
+    }
+    grid.innerHTML = html;
+    document.getElementById('profileContent').style.display = 'block';
+  });
+}
+
+function checkStrength() {
+  var pwd = document.getElementById('newPwd').value;
+  var fill = document.getElementById('strengthFill');
+  var lbl  = document.getElementById('strengthLabel');
+  if (!pwd) { fill.style.width='0%'; lbl.textContent=''; return; }
+  var score = 0;
+  if (pwd.length >= 8)  score++;
+  if (pwd.length >= 12) score++;
+  if (/[A-Z]/.test(pwd)) score++;
+  if (/[0-9]/.test(pwd)) score++;
+  if (/[^A-Za-z0-9]/.test(pwd)) score++;
+  var levels = [
+    {w:'20%',c:'#dc2626',l:'Very weak'},
+    {w:'40%',c:'#f97316',l:'Weak'},
+    {w:'60%',c:'#eab308',l:'Fair'},
+    {w:'80%',c:'#22c55e',l:'Strong'},
+    {w:'100%',c:'#16a34a',l:'Very strong'}
+  ];
+  var lv = levels[Math.min(score,4)];
+  fill.style.width = lv.w;
+  fill.style.background = lv.c;
+  lbl.textContent = lv.l;
+  lbl.style.color = lv.c;
+}
+
+function clearPwForm() {
+  document.getElementById('curPwd').value = '';
+  document.getElementById('newPwd').value = '';
+  document.getElementById('cnfPwd').value = '';
+  document.getElementById('strengthFill').style.width = '0%';
+  document.getElementById('strengthLabel').textContent = '';
+  document.getElementById('pwAlert').className = 'alert';
+}
+
+function showAlert(msg, type) {
+  var el = document.getElementById('pwAlert');
+  el.textContent = msg;
+  el.className = 'alert ' + type;
+}
+
+function changePassword() {
+  var cur  = document.getElementById('curPwd').value.trim();
+  var nw   = document.getElementById('newPwd').value.trim();
+  var cnf  = document.getElementById('cnfPwd').value.trim();
+  var btn  = document.getElementById('savePwBtn');
+
+  document.getElementById('pwAlert').className = 'alert';
+
+  if (!cur)           { showAlert('Please enter your current password.', 'err'); return; }
+  if (!nw)            { showAlert('Please enter a new password.', 'err'); return; }
+  if (nw.length < 6)  { showAlert('New password must be at least 6 characters.', 'err'); return; }
+  if (nw !== cnf)     { showAlert('New passwords do not match.', 'err'); return; }
+  if (cur === nw)     { showAlert('New password must be different from current.', 'err'); return; }
+
+  btn.disabled = true; btn.textContent = 'Updating...';
+
+  api({ action: 'changePassword', currentPassword: cur, newPassword: nw }, function(res) {
+    btn.disabled = false; btn.textContent = '🔒 Update Password';
+    if (res.error) { showAlert(res.error, 'err'); return; }
+    showAlert('✅ Password updated successfully!', 'ok');
+    clearPwForm();
+    toast('Password changed!', 'ok');
+  });
+}
+
+// Load on start
+loadProfile();
+</script>
+</body>
+</html>

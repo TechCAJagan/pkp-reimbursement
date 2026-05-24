@@ -32,7 +32,9 @@ body{font-family:"Palatino Linotype","Palatino","Book Antiqua",Palatino,serif;ba
 .s-foot{margin-top:auto;border-top:1px solid rgba(201,168,76,0.12)}
 .s-user{display:flex;align-items:center;gap:10px;padding:12px 18px}
 .s-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
-.s-un{font-size:12.5px;font-weight:600;color:#fff}
+.s-un{font-size:12.5px;font-weight:600;color:#fff;transition:color 0.15s}
+.s-user a:hover .s-un{color:var(--gold)}
+.s-user a:hover .s-av{box-shadow:0 0 0 2px var(--gold)}
 .s-ur{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
 .s-lo{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;margin-left:auto;font-size:14px;padding:4px;transition:color 0.15s}
 .s-lo:hover{color:var(--gold)}
@@ -135,7 +137,7 @@ tr:hover td{background:#fafafa}
 <aside class="sidebar" id="sidebar">
 <div class="s-logo"><div class="s-co">Reimburse   'ment</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
 <nav class="nav" id="sideNav"></nav>
-<div class="s-foot"><div class="s-powered">Powered by <span>CA. Jagan A.</span></div><div class="s-user"><div class="s-av" id="sAv">U</div><div><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div><button class="s-lo" id="loBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button></div></div>
+<div class="s-foot"><div class="s-powered">Powered by <span>CA. Jagan A.</span></div><div class="s-user"><a href="profile.html" title="View Profile" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0"><div class="s-av" id="sAv">U</div><div style="min-width:0"><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div></a><button class="s-lo" id="loBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button></div></div>
 </aside>
 <main class="main">
 <header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">➕ New Claim</button></header>

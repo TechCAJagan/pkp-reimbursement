@@ -212,11 +212,11 @@ if (!sess.role) { window.location.href = 'index.html'; }
 
 var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
 var NAV = {
-  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
-  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
-  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
-  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
-  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
+  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard', icon:'📊'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
+  MANAGER:  [{id:'dashboard',lbl:'Dashboard', icon:'📊'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
+  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard', icon:'📊'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
+  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard', icon:'📊'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
+  ADMIN:    [{id:'dashboard',lbl:'Dashboard', icon:'📊'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
 };
 
 function init() {

@@ -271,7 +271,18 @@ function api(params, cb) {
   var done = false;
   var timer = setTimeout(function(){ if(!done){done=true;cleanup();cb({error:'Timed out.'});} },25000);
   function cleanup(){ delete window[name]; var s=document.getElementById('s_'+name); if(s&&s.parentNode) s.parentNode.removeChild(s); }
-  window[name] = function(data){ if(!done){done=true;clearTimeout(timer);cleanup();cb(data);} };
+  window[name] = function(data){
+    if(!done){
+      done=true;clearTimeout(timer);cleanup();
+      // Auto logout on token errors
+      if(data.error && (data.error.indexOf('token')>=0||data.error.indexOf('Login')>=0||data.error.indexOf('session')>=0||data.error.indexOf('Session')>=0||data.error.indexOf('Invalid')>=0)) {
+        toast('Session expired. Please login again.','err');
+        setTimeout(function(){ sessionStorage.clear(); window.location.href='index.html'; },2000);
+        return;
+      }
+      cb(data);
+    }
+  };
   var q='callback='+encodeURIComponent(name)+'&token='+encodeURIComponent(tok);
   for(var k in params){ if(Object.prototype.hasOwnProperty.call(params,k)) q+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }
   var sc=document.createElement('script'); sc.id='s_'+name; sc.src=API+'?'+q;

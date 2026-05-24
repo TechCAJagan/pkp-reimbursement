@@ -129,9 +129,58 @@ tr:hover td{background:#fafafa}
 .tbb{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit}
 .tbb.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
 .toast{position:fixed;bottom:20px;right:20px;padding:11px 16px;border-radius:9px;font-size:13px;font-family:inherit;z-index:999;opacity:0;transform:translateY(12px);transition:all 0.3s;pointer-events:none;max-width:320px}
+
+/* ── REPORT ENHANCEMENTS ── */
+.rpt-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:#f8f8fc;border-bottom:1px solid var(--border)}
+.rpt-sel-bar{display:none;background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;padding:10px 18px;border-radius:9px;margin-bottom:10px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rpt-sel-bar.on{display:flex}
+.rpt-sel-info{font-size:13px;font-weight:600;font-family:"Palatino Linotype",serif}
+.rpt-sel-info span{color:var(--gold);font-size:16px;margin-right:6px}
+.rpt-sel-btns{display:flex;gap:8px;flex-wrap:wrap}
+.rpt-sel-btns button{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Palatino Linotype",serif;border:none;transition:all 0.15s}
+.rpt-btn-pdf{background:var(--red-lt);color:var(--red);border:1px solid #fca5a5!important}
+.rpt-btn-pdf:hover{background:#fee2e2}
+.rpt-btn-xls{background:var(--green-lt);color:var(--green);border:1px solid #6ee7b7!important}
+.rpt-btn-xls:hover{background:#d1fae5}
+.rpt-btn-clr{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.2)!important}
+.rpt-btn-clr:hover{background:rgba(255,255,255,0.25)}
+
+/* Column filter dropdowns */
+.col-filter{position:relative;display:inline-block}
+.col-filter-btn{background:none;border:none;cursor:pointer;padding:2px 4px;font-size:10px;color:var(--muted);transition:color 0.15s;vertical-align:middle}
+.col-filter-btn.active{color:var(--gold)}
+.col-filter-btn:hover{color:var(--blue)}
+.col-filter-drop{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(26,26,46,0.12);z-index:200;min-width:180px;max-height:260px;overflow-y:auto;padding:6px 0}
+.col-filter-drop input{width:calc(100% - 16px);margin:6px 8px;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
+.col-filter-item{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#1a1a2e;transition:background 0.1s}
+.col-filter-item:hover{background:#f4f4f8}
+.col-filter-item input[type=checkbox]{accent-color:var(--blue3);cursor:pointer;flex-shrink:0}
+.col-filter-actions{display:flex;gap:6px;padding:6px 8px;border-top:1px solid var(--border);margin-top:4px}
+.col-filter-actions button{flex:1;padding:5px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;border:none}
+.cf-ok{background:var(--blue);color:#fff}.cf-clr{background:#f4f4f8;color:var(--blue)}
+
+/* Row checkboxes */
+.rpt-chk{accent-color:var(--blue3);cursor:pointer;width:14px;height:14px}
+.rpt-row-sel td{background:#eeeef8!important}
+
+/* Print styles */
+@media print{
+  .sidebar,.topbar,.rpt-toolbar,.rpt-sel-bar,.th2,.rpt-chk,thead .col-filter,button{display:none!important}
+  body{background:#fff;font-family:"Palatino Linotype",serif}
+  .main{margin-left:0!important}
+  .pane{padding:0!important}
+  .rpt-print-header{display:block!important}
+  .tc{border:none!important;box-shadow:none!important}
+  th{background:#1a1a2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rpt-print-footer{display:block!important;margin-top:20px;border-top:2px solid #1a1a2e;padding-top:12px}
+  tr{page-break-inside:avoid}
+}
+.rpt-print-header{display:none;margin-bottom:20px}
+.rpt-print-footer{display:none}
 .toast.show{opacity:1;transform:translateY(0)}
 .t-ok{background:#065f46;color:#fff}.t-err{background:#991b1b;color:#fff}.t-info{background:var(--blue);color:#fff}
 </style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
@@ -177,7 +226,20 @@ tr:hover td{background:#fafafa}
 <div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">📥 Export CSV</button><button class="ghost" onclick="loadAP()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">📥 Export CSV</button><button class="ghost" onclick="loadFIN()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">📥 Export CSV</button><button class="ghost" onclick="loadACC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
-<div class="pane" id="pane-reports"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div><div id="rptOut"></div></div>
+<div class="pane" id="pane-reports">
+<div class="rpt-print-header" id="rptPrintHdr"></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div>
+<div class="rpt-sel-bar" id="rptSelBar">
+  <div class="rpt-sel-info"><span id="selCount">0</span> claim(s) selected</div>
+  <div class="rpt-sel-btns">
+    <button class="rpt-btn-pdf" onclick="exportSelectedPDF()">🖨️ Print / PDF</button>
+    <button class="rpt-btn-xls" onclick="exportSelectedXLS()">📊 Export Excel</button>
+    <button class="rpt-btn-clr" onclick="clearSelection()">✖ Clear Selection</button>
+  </div>
+</div>
+<div id="rptOut"></div>
+<div class="rpt-print-footer" id="rptPrintFtr"></div>
+</div>
 <div class="pane" id="pane-types">
 <div class="tc"><div class="th2"><div class="th2-title">Reimbursement Types</div>
 <div class="tb"><input class="srch" id="typeSrch" placeholder="Search..." oninput="filterTypes()">
@@ -983,57 +1045,319 @@ function buildRpts(){
     var div=document.createElement("div");
     div.style.cssText="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s";
     div.innerHTML="<div style=\"font-size:28px;margin-bottom:8px\">"+cd.ic+"</div><div style=\"font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px;font-family:'Palatino Linotype',serif\">"+cd.t+"</div><div style=\"font-size:11px;color:var(--muted)\">"+cd.s+"</div>";
-    div.addEventListener("mouseover",function(){this.style.borderColor="var(--blue3)";});
-    div.addEventListener("mouseout",function(){this.style.borderColor="var(--border)";});
+    div.addEventListener("mouseover",function(){this.style.borderColor="var(--blue3)";this.style.transform="translateY(-2px)";this.style.boxShadow="0 4px 12px rgba(26,26,46,0.08)";});
+    div.addEventListener("mouseout",function(){this.style.borderColor="var(--border)";this.style.transform="";this.style.boxShadow="";});
     (function(rid){ div.addEventListener("click",function(){ loadRpt(rid); }); })(cd.id);
     grid.appendChild(div);
   }
   document.getElementById("rptOut").innerHTML="";
+  document.getElementById("rptSelBar").className="rpt-sel-bar";
 }
 
+// ── REPORT STATE ──
+var rptData=[];
+var rptCurrentRid="";
+var rptColFilters={};   // {colKey: Set of selected values}
+var rptSelected={};     // {ClaimID: true/false}
+
 function loadRpt(rid){
-  document.getElementById('rptOut').innerHTML='<div class="empty">Loading...</div>';
-  api({action:'getClaims',filter:'team'},function(res){
-    if(res.error){toast(res.error,'err');return;}
+  rptCurrentRid=rid; rptSelected={}; rptColFilters={};
+  document.getElementById("rptSelBar").className="rpt-sel-bar";
+  document.getElementById("rptOut").innerHTML="<div class=\"empty\">Loading...</div>";
+  api({action:"getClaims",filter:"team"},function(res){
+    if(res.error){toast(res.error,"err");return;}
     var all=res.claims||[];
     var filtered=[];
-    if(rid==='summary') filtered=all;
-    else if(rid==='pending_manager') filtered=all.filter(function(c){return c.ManagerApprovalStatus==='PENDING_MANAGER';});
-    else if(rid==='pending_finance') filtered=all.filter(function(c){return c.ManagerApprovalStatus==='PENDING_FINANCE';});
-    else if(rid==='pending_payment') filtered=all.filter(function(c){return c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DatePaidByFirm;});
-    else if(rid==='pending_receipt') filtered=all.filter(function(c){return c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
-    else if(rid==='clientwise') filtered=all.slice().sort(function(a,b){return (a.ClientName||'').localeCompare(b.ClientName||'');});
-    else if(rid==='employeewise') filtered=all.slice().sort(function(a,b){return (a.ClaimantName||'').localeCompare(b.ClaimantName||'');});
+    if(rid==="summary") filtered=all;
+    else if(rid==="pending_manager") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_MANAGER";});
+    else if(rid==="pending_finance") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_FINANCE";});
+    else if(rid==="pending_payment") filtered=all.filter(function(c){return c.FinanceApprovalStatus==="APPROVED_FINANCE"&&!c.DatePaidByFirm;});
+    else if(rid==="pending_receipt") filtered=all.filter(function(c){return c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
+    else if(rid==="clientwise") filtered=all.slice().sort(function(a,b){return (a.ClientName||"").localeCompare(b.ClientName||"");});
+    else if(rid==="employeewise") filtered=all.slice().sort(function(a,b){return (a.ClaimantName||"").localeCompare(b.ClaimantName||"");});
     else filtered=all;
     rptData=filtered;
     renderRpt(rid,filtered);
   });
 }
 
-function renderRpt(rid,data){
-  var total=0; for(var i=0;i<data.length;i++) total+=parseFloat(data[i].Amount)||0;
-  var wrap=document.createElement('div'); wrap.className='tc';
-  var hdr=document.createElement('div'); hdr.className='th2';
-  var ttl=document.createElement('div'); ttl.className='th2-title'; ttl.textContent=rid.replace(/_/g,' ')+' ('+data.length+' records - '+fmtA(total)+')';
-  var tb=document.createElement('div'); tb.className='tb';
-  var si=document.createElement('input'); si.className='srch'; si.placeholder='Search...'; si.style.width='160px';
-  si.addEventListener('input',function(){
-    var q=this.value.toLowerCase();
-    var rows=wrap.querySelectorAll('tbody tr');
-    for(var i=0;i<rows.length;i++) rows[i].style.display=rows[i].textContent.toLowerCase().indexOf(q)>=0?'':'none';
+// ── COLUMN FILTER LOGIC ──
+var COL_KEYS=["ClaimID","ClaimantName","DateOfExpense","ClientName","MajorHead","MinorHead","Category","Amount","status"];
+var COL_LABELS={"ClaimID":"Claim ID","ClaimantName":"Employee","DateOfExpense":"Date","ClientName":"Client","MajorHead":"Major Head","MinorHead":"Minor Head","Category":"Category","Amount":"Amount","status":"Status"};
+
+function getColVal(c,key){
+  if(key==="status") return getStatusLabel(getStatus(c));
+  if(key==="Amount") return fmtA(c.Amount);
+  if(key==="DateOfExpense") return fmtD(c.DateOfExpense);
+  return String(c[key]||"-");
+}
+
+function getStatusLabel(s){
+  var m={PENDING_MANAGER:"Pending Manager",PENDING_FINANCE:"Pending Finance",APPROVED_FINANCE:"Finance Approved",REJECTED_MANAGER:"Rejected",REJECTED_FINANCE:"Fin.Rejected",PAID:"Paid",CLOSED:"Closed"};
+  return m[s]||s||"-";
+}
+
+function getUniqueVals(key){
+  var vals={};
+  for(var i=0;i<rptData.length;i++) vals[getColVal(rptData[i],key)]=true;
+  return Object.keys(vals).sort();
+}
+
+function applyColFilters(){
+  var filtered=rptData.filter(function(c){
+    for(var key in rptColFilters){
+      if(!rptColFilters[key]||rptColFilters[key].length===0) continue;
+      var val=getColVal(c,key);
+      if(rptColFilters[key].indexOf(val)<0) return false;
+    }
+    return true;
   });
-  var eb=document.createElement('button'); eb.className='ghost'; eb.textContent='Export CSV'; eb.addEventListener('click',function(){exportCSV(rptData,'report_'+rid);});
-  var pb=document.createElement('button'); pb.className='ghost'; pb.textContent='Print / PDF'; pb.addEventListener('click',function(){window.print();});
-  tb.appendChild(si); tb.appendChild(eb); tb.appendChild(pb);
-  hdr.appendChild(ttl); hdr.appendChild(tb); wrap.appendChild(hdr);
-  var tw=document.createElement('div'); tw.className='tw';
-  var tbl=document.createElement('table');
-  var html='<thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Major Head</th><th>Category</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
-  if(!data.length) html+='<tr><td colspan="8"><div class="empty">No records.</div></td></tr>';
-  else for(var i=0;i<data.length;i++){var c=data[i];var s=getStatus(c);html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td>'+(c.MajorHead||'-')+'</td><td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td></tr>';}
-  html+='</tbody>';
-  tbl.innerHTML=html; tw.appendChild(tbl); wrap.appendChild(tw);
-  document.getElementById('rptOut').innerHTML=''; document.getElementById('rptOut').appendChild(wrap);
+  return filtered;
+}
+
+function openColFilter(key,btnEl){
+  // Close any open filter dropdowns
+  document.querySelectorAll(".col-filter-drop").forEach(function(d){d.remove();});
+  var drop=document.createElement("div"); drop.className="col-filter-drop";
+  var si=document.createElement("input"); si.type="text"; si.placeholder="Search...";
+  drop.appendChild(si);
+  var allVals=getUniqueVals(key);
+  var selected=rptColFilters[key]||allVals.slice();
+  function buildItems(filter){
+    var old=drop.querySelectorAll(".col-filter-item");
+    old.forEach(function(o){o.remove();});
+    var actDiv=drop.querySelector(".col-filter-actions");
+    var shown=allVals.filter(function(v){return !filter||v.toLowerCase().indexOf(filter.toLowerCase())>=0;});
+    shown.forEach(function(v){
+      var item=document.createElement("div"); item.className="col-filter-item";
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.value=v; cb.checked=selected.indexOf(v)>=0;
+      cb.addEventListener("change",function(){if(this.checked){if(selected.indexOf(v)<0)selected.push(v);}else{selected=selected.filter(function(s){return s!==v;});}});
+      var lbl=document.createElement("span"); lbl.textContent=v; lbl.style.overflow="hidden"; lbl.style.textOverflow="ellipsis"; lbl.style.whiteSpace="nowrap";
+      item.appendChild(cb); item.appendChild(lbl);
+      drop.insertBefore(item,actDiv);
+    });
+  }
+  var actions=document.createElement("div"); actions.className="col-filter-actions";
+  var okBtn=document.createElement("button"); okBtn.className="cf-ok"; okBtn.textContent="Apply";
+  var clrBtn=document.createElement("button"); clrBtn.className="cf-clr"; clrBtn.textContent="Clear";
+  okBtn.addEventListener("click",function(){
+    rptColFilters[key]=selected.length===allVals.length?[]:selected;
+    if(rptColFilters[key].length===0) delete rptColFilters[key];
+    drop.remove();
+    btnEl.className="col-filter-btn"+(Object.keys(rptColFilters).indexOf(key)>=0?" active":"");
+    renderRpt(rptCurrentRid,applyColFilters());
+  });
+  clrBtn.addEventListener("click",function(){
+    selected=allVals.slice(); delete rptColFilters[key];
+    buildItems(""); btnEl.className="col-filter-btn";
+  });
+  actions.appendChild(clrBtn); actions.appendChild(okBtn); drop.appendChild(actions);
+  buildItems("");
+  si.addEventListener("input",function(){buildItems(this.value);});
+  // Position
+  var rect=btnEl.getBoundingClientRect();
+  drop.style.position="fixed"; drop.style.top=(rect.bottom+4)+"px"; drop.style.left=Math.max(8,rect.left-60)+"px";
+  document.body.appendChild(drop);
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener("click",function handler(e){
+      if(!drop.contains(e.target)&&e.target!==btnEl){drop.remove();document.removeEventListener("click",handler);}
+    });
+  },100);
+}
+
+// ── SELECTION LOGIC ──
+function toggleRowSelect(chk,claimId){
+  if(chk.checked) rptSelected[claimId]=true;
+  else delete rptSelected[claimId];
+  var tr=chk.closest("tr");
+  if(tr) tr.className=chk.checked?"rpt-row-sel":"";
+  updateSelBar();
+}
+
+function toggleSelectAll(chk){
+  var all=document.querySelectorAll(".rpt-chk");
+  for(var i=0;i<all.length;i++){
+    all[i].checked=chk.checked;
+    var cid=all[i].getAttribute("data-id");
+    if(chk.checked) rptSelected[cid]=true;
+    else delete rptSelected[cid];
+    var tr=all[i].closest("tr");
+    if(tr) tr.className=chk.checked?"rpt-row-sel":"";
+  }
+  updateSelBar();
+}
+
+function updateSelBar(){
+  var count=Object.keys(rptSelected).length;
+  var bar=document.getElementById("rptSelBar");
+  document.getElementById("selCount").textContent=count;
+  bar.className=count>0?"rpt-sel-bar on":"rpt-sel-bar";
+}
+
+function getSelectedClaims(){
+  return rptData.filter(function(c){return rptSelected[c.ClaimID];});
+}
+
+function clearSelection(){
+  rptSelected={};
+  document.querySelectorAll(".rpt-chk").forEach(function(c){c.checked=false;});
+  document.querySelectorAll(".rpt-row-sel").forEach(function(r){r.className="";});
+  var allChk=document.getElementById("rptSelectAll"); if(allChk) allChk.checked=false;
+  updateSelBar();
+}
+
+// ── RENDER REPORT ──
+function renderRpt(rid,data){
+  var total=0; var catTotals={};
+  for(var i=0;i<data.length;i++){
+    var amt=parseFloat(data[i].Amount)||0; total+=amt;
+    var cat=data[i].Category||"Uncategorised";
+    catTotals[cat]=(catTotals[cat]||0)+amt;
+  }
+  var rptTitle={summary:"Claims Summary",pending_manager:"Pending Manager Approval",pending_finance:"Pending Finance Approval",pending_payment:"Pending Payment",pending_receipt:"Pending Receipt",clientwise:"Client-wise Report",employeewise:"Employee-wise Report"};
+  var titleText=rptTitle[rid]||rid.replace(/_/g," ");
+
+  var out=document.getElementById("rptOut");
+  out.innerHTML="";
+
+  // Print header (hidden on screen, shown on print)
+  var ph=document.getElementById("rptPrintHdr");
+  ph.innerHTML="<div style='text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:12px;margin-bottom:16px'><div style='font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#7070a0;margin-bottom:4px'>Pratapkaran Paul &amp; Co.</div><div style='font-size:20px;font-weight:700;color:#1a1a2e;font-family:Palatino Linotype,serif;margin-bottom:4px'>"+titleText+"</div><div style='font-size:11px;color:#7070a0'>Printed by: "+sess.name+" &nbsp;|&nbsp; Date: "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})+"</div></div>";
+
+  var wrap=document.createElement("div"); wrap.className="tc";
+  // Toolbar
+  var tbr=document.createElement("div"); tbr.className="rpt-toolbar";
+  var ttl=document.createElement("div"); ttl.className="th2-title"; ttl.style.marginRight="auto";
+  ttl.textContent=titleText+" ("+data.length+" records — "+fmtA(total)+")";
+  var selAllWrap=document.createElement("label"); selAllWrap.style.cssText="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer";
+  var selAllChk=document.createElement("input"); selAllChk.type="checkbox"; selAllChk.id="rptSelectAll"; selAllChk.className="rpt-chk"; selAllChk.style.width="14px"; selAllChk.style.height="14px";
+  selAllChk.addEventListener("change",function(){toggleSelectAll(this);});
+  selAllWrap.appendChild(selAllChk); selAllWrap.appendChild(document.createTextNode("Select All"));
+  var xcsv=document.createElement("button"); xcsv.className="ghost"; xcsv.innerHTML="📥 CSV"; xcsv.addEventListener("click",function(){exportCSV(data,"report_"+rid);});
+  tbr.appendChild(ttl); tbr.appendChild(selAllWrap); tbr.appendChild(xcsv);
+  wrap.appendChild(tbr);
+
+  // Table
+  var tw=document.createElement("div"); tw.className="tw";
+  var tbl=document.createElement("table");
+  // Build thead with filter buttons
+  var thead=document.createElement("thead");
+  var htr=document.createElement("tr");
+  var cols=[
+    {key:"chk",lbl:""},
+    {key:"ClaimID",lbl:"Claim ID"},
+    {key:"ClaimantName",lbl:"Employee"},
+    {key:"DateOfExpense",lbl:"Date"},
+    {key:"ClientName",lbl:"Client"},
+    {key:"MajorHead",lbl:"Major Head"},
+    {key:"MinorHead",lbl:"Minor Head"},
+    {key:"Category",lbl:"Category"},
+    {key:"Amount",lbl:"Amount"},
+    {key:"status",lbl:"Status"}
+  ];
+  for(var ci=0;ci<cols.length;ci++){
+    var th=document.createElement("th");
+    if(cols[ci].key==="chk"){th.style.width="32px"; htr.appendChild(th); continue;}
+    var hasFilter=rptColFilters[cols[ci].key]&&rptColFilters[cols[ci].key].length>0;
+    th.innerHTML=cols[ci].lbl;
+    var fb=document.createElement("button"); fb.className="col-filter-btn"+(hasFilter?" active":""); fb.innerHTML="▼"; fb.title="Filter";
+    (function(k,btn){ fb.addEventListener("click",function(e){e.stopPropagation();openColFilter(k,btn);}); })(cols[ci].key,fb);
+    th.appendChild(fb);
+    htr.appendChild(th);
+  }
+  thead.appendChild(htr); tbl.appendChild(thead);
+
+  // Tbody
+  var tbody=document.createElement("tbody");
+  if(!data.length){
+    var etr=document.createElement("tr"); var etd=document.createElement("td"); etd.colSpan=10; etd.innerHTML="<div class=\"empty\">No records.</div>"; etr.appendChild(etd); tbody.appendChild(etr);
+  } else {
+    for(var i=0;i<data.length;i++){
+      var c=data[i]; var s=getStatus(c);
+      var tr=document.createElement("tr");
+      if(rptSelected[c.ClaimID]) tr.className="rpt-row-sel";
+      // Checkbox td
+      var chtd=document.createElement("td");
+      var chk=document.createElement("input"); chk.type="checkbox"; chk.className="rpt-chk"; chk.setAttribute("data-id",c.ClaimID); chk.checked=!!rptSelected[c.ClaimID];
+      (function(chkEl,cid){ chkEl.addEventListener("change",function(){toggleRowSelect(chkEl,cid);}); })(chk,c.ClaimID);
+      chtd.appendChild(chk); tr.appendChild(chtd);
+      // Data cells
+      var vals=["<span class=\"cid\">"+c.ClaimID+"</span>",c.ClaimantName||c.ClaimantID||"-",fmtD(c.DateOfExpense),c.ClientName||"-",c.MajorHead||"-",c.MinorHead||"-","<span style=\"font-size:11px;color:var(--muted)\">"+((c.Category||"-"))+"</span>","<span class=\"amt\">"+fmtA(c.Amount)+"</span>",statusBadge(s)];
+      for(var v=0;v<vals.length;v++){var td=document.createElement("td"); td.innerHTML=vals[v]; tr.appendChild(td);}
+      tbody.appendChild(tr);
+    }
+  }
+  tbl.appendChild(tbody); tw.appendChild(tbl); wrap.appendChild(tw);
+  out.appendChild(wrap);
+
+  // Print footer (hidden on screen)
+  var pf=document.getElementById("rptPrintFtr");
+  var catRows="";
+  for(var cat in catTotals) catRows+="<tr><td style='padding:4px 8px;font-size:12px'>"+cat+"</td><td style='padding:4px 8px;font-size:12px;text-align:right;font-weight:600'>"+fmtA(catTotals[cat])+"</td></tr>";
+  pf.innerHTML="<table style='width:100%;border-collapse:collapse;margin-bottom:16px'><thead><tr><th colspan='2' style='background:#1a1a2e;color:#fff;padding:7px 8px;font-size:12px;text-align:left'>Summary by Category</th></tr></thead><tbody>"+catRows+"<tr style='border-top:2px solid #1a1a2e'><td style='padding:6px 8px;font-weight:700;font-size:13px'>TOTAL</td><td style='padding:6px 8px;font-weight:700;font-size:13px;text-align:right'>"+fmtA(total)+"</td></tr></tbody></table><div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px'><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Prepared by<br><br><strong style='color:#1a1a2e'>"+sess.name+"</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Authorised by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Reviewed by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div></div><div style='margin-top:16px;font-size:9px;color:#9090b0;text-align:center'>Pratapkaran Paul &amp; Co. | System generated report | "+new Date().toLocaleString("en-IN")+"</div>";
+}
+
+// ── EXPORT SELECTED PDF (browser print) ──
+function exportSelectedPDF(){
+  var sel=getSelectedClaims();
+  if(!sel.length){toast("Select at least one claim to print.","err");return;}
+  // Store selected in sessionStorage and open print window
+  sessionStorage.setItem("printReportData", JSON.stringify(sel));
+  sessionStorage.setItem("printReportTitle", document.querySelector(".th2-title") ? document.querySelector(".th2-title").textContent : "Claims Report");
+  window.open("report_print.html","_blank","width=900,height=700");
+}
+
+// ── EXPORT SELECTED EXCEL ──
+function exportSelectedXLS(){
+  var sel=getSelectedClaims();
+  if(!sel.length){toast("Select at least one claim to export.","err");return;}
+  if(typeof XLSX==="undefined"){toast("Excel library not loaded. Please refresh.","err");return;}
+
+  var wb=XLSX.utils.book_new();
+
+  // Main data sheet
+  var headers=["Claim ID","Employee","Date of Expense","Client","Major Head","Minor Head","Nature","Category","Amount (Rs.)","Status","Manager Status","Finance Status","Date Paid","Invoice Date","Receipt Date"];
+  var rows=[headers];
+  var total=0;
+  for(var i=0;i<sel.length;i++){
+    var c=sel[i]; var amt=parseFloat(c.Amount)||0; total+=amt;
+    rows.push([
+      c.ClaimID, c.ClaimantName||c.ClaimantID||"",
+      fmtD(c.DateOfExpense), c.ClientName||"",
+      c.MajorHead||"", c.MinorHead||"", c.Nature||"",
+      c.Category||"", amt,
+      getStatusLabel(getStatus(c)),
+      c.ManagerApprovalStatus||"", c.FinanceApprovalStatus||"",
+      c.DatePaidByFirm||"", c.DateInvoicedToClient||"", c.DateReceivedFromClient||""
+    ]);
+  }
+  // Total row
+  rows.push(["","","","","","","","TOTAL",total,"","","","","",""]);
+
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+
+  // Column widths
+  ws["!cols"]=[{wch:16},{wch:20},{wch:14},{wch:22},{wch:16},{wch:16},{wch:16},{wch:18},{wch:14},{wch:18},{wch:18},{wch:18},{wch:14},{wch:14},{wch:14}];
+
+  XLSX.utils.book_append_sheet(wb, ws, "Claims");
+
+  // Summary sheet
+  var catTotals={};
+  for(var i=0;i<sel.length;i++){
+    var cat=sel[i].Category||"Uncategorised";
+    catTotals[cat]=(catTotals[cat]||0)+(parseFloat(sel[i].Amount)||0);
+  }
+  var srows=[["Category","Total Amount (Rs.)"]];
+  for(var cat in catTotals) srows.push([cat, catTotals[cat]]);
+  srows.push(["GRAND TOTAL", total]);
+  var ws2=XLSX.utils.aoa_to_sheet(srows);
+  ws2["!cols"]=[{wch:24},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws2, "Summary");
+
+  var fname="PKP_Claims_"+new Date().toISOString().slice(0,10)+".xlsx";
+  XLSX.writeFile(wb, fname);
+  toast("Excel exported: "+sel.length+" claims", "ok");
 }
 
 // ── USERS ──

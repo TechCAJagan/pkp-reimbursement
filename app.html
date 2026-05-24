@@ -4,54 +4,65 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PKP Reimbursement</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
-:root{--blue:#1a1a2e;--blue2:#2a5298;--blue3:#3b6fd4;--blue-lt:#e8f0fe;--gold:#c9a84c;
-  --green:#065f46;--green-lt:#ecfdf5;--red:#991b1b;--red-lt:#fef2f2;
-  --amber:#92400e;--amber-lt:#fef9ec;--gray:#374151;--border:#e5e7eb;--muted:#6b7280;--sw:240px}
-body{font-family:"Palatino Linotype","Book Antiqua",Palatino,serif;background:#f0f4f8;color:#111;display:flex;min-height:100vh}
-.sidebar{width:var(--sw);background:var(--blue);min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto}
-.s-logo{padding:20px 18px 16px;border-bottom:1px solid rgba(255,255,255,0.1)}
-.s-co{font-size:10px;font-weight:600;color:rgba(255,255,255,0.4);letter-spacing:0.1em;margin-bottom:4px}
-.s-name{font-size:15px;font-weight:700;color:#fff;line-height:1.2}
+:root{
+  --blue:#1a1a2e;--blue2:#2d2d4e;--blue3:#4a4a8a;--blue-lt:#eeeef8;
+  --gold:#c9a84c;--gold-lt:#fef9ec;--gold2:#e8c96a;
+  --green:#0a5c36;--green-lt:#e8f8f0;
+  --red:#8b1a1a;--red-lt:#fdf2f2;
+  --amber:#7a4f00;--amber-lt:#fef8e8;
+  --gray:#2d2d4e;--border:#dddde8;--muted:#7070a0;--sw:250px;
+  --cream:#faf8f5;--surface:#ffffff;
+}
+body{font-family:"Palatino Linotype","Palatino","Book Antiqua",Palatino,serif;background:#f0f0f5;color:#1a1a2e;display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:linear-gradient(180deg,#1a1a2e 0%,#12122a 100%);min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid rgba(201,168,76,0.15)}
+.s-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(201,168,76,0.15);background:rgba(201,168,76,0.04)}
+.s-co{font-size:11px;font-weight:600;color:rgba(201,168,76,0.6);letter-spacing:0.15em;margin-bottom:5px;font-family:"Palatino Linotype",serif}
+.s-name{font-size:14px;font-weight:600;color:#fff;line-height:1.3;font-family:"Palatino Linotype",serif}
 .s-name span{color:var(--gold)}
-.nav{padding:12px 0}
-.ni{display:flex;align-items:center;gap:10px;padding:9px 18px;font-size:13px;color:rgba(255,255,255,0.6);cursor:pointer;border-left:3px solid transparent;transition:all 0.15s;user-select:none}
-.ni:hover{color:#fff;background:rgba(255,255,255,0.07)}
-.ni.on{color:#fff;background:rgba(255,255,255,0.12);border-left-color:var(--gold);font-weight:500}
+.nav{padding:10px 0}
+.ni{display:flex;align-items:center;gap:11px;padding:10px 18px;font-size:12.5px;color:rgba(255,255,255,0.55);cursor:pointer;border-left:3px solid transparent;transition:all 0.2s;user-select:none;letter-spacing:0.01em}
+.ni:hover{color:rgba(255,255,255,0.9);background:rgba(201,168,76,0.08)}
+.ni.on{color:#fff;background:rgba(201,168,76,0.12);border-left-color:var(--gold);font-weight:600}
+.ni span:first-child{width:20px;text-align:center;font-size:15px;flex-shrink:0}
 .ni .nb{margin-left:auto;background:var(--gold);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
-.s-foot{margin-top:auto;padding:14px 18px;border-top:1px solid rgba(255,255,255,0.1)}
-.s-user{display:flex;align-items:center;gap:10px}
-.s-av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
-.s-un{font-size:13px;font-weight:600;color:#fff}
+.s-foot{margin-top:auto;border-top:1px solid rgba(201,168,76,0.12)}
+.s-user{display:flex;align-items:center;gap:10px;padding:12px 18px}
+.s-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
+.s-un{font-size:12.5px;font-weight:600;color:#fff}
 .s-ur{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
-.s-lo{background:none;border:none;color:rgba(255,255,255,0.4);cursor:pointer;margin-left:auto;font-size:15px;padding:4px}
+.s-lo{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;margin-left:auto;font-size:14px;padding:4px;transition:color 0.15s}
 .s-lo:hover{color:var(--gold)}
+.s-powered{padding:8px 18px 14px;text-align:center;font-size:10px;color:rgba(201,168,76,0.5);letter-spacing:0.05em;font-family:"Palatino Linotype",serif;font-style:italic;border-top:1px solid rgba(201,168,76,0.08)}
+.s-powered span{color:rgba(201,168,76,0.8);font-weight:600}
 .main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
-.topbar{background:#fff;border-bottom:1px solid var(--border);height:56px;display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50;gap:12px}
-.topbar h1{font-size:18px;font-weight:700;color:var(--blue);flex:1}
+.topbar{background:#fff;border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50;gap:12px;box-shadow:0 1px 8px rgba(26,26,46,0.06)}
+.topbar h1{font-size:19px;font-weight:600;color:var(--blue);flex:1;font-family:"Palatino Linotype",serif;letter-spacing:0.02em}
 .rtag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
 .rt-EMPLOYEE{background:#dbeafe;color:#1e40af}.rt-MANAGER{background:#d1fae5;color:#065f46}
 .rt-FINANCE_MGR{background:#fef3c7;color:#92400e}.rt-ACCOUNTS{background:#ede9fe;color:#5b21b6}.rt-ADMIN{background:#fee2e2;color:#991b1b}
 .pane{display:none;padding:24px 28px}
 .pane.on{display:block}
 .sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
-.sc{background:#fff;border-radius:10px;padding:16px 18px;border:1px solid var(--border)}
-.sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);margin-bottom:6px}
-.sv{font-size:26px;font-weight:700;color:var(--blue);line-height:1}
+.sc{background:#fff;border-radius:10px;padding:16px 18px;border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s}
+.sc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,26,46,0.08)}
+.sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;font-family:"Palatino Linotype",serif}
+.sv{font-size:26px;font-weight:700;color:var(--blue);line-height:1;font-family:"Palatino Linotype",serif}
 .sv.green{color:var(--green)}.sv.red{color:var(--red)}.sv.amber{color:var(--amber)}
 .ss2{font-size:11px;color:var(--muted);margin-top:3px}
 .tc{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
 .th2{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
-.th2-title{font-size:15px;font-weight:600;color:var(--blue)}
+.th2-title{font-size:15px;font-weight:600;color:var(--blue);font-family:"Palatino Linotype",serif;letter-spacing:0.01em}
 .tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
 .srch{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;outline:none;min-width:160px;background:#f9fafb}
 .srch:focus{border-color:var(--blue3);background:#fff}
-.fsel{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:#fff;outline:none;cursor:pointer}
+.fsel{padding:7px 32px 7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%231a1a2e' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
-th{padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);background:#f9fafb;border-bottom:1px solid var(--border);white-space:nowrap}
+th{padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);background:#f4f4f8;border-bottom:1px solid var(--border);white-space:nowrap;font-family:"Palatino Linotype",serif}
 td{padding:11px 13px;font-size:13px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 tr:last-child td{border-bottom:none}
 tr:hover td{background:#fafafa}
@@ -68,11 +79,11 @@ tr:hover td{background:#fafafa}
 .btn-ok:hover{background:#d1fae5}
 .btn-no{border-color:#fca5a5;color:var(--red);background:var(--red-lt)}
 .btn-no:hover{background:#fee2e2}
-.bpri{background:var(--blue);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.bpri:hover{background:var(--blue2)}
-.bpri:disabled{opacity:0.6;cursor:default}
-.bsec{background:#fff;color:var(--blue);border:1.5px solid var(--blue3);border-radius:8px;padding:9px 18px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer}
-.bsec:hover{background:var(--blue-lt)}
+.bpri{background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:"Palatino Linotype",serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px rgba(26,26,46,0.2)}
+.bpri:hover{background:linear-gradient(135deg,#2d2d4e,#3d3d6e);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,26,46,0.3)}
+.bpri:disabled{opacity:0.6;cursor:default;transform:none}
+.bsec{background:#fff;color:var(--blue);border:1.5px solid var(--blue3);border-radius:8px;padding:9px 18px;font-family:"Palatino Linotype",serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.bsec:hover{background:var(--blue-lt);transform:translateY(-1px)}
 .ghost{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 13px;font-family:inherit;font-size:12px;color:var(--gray);cursor:pointer}
 .ghost:hover{border-color:var(--blue3);color:var(--blue)}
 .empty{padding:48px;text-align:center;color:var(--muted);font-size:13px}
@@ -102,7 +113,7 @@ tr:hover td{background:#fafafa}
 .overlay.on{display:flex}
 .modal{background:#fff;border-radius:14px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
 .mhdr{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
-.mtitle{font-size:17px;font-weight:700;color:var(--blue)}
+.mtitle{font-size:17px;font-weight:600;color:var(--blue);font-family:"Palatino Linotype",serif;letter-spacing:0.01em}
 .mcls{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
 .mbdy{padding:16px 24px}
 .mft{padding:12px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
@@ -122,27 +133,27 @@ tr:hover td{background:#fafafa}
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-<div class="s-logo"><div class="s-co">Reimburse 'ment</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
+<div class="s-logo"><div class="s-co">Reimburse   'ment</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
 <nav class="nav" id="sideNav"></nav>
-<div class="s-foot"><div class="s-user"><div class="s-av" id="sAv">U</div><div><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div><button class="s-lo" id="loBtn" title="Logout">&#9211;</button></div></div>
+<div class="s-foot"><div class="s-powered">Powered by <span>CA. Jagan A.</span></div><div class="s-user"><div class="s-av" id="sAv">U</div><div><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div><button class="s-lo" id="loBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button></div></div>
 </aside>
 <main class="main">
-<header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">+ New Claim</button></header>
+<header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">➕ New Claim</button></header>
 <div class="pane on" id="pane-dashboard"><div style="font-size:20px;font-weight:700;color:var(--blue);margin-bottom:18px" id="dashTitle">Dashboard</div><div class="sg" id="dashStats"></div><div id="dashActions"></div><div id="dashPending"></div></div>
 <div class="pane" id="pane-new-claim">
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">Basic Details</div></div><div class="fc-body"><div class="fg fg2">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📅 Basic Details</div></div><div class="fc-body"><div class="fg fg2">
 <div class="field"><label>Date of Expense <span class="req">*</span></label><input type="date" id="ncDate"></div>
 <div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="ncClient" placeholder="e.g. ABC Corporation"></div>
 </div></div></div>
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">Expense Classification</div></div><div class="fc-body"><div class="fg fg3">
-<div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select</option></select></div>
-<div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select</option></select></div>
-<div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select</option></select></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📁 Expense Classification</div></div><div class="fc-body"><div class="fg fg3">
+<div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select Major Head</option></select></div>
+<div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select Minor Head</option></select></div>
+<div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select Nature</option></select></div>
 <div class="field sp2"><label>Sub-Nature</label><input type="text" id="ncSub" placeholder="Optional"></div>
 <div class="field"><label>Amount (Rs.) <span class="req">*</span></label><input type="number" id="ncAmt" placeholder="0.00" min="0" step="0.01"></div>
 <div class="field sp3"><label>Description <span class="req">*</span></label><textarea id="ncDesc" placeholder="Purpose, occasion, persons involved..."></textarea></div>
 </div></div></div>
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">Category</div></div><div class="fc-body">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">🏷️ Category</div></div><div class="fc-body">
 <div class="cat-grid">
 <label class="cat-opt sel" id="cat0"><input type="radio" name="cat" value="Client Reimbursable" checked><div><div class="cat-lbl">Client Reimbursable</div><div class="cat-sub">Recover from client</div></div></label>
 <label class="cat-opt" id="cat1"><input type="radio" name="cat" value="Non Reimbursable"><div><div class="cat-lbl">Non Reimbursable</div><div class="cat-sub">Firm bears cost</div></div></label>
@@ -151,30 +162,30 @@ tr:hover td{background:#fafafa}
 </div>
 <div class="amt-box"><span style="font-size:13px;color:var(--blue);font-weight:500">Claim Amount</span><span class="amt-val" id="ncAmtD">Rs. 0.00</span></div>
 </div></div>
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">Attachment Reference (Optional)</div></div><div class="fc-body">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📎 Attachment Reference (Optional)</div></div><div class="fc-body">
 <div class="field"><label>Attachment Reference No.</label><input type="text" id="ncAttRef" placeholder="e.g. PKP-ATT-2025-0001 (auto-generated on request)"></div>
 <div class="field"><label>Document Link (OneDrive/Drive shared link)</label><input type="text" id="ncAttURL" placeholder="Paste shareable link here"></div>
 <p style="font-size:12px;color:var(--muted);margin-top:8px">Upload your document to a shared folder and paste the link above. Or leave blank.</p>
-<button class="ghost" style="margin-top:10px" onclick="getRef()">Generate Reference Number</button>
+<button class="ghost" style="margin-top:10px" onclick="getRef()">🔖 Generate Reference Number</button>
 <span id="refStatus" style="font-size:12px;color:var(--blue);margin-left:10px"></span>
 </div></div>
-<div class="sub-bar"><button class="ghost" onclick="go('my-claims')">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">Submit for Approval</button></div>
+<div class="sub-bar"><button class="ghost" onclick="go('my-claims')">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">📨 Submit for Approval</button></div>
 </div>
-<div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">Export CSV</button><button class="ghost" onclick="loadMC()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
-<div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">Export CSV</button><button class="ghost" onclick="loadAP()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
-<div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">Export CSV</button><button class="ghost" onclick="loadFIN()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
-<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">Export CSV</button><button class="ghost" onclick="loadACC()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">📥 Export CSV</button><button class="ghost" onclick="loadMC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">📥 Export CSV</button><button class="ghost" onclick="loadAP()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">📥 Export CSV</button><button class="ghost" onclick="loadFIN()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">📥 Export CSV</button><button class="ghost" onclick="loadACC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-reports"><div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div><div id="rptOut"></div></div>
 <div class="pane" id="pane-types">
 <div class="tc"><div class="th2"><div class="th2-title">Reimbursement Types</div>
 <div class="tb"><input class="srch" id="typeSrch" placeholder="Search..." oninput="filterTypes()">
 <select class="fsel" id="typeFilter" onchange="filterTypes()"><option value="">All</option><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select>
-<button class="bpri" onclick="openAddType()">+ Add Type</button>
-<button class="ghost" onclick="loadTypes()">Refresh</button></div></div>
+<button class="bpri" onclick="openAddType()">➕ Add Type</button>
+<button class="ghost" onclick="loadTypes()">🔄 Refresh</button></div></div>
 <div class="tw"><table><thead><tr><th>ID</th><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Status</th><th>Actions</th></tr></thead>
 <tbody id="typesBody"><tr><td colspan="6"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 
-<div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">+ Add Employee</button><button class="ghost" onclick="loadUSR()">Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">👤 Add Employee</button><button class="ghost" onclick="loadUSR()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 </main>
 <div class="overlay" id="detOv"><div class="modal"><div class="mhdr"><div class="mtitle" id="mTtl">Claim Details</div><button class="mcls" onclick="closeMod()">&#10005;</button></div><div class="mbdy"><div class="ibar" id="mIBar" style="display:none"></div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div><div id="mBdg"></div></div><div class="dg" id="mDets"></div><div id="mRem"></div></div><div class="mft" id="mFt"></div></div></div>
 <div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">Finance Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
@@ -211,12 +222,24 @@ try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = session
 if (!sess.role) { window.location.href = 'index.html'; }
 
 var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
+var NAV_ICONS = {
+  'dashboard':   '📊',
+  'new-claim':   '➕',
+  'my-claims':   '📋',
+  'approvals':   '✅',
+  'finance':     '🔍',
+  'accounts':    '💳',
+  'reports':     '📈',
+  'users':       '👥',
+  'types':       '🗂️'
+};
+
 var NAV = {
-  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard', icon:'📊', active:true},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
-  MANAGER:  [{id:'dashboard',lbl:'Dashboard', icon:'📊', active:true},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
-  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard', icon:'📊', active:true},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
-  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard', icon:'📊', active:true},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
-  ADMIN:    [{id:'dashboard',lbl:'Dashboard', icon:'📊', active:true},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
+  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
+  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
+  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
+  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
+  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
 };
 
 function init() {
@@ -239,8 +262,18 @@ function buildNav() {
     var it = items[i];
     var d = document.createElement('div');
     d.className = 'ni'; d.setAttribute('data-pane', it.id);
-    d.innerHTML = '<span>'+it.lbl+'</span>';
-    if (it.bid) d.innerHTML += '<span class="nb" id="'+it.bid+'" style="display:none">0</span>';
+    var icon = document.createElement('span');
+    icon.textContent = NAV_ICONS[it.id] || '●';
+    icon.style.fontSize = '15px';
+    icon.style.width = '18px';
+    icon.style.textAlign = 'center';
+    var lbl = document.createElement('span'); lbl.textContent = it.lbl;
+    d.appendChild(icon); d.appendChild(lbl);
+    if (it.bid) {
+      var nb = document.createElement('span');
+      nb.className='nb'; nb.id=it.bid; nb.style.display='none'; nb.textContent='0';
+      d.appendChild(nb);
+    }
     (function(pid){ d.addEventListener('click', function(){ go(pid); }); })(it.id);
     nav.appendChild(d);
   }
@@ -300,11 +333,17 @@ function fmtA(n){ var v=parseFloat(n)||0; return 'Rs.'+v.toLocaleString('en-IN',
 function toDateInput(d){ if(!d) return ''; try{ var dt=new Date(d); if(isNaN(dt.getTime())) return ''; return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }catch(e){ return ''; } }
 
 function statusBadge(s){
-  var m={PENDING_MANAGER:['b-pm','Pending Manager'],PENDING_FINANCE:['b-pf','Pending Finance'],
-    APPROVED_FINANCE:['b-af','Finance Approved'],REJECTED_MANAGER:['b-rej','Rejected'],
-    REJECTED_FINANCE:['b-rej','Fin.Rejected'],PAID:['b-paid','Paid'],CLOSED:['b-closed','Closed']};
-  var info=m[s]||['b-pm',s||'-'];
-  return '<span class="badge '+info[0]+'">'+info[1]+'</span>';
+  var m={
+    PENDING_MANAGER: ['b-pm','⏳','Pending Manager'],
+    PENDING_FINANCE: ['b-pf','🔍','Pending Finance'],
+    APPROVED_FINANCE:['b-af','✅','Finance Approved'],
+    REJECTED_MANAGER:['b-rej','❌','Rejected'],
+    REJECTED_FINANCE:['b-rej','❌','Fin.Rejected'],
+    PAID:            ['b-paid','💳','Paid'],
+    CLOSED:          ['b-closed','🔒','Closed']
+  };
+  var info=m[s]||['b-pm','●',s||'-'];
+  return '<span class="badge '+info[0]+'">'+info[1]+' '+info[2]+'</span>';
 }
 
 function getStatus(c){ return c.FinanceApprovalStatus&&c.FinanceApprovalStatus!=='PENDING'?c.FinanceApprovalStatus:c.ManagerApprovalStatus||'PENDING_MANAGER'; }
@@ -522,7 +561,7 @@ function filterMC() {
     var tr=document.createElement("tr");
     tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td>"+(c.MajorHead||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+statusBadge(s)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
     var last=tr.querySelector("td:last-child");
-    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
     (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,false); }); })(c.ClaimID);
     last.appendChild(vb);
     if(s==="APPROVED_FINANCE"){
@@ -585,13 +624,13 @@ function filterAP() {
     var tr=document.createElement("tr");
     tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td><span class=\"av\">"+nm.charAt(0).toUpperCase()+"</span>"+nm+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td>"+statusBadge(c.ManagerApprovalStatus)+"</td><td></td>";
     var td=tr.querySelector("td:last-child");
-    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
     (function(id,ip){ vb.addEventListener("click",function(){ viewClaim(id,ip,false); }); })(c.ClaimID,isPend);
     td.appendChild(vb);
     if(isPend){
-      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.textContent="Approve";
+      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve";
       (function(id){ ab.addEventListener("click",function(){ qApprove(id); }); })(c.ClaimID);
-      var rb=document.createElement("button"); rb.className="btn btn-no"; rb.textContent="Reject";
+      var rb=document.createElement("button"); rb.className="btn btn-no"; rb.innerHTML="❌ Reject";
       (function(id){ rb.addEventListener("click",function(){ qReject(id); }); })(c.ClaimID);
       td.appendChild(ab); td.appendChild(rb);
     }
@@ -638,11 +677,11 @@ function filterFIN() {
     var tr=document.createElement("tr");
     tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
     var td=tr.querySelector("td:last-child");
-    var vb=document.createElement("button"); vb.className="btn"; vb.textContent="View";
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
     (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,true); }); })(c.ClaimID);
-    var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.textContent="Approve";
+    var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve";
     (function(id){ ab.addEventListener("click",function(){ qFinApprove(id); }); })(c.ClaimID);
-    var rb=document.createElement("button"); rb.className="btn btn-no"; rb.textContent="Reject";
+    var rb=document.createElement("button"); rb.className="btn btn-no"; rb.innerHTML="❌ Reject";
     (function(id){ rb.addEventListener("click",function(){ qFinReject(id); }); })(c.ClaimID);
     td.appendChild(vb); td.appendChild(ab); td.appendChild(rb);
     tb.appendChild(tr);
@@ -681,7 +720,7 @@ function filterACC() {
     var tr=document.createElement("tr");
     tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td>"+pd+"</td><td>"+id2+"</td><td>"+rd+"</td><td></td>";
     var td=tr.querySelector("td:last-child");
-    var ub=document.createElement("button"); ub.className="btn"; ub.textContent="Update";
+    var ub=document.createElement("button"); ub.className="btn"; ub.innerHTML="📝 Update";
     (function(id){ ub.addEventListener("click",function(){ openAccMod(id); }); })(c.ClaimID);
     td.appendChild(ub);
     tb.appendChild(tr);
@@ -796,22 +835,28 @@ function buildTypeMap() {
   }
 }
 
+function populateMinor(majorVal) {
+  var mn=document.getElementById('ncMinor');
+  mn.innerHTML='<option value="">Select Minor Head</option>';
+  var opts=MINOR[majorVal]||[];
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
+  document.getElementById('ncNature').innerHTML='<option value="">Select Nature</option>';
+}
+
+function populateNature(minorVal) {
+  var ns=document.getElementById('ncNature');
+  ns.innerHTML='<option value="">Select Nature</option>';
+  var opts=NATURE[minorVal]||NATURE['default']||['Standard','Special','Recurring','One-time'];
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
+}
+
 function setupNewClaim() {
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('ncCancel').addEventListener('click', function(){ go('my-claims'); });
   document.getElementById('ncDate').max=today;
   var ms=document.getElementById('ncMajor');
-  ms.addEventListener('change',function(){
-    var opts=MINOR[this.value]||[]; var mn=document.getElementById('ncMinor');
-    mn.innerHTML='<option value="">Select</option>';
-    for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
-    document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
-  });
-  document.getElementById('ncMinor').addEventListener('change',function(){
-    var opts=NATURE[this.value]||NATURE['default']; var ns=document.getElementById('ncNature');
-    ns.innerHTML='<option value="">Select</option>';
-    for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
-  });
+  ms.addEventListener('change',function(){ populateMinor(this.value); });
+  document.getElementById('ncMinor').addEventListener('change',function(){ populateNature(this.value); });
   document.getElementById('ncAmt').addEventListener('input',function(){
     var v=parseFloat(this.value)||0; document.getElementById('ncAmtD').textContent='Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2});
   });
@@ -838,9 +883,11 @@ function resetNC(){
   // Rebuild major dropdown from loaded types
   loadTypeData(function(){
     var ms=document.getElementById('ncMajor');
-    ms.innerHTML='<option value="">Select</option>';
+    ms.innerHTML='<option value="">Select Major Head</option>';
     var majorList=Object.keys(MINOR);
-    for(var i=0;i<majorList.length;i++){var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);}
+    for(var i=0;i<majorList.length;i++){
+      var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);
+    }
   });
 }
 
@@ -872,15 +919,22 @@ function submitClaim(){
 // ── REPORTS ──
 function buildRpts(){
   var role=sess.role;
-  var cards=[{id:"summary",t:"Claims Summary",s:"All claims overview"},{id:"pending_manager",t:"Pending Manager",s:"Awaiting manager approval"},{id:"pending_finance",t:"Pending Finance",s:"Awaiting finance approval"},{id:"pending_payment",t:"Pending Payment",s:"Approved but not paid"},{id:"pending_receipt",t:"Pending Receipt",s:"Invoiced, not received"},{id:"clientwise",t:"Client-wise",s:"Grouped by client"}];
-  if(role==="ADMIN"||role==="FINANCE_MGR") cards.push({id:"employeewise",t:"Employee-wise",s:"Grouped by employee"});
+  var cards=[
+    {id:"summary",t:"Claims Summary",s:"All claims overview",ic:"📋"},
+    {id:"pending_manager",t:"Pending Manager",s:"Awaiting manager approval",ic:"⏳"},
+    {id:"pending_finance",t:"Pending Finance",s:"Awaiting finance approval",ic:"🔍"},
+    {id:"pending_payment",t:"Pending Payment",s:"Approved but not paid",ic:"💳"},
+    {id:"pending_receipt",t:"Pending Receipt",s:"Invoiced, not received",ic:"📬"},
+    {id:"clientwise",t:"Client-wise",s:"Grouped by client",ic:"🏢"}
+  ];
+  if(role==="ADMIN"||role==="FINANCE_MGR") cards.push({id:"employeewise",t:"Employee-wise",s:"Grouped by employee",ic:"👤"});
   var grid=document.getElementById("rptCards");
   grid.innerHTML="";
   for(var i=0;i<cards.length;i++){
     var cd=cards[i];
     var div=document.createElement("div");
     div.style.cssText="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s";
-    div.innerHTML="<div style=\"font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px\">"+cd.t+"</div><div style=\"font-size:11px;color:var(--muted)\">"+cd.s+"</div>";
+    div.innerHTML="<div style=\"font-size:28px;margin-bottom:8px\">"+cd.ic+"</div><div style=\"font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px;font-family:'Palatino Linotype',serif\">"+cd.t+"</div><div style=\"font-size:11px;color:var(--muted)\">"+cd.s+"</div>";
     div.addEventListener("mouseover",function(){this.style.borderColor="var(--blue3)";});
     div.addEventListener("mouseout",function(){this.style.borderColor="var(--border)";});
     (function(rid){ div.addEventListener("click",function(){ loadRpt(rid); }); })(cd.id);
@@ -981,7 +1035,7 @@ function filterUSR(){
     var stSp=document.createElement("span"); stSp.style.cssText="font-size:12px;font-weight:600;color:"+statusColor; stSp.textContent=statusText;
     td6.appendChild(stSp);
     var td7=document.createElement("td");
-    var eb=document.createElement("button"); eb.className="btn"; eb.textContent="Edit";
+    var eb=document.createElement("button"); eb.className="btn"; eb.innerHTML="✏️ Edit";
     (function(id){ eb.addEventListener("click",function(){ openEditUser(id); }); })(e.id);
     var deb=document.createElement("button"); deb.className="btn "+(act?"btn-no":"btn-ok"); deb.textContent=act?"Deactivate":"Activate";
     (function(id,a){ deb.addEventListener("click",function(){ togUser(id,a); }); })(e.id,act);

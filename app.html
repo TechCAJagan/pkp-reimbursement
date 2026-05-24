@@ -169,7 +169,7 @@ tr:hover td{background:#fafafa}
 <button class="ghost" style="margin-top:10px" onclick="getRef()">🔖 Generate Reference Number</button>
 <span id="refStatus" style="font-size:12px;color:var(--blue);margin-left:10px"></span>
 </div></div>
-<div class="sub-bar"><button class="ghost" onclick="go('my-claims')">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">📨 Submit for Approval</button></div>
+<div class="sub-bar"><button class="ghost" id="ncCancel">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">📨 Submit for Approval</button></div>
 </div>
 <div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">📥 Export CSV</button><button class="ghost" onclick="loadMC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">📥 Export CSV</button><button class="ghost" onclick="loadAP()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
@@ -813,11 +813,21 @@ var NATURE={'default':['Standard','Special','Recurring','One-time']};
 var ALL_TYPES=[];
 
 function loadTypeData(cb) {
-  if (ALL_TYPES.length > 0) { if(cb) cb(); return; }
+  // Always reload if MINOR is empty (handles first visit and refresh)
+  if (ALL_TYPES.length > 0 && Object.keys(MINOR).length > 0) { if(cb) cb(); return; }
   api({action:'getReimbursementTypes'}, function(res) {
-    if (res.error || !res.types) { if(cb) cb(); return; }
-    ALL_TYPES = res.types.filter(function(t){ return t.isActive === 'TRUE'; });
+    if (res.error) { console.warn('Types error:', res.error); if(cb) cb(); return; }
+    if (!res.types || res.types.length === 0) {
+      console.warn('No types returned. Add types in Admin > Reimb. Types first.');
+      if(cb) cb(); return;
+    }
+    ALL_TYPES = res.types.filter(function(t){
+      var v = String(t.isActive).toUpperCase().trim();
+      return v === 'TRUE' || v === '1';
+    });
+    console.log('Types loaded:', ALL_TYPES.length, 'active types');
     buildTypeMap();
+    console.log('MINOR keys:', Object.keys(MINOR));
     if (cb) cb();
   });
 }
@@ -826,39 +836,75 @@ function buildTypeMap() {
   MINOR = {};
   for (var i=0; i<ALL_TYPES.length; i++) {
     var t = ALL_TYPES[i];
-    if (!MINOR[t.majorHead]) MINOR[t.majorHead] = [];
-    if (MINOR[t.majorHead].indexOf(t.minorHead) < 0) MINOR[t.majorHead].push(t.minorHead);
-    if (t.nature) {
-      if (!NATURE[t.minorHead]) NATURE[t.minorHead] = [];
-      if (NATURE[t.minorHead].indexOf(t.nature) < 0) NATURE[t.minorHead].push(t.nature);
+    var maj = (t.majorHead || '').trim();
+    var min = (t.minorHead || '').trim();
+    var nat = (t.nature    || '').trim();
+    if (!maj || !min) continue;
+    if (!MINOR[maj]) MINOR[maj] = [];
+    if (MINOR[maj].indexOf(min) < 0) MINOR[maj].push(min);
+    if (nat) {
+      if (!NATURE[min]) NATURE[min] = [];
+      if (NATURE[min].indexOf(nat) < 0) NATURE[min].push(nat);
     }
   }
+  console.log('buildTypeMap done. MINOR:', JSON.stringify(MINOR));
+  console.log('NATURE:', JSON.stringify(NATURE));
 }
 
 function populateMinor(majorVal) {
   var mn=document.getElementById('ncMinor');
   mn.innerHTML='<option value="">Select Minor Head</option>';
-  var opts=MINOR[majorVal]||[];
-  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
+  var key = (majorVal||'').trim();
+  if (!key) return;
+  console.log('populateMinor called with:', JSON.stringify(key));
+  console.log('MINOR keys available:', Object.keys(MINOR));
+  // If MINOR not loaded yet, force reload
+  if (Object.keys(MINOR).length === 0) {
+    ALL_TYPES = [];
+    loadTypeData(function(){ populateMinor(key); });
+    return;
+  }
+  var opts = MINOR[key] || [];
+  console.log('opts for', key, ':', opts);
+  if (opts.length === 0) {
+    mn.innerHTML='<option value="">No types for this head</option>';
+    return;
+  }
+  for(var i=0;i<opts.length;i++){
+    var o=document.createElement('option');
+    o.value=opts[i]; o.textContent=opts[i];
+    mn.appendChild(o);
+  }
   document.getElementById('ncNature').innerHTML='<option value="">Select Nature</option>';
 }
 
 function populateNature(minorVal) {
   var ns=document.getElementById('ncNature');
   ns.innerHTML='<option value="">Select Nature</option>';
-  var opts=NATURE[minorVal]||NATURE['default']||['Standard','Special','Recurring','One-time'];
-  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
+  var key = (minorVal||'').trim();
+  if (!key) return;
+  console.log('populateNature called with:', JSON.stringify(key));
+  var opts = NATURE[key] || NATURE['default'] || ['Standard','Special','Recurring','One-time'];
+  console.log('nature opts:', opts);
+  for(var i=0;i<opts.length;i++){
+    var o=document.createElement('option');
+    o.value=opts[i]; o.textContent=opts[i];
+    ns.appendChild(o);
+  }
 }
 
 function setupNewClaim() {
   var today=new Date().toISOString().split('T')[0];
-  document.getElementById('ncCancel').addEventListener('click', function(){ go('my-claims'); });
-  document.getElementById('ncDate').max=today;
-  var ms=document.getElementById('ncMajor');
-  ms.addEventListener('change',function(){ populateMinor(this.value); });
-  document.getElementById('ncMinor').addEventListener('change',function(){ populateNature(this.value); });
-  document.getElementById('ncAmt').addEventListener('input',function(){
-    var v=parseFloat(this.value)||0; document.getElementById('ncAmtD').textContent='Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2});
+  var el = function(id){ return document.getElementById(id); };
+  if(el('ncCancel')) el('ncCancel').addEventListener('click', function(){ go('my-claims'); });
+  if(el('ncDate')) el('ncDate').max=today;
+  var ms=el('ncMajor');
+  if(ms) ms.addEventListener('change',function(){ populateMinor(this.value); });
+  var mn=el('ncMinor');
+  if(mn) mn.addEventListener('change',function(){ populateNature(this.value); });
+  var amt=el('ncAmt');
+  if(amt) amt.addEventListener('input',function(){
+    var v=parseFloat(this.value)||0; el('ncAmtD').textContent='Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2});
   });
   var cats=document.querySelectorAll('.cat-opt');
   for(var c=0;c<cats.length;c++){cats[c].addEventListener('click',function(){for(var x=0;x<cats.length;x++) cats[x].className='cat-opt';this.className='cat-opt sel';});}

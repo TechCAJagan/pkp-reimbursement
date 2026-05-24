@@ -152,9 +152,10 @@ tr:hover td{background:#fafafa}
 .col-filter-btn:hover{color:var(--blue)}
 .col-filter-drop{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(26,26,46,0.12);z-index:200;min-width:180px;max-height:260px;overflow-y:auto;padding:6px 0}
 .col-filter-drop input{width:calc(100% - 16px);margin:6px 8px;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
-.col-filter-item{display:flex;align-items:center;gap:8px;padding:6px 12px;font-size:12px;cursor:pointer;color:#1a1a2e;transition:background 0.1s}
+.col-filter-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;cursor:pointer;color:#1a1a2e;transition:background 0.1s;white-space:nowrap}
 .col-filter-item:hover{background:#f4f4f8}
-.col-filter-item input[type=checkbox]{accent-color:var(--blue3);cursor:pointer;flex-shrink:0}
+.col-filter-item input[type=checkbox]{accent-color:var(--blue3);cursor:pointer;flex-shrink:0;width:13px;height:13px}
+.col-filter-item span{flex:1;font-size:12px;color:#1a1a2e}
 .col-filter-actions{display:flex;gap:6px;padding:6px 8px;border-top:1px solid var(--border);margin-top:4px}
 .col-filter-actions button{flex:1;padding:5px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;border:none}
 .cf-ok{background:var(--blue);color:#fff}.cf-clr{background:#f4f4f8;color:var(--blue)}
@@ -1132,7 +1133,7 @@ function openColFilter(key,btnEl){
       var item=document.createElement("div"); item.className="col-filter-item";
       var cb=document.createElement("input"); cb.type="checkbox"; cb.value=v; cb.checked=selected.indexOf(v)>=0;
       cb.addEventListener("change",function(){if(this.checked){if(selected.indexOf(v)<0)selected.push(v);}else{selected=selected.filter(function(s){return s!==v;});}});
-      var lbl=document.createElement("span"); lbl.textContent=v; lbl.style.overflow="hidden"; lbl.style.textOverflow="ellipsis"; lbl.style.whiteSpace="nowrap";
+      var lbl=document.createElement("span"); lbl.textContent=v; lbl.style.flex="1"; lbl.style.fontSize="12px";
       item.appendChild(cb); item.appendChild(lbl);
       drop.insertBefore(item,actDiv);
     });

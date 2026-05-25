@@ -170,14 +170,14 @@ tr:hover td{background:#fafafa}
   body{background:#fff;font-family:"Palatino Linotype",serif}
   .main{margin-left:0!important}
   .pane{padding:0!important}
-  .rpt-print-header{display:block!important}
+  .rpt-print-header{display:block!important;margin-bottom:20px}
+  .rpt-print-footer{display:block!important;margin-top:20px;border-top:2px solid #1a1a2e;padding-top:12px}
   .tc{border:none!important;box-shadow:none!important}
   th{background:#1a1a2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
-  .rpt-print-footer{display:block!important;margin-top:20px;border-top:2px solid #1a1a2e;padding-top:12px}
   tr{page-break-inside:avoid}
 }
-.rpt-print-header{display:none;margin-bottom:20px}
-.rpt-print-footer{display:none}
+.rpt-print-header{display:none!important;margin-bottom:20px}
+.rpt-print-footer{display:none!important}
 .toast.show{opacity:1;transform:translateY(0)}
 .t-ok{background:#065f46;color:#fff}.t-err{background:#991b1b;color:#fff}.t-info{background:var(--blue);color:#fff}
 </style>
@@ -1223,7 +1223,7 @@ function renderRpt(rid,data){
   out.innerHTML="";
 
   // Print header (hidden on screen, shown on print)
-  var ph=document.getElementById("rptPrintHdr");
+  var ph=document.getElementById("rptPrintHdr"); ph.style.display="none";
   ph.innerHTML="<div style='text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:12px;margin-bottom:16px'><div style='font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#7070a0;margin-bottom:4px'>Pratapkaran Paul &amp; Co.</div><div style='font-size:20px;font-weight:700;color:#1a1a2e;font-family:Palatino Linotype,serif;margin-bottom:4px'>"+titleText+"</div><div style='font-size:11px;color:#7070a0'>Printed by: "+sess.name+" &nbsp;|&nbsp; Date: "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})+"</div></div>";
 
   var wrap=document.createElement("div"); wrap.className="tc";
@@ -1298,7 +1298,7 @@ function renderRpt(rid,data){
   out.appendChild(wrap);
 
   // Print footer (hidden on screen)
-  var pf=document.getElementById("rptPrintFtr");
+  var pf=document.getElementById("rptPrintFtr"); pf.style.display="none";
   var catRows="";
   for(var cat in catTotals) catRows+="<tr><td style='padding:4px 8px;font-size:12px'>"+cat+"</td><td style='padding:4px 8px;font-size:12px;text-align:right;font-weight:600'>"+fmtA(catTotals[cat])+"</td></tr>";
   pf.innerHTML="<table style='width:100%;border-collapse:collapse;margin-bottom:16px'><thead><tr><th colspan='2' style='background:#1a1a2e;color:#fff;padding:7px 8px;font-size:12px;text-align:left'>Summary by Category</th></tr></thead><tbody>"+catRows+"<tr style='border-top:2px solid #1a1a2e'><td style='padding:6px 8px;font-weight:700;font-size:13px'>TOTAL</td><td style='padding:6px 8px;font-weight:700;font-size:13px;text-align:right'>"+fmtA(total)+"</td></tr></tbody></table><div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px'><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Prepared by<br><br><strong style='color:#1a1a2e'>"+sess.name+"</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Authorised by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Reviewed by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div></div><div style='margin-top:16px;font-size:9px;color:#9090b0;text-align:center'>Pratapkaran Paul &amp; Co. | System generated report | "+new Date().toLocaleString("en-IN")+"</div>";

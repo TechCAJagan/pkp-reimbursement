@@ -1247,19 +1247,24 @@ function renderRpt(rid,data){
   var htr=document.createElement("tr");
   var cols=[
     {key:"chk",lbl:""},
-    {key:"ClaimID",lbl:"Claim ID"},
-    {key:"ClaimantName",lbl:"Employee"},
-    {key:"DateOfExpense",lbl:"Date"},
+    {key:"ClaimID",lbl:"Claim / Employee"},
+    {key:"ClaimantName",lbl:"_skip"},
+    {key:"DateOfExpense",lbl:"_skip"},
     {key:"ClientName",lbl:"Client"},
-    {key:"MajorHead",lbl:"Major Head"},
-    {key:"MinorHead",lbl:"Minor Head"},
-    {key:"Category",lbl:"Category"},
+    {key:"MajorHead",lbl:"Classification"},
+    {key:"MinorHead",lbl:"_skip"},
+    {key:"Nature",lbl:"_skip"},
+    {key:"description",lbl:"Description & Sub-nature"},
     {key:"Amount",lbl:"Amount"},
-    {key:"status",lbl:"Status"}
+    {key:"status",lbl:"Status"},
+    {key:"AttachmentRef",lbl:"Attachment Ref."}
   ];
+  var colWidths={"chk":"28px","ClaimID":"160px","ClientName":"100px","MajorHead":"110px","description":"180px","Amount":"80px","status":"110px","AttachmentRef":"90px"};
   for(var ci=0;ci<cols.length;ci++){
+    if(cols[ci].lbl==="_skip") continue;
     var th=document.createElement("th");
-    if(cols[ci].key==="chk"){th.style.width="32px"; htr.appendChild(th); continue;}
+    if(cols[ci].key==="chk"){th.style.width="28px"; htr.appendChild(th); continue;}
+    if(colWidths[cols[ci].key]) th.style.width=colWidths[cols[ci].key];
     var hasFilter=rptColFilters[cols[ci].key]&&rptColFilters[cols[ci].key].length>0;
     th.innerHTML=cols[ci].lbl;
     var fb=document.createElement("button"); fb.className="col-filter-btn"+(hasFilter?" active":""); fb.innerHTML="▼"; fb.title="Filter";
@@ -1318,7 +1323,7 @@ function exportSelectedXLS(){
   var wb=XLSX.utils.book_new();
 
   // Main data sheet
-  var headers=["Claim ID","Employee","Date of Expense","Client","Major Head","Minor Head","Nature","Category","Amount (Rs.)","Status","Manager Status","Finance Status","Date Paid","Invoice Date","Receipt Date"];
+  var headers=["Claim ID","Employee","Date of Expense","Client","Major Head","Minor Head","Nature","Category","Sub-nature","Description","Amount (Rs.)","Status","Manager Status","Finance Status","Attachment Ref.","Date Paid","Invoice Date","Receipt Date"];
   var rows=[headers];
   var total=0;
   for(var i=0;i<sel.length;i++){
@@ -1327,9 +1332,11 @@ function exportSelectedXLS(){
       c.ClaimID, c.ClaimantName||c.ClaimantID||"",
       fmtD(c.DateOfExpense), c.ClientName||"",
       c.MajorHead||"", c.MinorHead||"", c.Nature||"",
-      c.Category||"", amt,
+      c.Category||"", c.SubNature||"", c.Description||"",
+      amt,
       getStatusLabel(getStatus(c)),
       c.ManagerApprovalStatus||"", c.FinanceApprovalStatus||"",
+      c.AttachmentRef||"",
       c.DatePaidByFirm||"", c.DateInvoicedToClient||"", c.DateReceivedFromClient||""
     ]);
   }
@@ -1339,7 +1346,7 @@ function exportSelectedXLS(){
   var ws=XLSX.utils.aoa_to_sheet(rows);
 
   // Column widths
-  ws["!cols"]=[{wch:16},{wch:20},{wch:14},{wch:22},{wch:16},{wch:16},{wch:16},{wch:18},{wch:14},{wch:18},{wch:18},{wch:18},{wch:14},{wch:14},{wch:14}];
+  ws["!cols"]=[{wch:16},{wch:22},{wch:14},{wch:22},{wch:16},{wch:16},{wch:16},{wch:18},{wch:18},{wch:40},{wch:14},{wch:18},{wch:18},{wch:18},{wch:18},{wch:14},{wch:14},{wch:14}];
 
   XLSX.utils.book_append_sheet(wb, ws, "Claims");
 

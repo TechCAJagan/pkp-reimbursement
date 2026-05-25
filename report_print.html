@@ -129,7 +129,7 @@ function render() {
   // ── HEADER ──
   html += "<div class='firm-header'>";
   html += "<div class='firm-name'>Pratapkaran Paul &amp; Co.</div>";
-  html += "<div class='firm-sub'>Chartered Accountants &amp; Associates</div>";
+  html += "<div class='firm-sub'>Chartered Accountants</div>";
   html += "<div class='report-title'>" + title + "</div>";
   html += "<div class='report-meta'><span>Prepared by: " + (user.name||"System") + "</span><span>Printed: " + printDate + " at " + printTime + "</span></div>";
   html += "</div>";
@@ -190,7 +190,7 @@ function render() {
   html += "</div>";
 
   // ── FOOTER ──
-  html += "<div class='doc-footer'><span>Pratapkaran Paul &amp; Co. | Reimbursement Management System</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
+  html += "<div class='doc-footer'><span>Pratapkaran Paul &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
 
   document.getElementById("page").innerHTML = html;
 

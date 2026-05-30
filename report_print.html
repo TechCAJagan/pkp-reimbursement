@@ -6,11 +6,13 @@
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;color:#1a1a2e;background:#fff;padding:24px}
-.no-print{margin-bottom:16px;display:flex;gap:10px}
+.no-print{margin-bottom:16px;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
 .no-print button{padding:9px 20px;border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;cursor:pointer;border:none}
 .btn-print{background:#1a1a2e;color:#fff}
 .btn-print:hover{background:#2d2d4e}
 .btn-close{background:#f4f4f8;color:#1a1a2e;border:1px solid #dddde8!important}
+.toggle-wrap{display:flex;align-items:center;gap:8px;padding:7px 14px;border:1px solid #dddde8;border-radius:8px;cursor:pointer;font-size:13px;color:#1a1a2e;user-select:none;background:#f8f8fc}
+.toggle-wrap input{width:16px;height:16px;accent-color:#1a1a2e;cursor:pointer}
 .page{max-width:960px;margin:0 auto}
 
 /* Header */
@@ -27,11 +29,17 @@ body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;color:#1a1a
 .stat-val{font-size:18px;font-weight:700;color:#1a1a2e}
 .stat-val.gold{color:#c9a84c}
 
+/* Section header for grouped mode */
+.sec-hdr{background:#1a1a2e;color:#fff;padding:8px 14px;margin-top:20px;margin-bottom:0;border-radius:6px 6px 0 0;display:flex;justify-content:space-between;align-items:center}
+.sec-hdr-title{font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
+.sec-hdr-amt{font-size:13px;font-weight:700;color:#c9a84c}
+.sec-subtotal td{font-weight:700;background:#eeeef8!important;border-top:2px solid #1a1a2e;font-size:12px}
+
 /* Table */
-table{width:100%;border-collapse:collapse;margin-bottom:20px;font-size:12px}
-thead tr{background:#1a1a2e}
-th{color:#fff;padding:8px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap}
-td{padding:7px 10px;border-bottom:1px solid #ededf4;vertical-align:top}
+table{width:100%;border-collapse:collapse;margin-bottom:4px;font-size:12px}
+thead tr{background:#2d2d4e}
+th{color:#fff;padding:7px 10px;text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:0.06em;font-weight:600;white-space:nowrap}
+td{padding:6px 10px;border-bottom:1px solid #ededf4;vertical-align:top}
 tr:nth-child(even) td{background:#f8f8fc}
 .total-row td{font-weight:700;border-top:2px solid #1a1a2e;background:#eeeef8!important;font-size:13px}
 .mono{font-family:monospace;font-size:11px;color:#7070a0}
@@ -44,13 +52,18 @@ tr:nth-child(even) td{background:#f8f8fc}
 .b-paid{background:#e8f8f0;color:#0a5c36}
 
 /* Summary section */
-.summary-section{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px}
+.summary-section{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:24px;margin-top:20px}
 .sum-card{border:1px solid #dddde8;border-radius:8px;overflow:hidden}
 .sum-card-title{background:#1a1a2e;color:#fff;padding:7px 12px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.06em}
 .sum-table{width:100%;border-collapse:collapse;font-size:12px}
 .sum-table td{padding:6px 12px;border-bottom:1px solid #ededf4}
 .sum-table tr:last-child td{font-weight:700;border-top:2px solid #1a1a2e;background:#eeeef8;border-bottom:none}
 .sum-table td:last-child{text-align:right;font-weight:600}
+
+/* Grand total bar */
+.grand-total-bar{background:#1a1a2e;color:#fff;padding:10px 16px;border-radius:6px;display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;margin-top:8px}
+.gt-label{font-size:11px;text-transform:uppercase;letter-spacing:0.08em}
+.gt-val{font-size:18px;font-weight:700;color:#c9a84c}
 
 /* Signatures */
 .sign-section{display:grid;grid-template-columns:1fr 1fr 1fr;gap:24px;margin-top:24px;padding-top:16px;border-top:1px solid #dddde8}
@@ -65,12 +78,13 @@ tr:nth-child(even) td{background:#f8f8fc}
 @media print{
   .no-print{display:none!important}
   body{padding:12px}
-  .stat-box{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .stat-box,.sec-hdr,.grand-total-bar{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   thead tr{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   .sum-card-title{-webkit-print-color-adjust:exact;print-color-adjust:exact}
   tr{page-break-inside:avoid}
   .summary-section{page-break-inside:avoid}
   .sign-section{page-break-inside:avoid}
+  .sec-hdr{page-break-after:avoid}
 }
 </style>
 </head>
@@ -78,6 +92,15 @@ tr:nth-child(even) td{background:#f8f8fc}
 <div class="no-print">
   <button class="btn-print" onclick="window.print()">🖨️ Print / Save PDF</button>
   <button class="btn-close" onclick="window.close()">✖ Close</button>
+  <label style="display:flex;align-items:center;gap:8px;font-size:13px;color:#1a1a2e">
+    <span style="color:#7070a0">Group by:</span>
+    <select id="groupBy" onchange="render()" style="padding:6px 28px 6px 10px;border:1px solid #dddde8;border-radius:7px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%231a1a2e%22 stroke-width=%222.5%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 8px center">
+      <option value="category" selected>Category</option>
+      <option value="client">Client</option>
+      <option value="employee">Employee</option>
+      <option value="none">No Grouping</option>
+    </select>
+  </label>
 </div>
 
 <div class="page" id="page">
@@ -85,16 +108,10 @@ tr:nth-child(even) td{background:#f8f8fc}
 </div>
 
 <script>
-var data = [];
-var title = "Claims Report";
-
-try {
-  data  = JSON.parse(sessionStorage.getItem("printReportData") || "[]");
-  title = sessionStorage.getItem("printReportTitle") || "Claims Report";
-} catch(e) {}
-
-var user = {};
-try { user = JSON.parse(sessionStorage.getItem("pkp_user") || "{}"); } catch(e) {}
+var data=[], title="Claims Report", user={};
+try{ data=JSON.parse(sessionStorage.getItem("printReportData")||"[]"); }catch(e){}
+try{ title=sessionStorage.getItem("printReportTitle")||"Claims Report"; }catch(e){}
+try{ user=JSON.parse(sessionStorage.getItem("pkp_user")||"{}"); }catch(e){}
 
 function fmtD(d){ if(!d||d==="-") return "-"; try{ return new Date(d).toLocaleDateString("en-IN",{day:"2-digit",month:"short",year:"numeric"}); }catch(e){return d;} }
 function fmtA(n){ var v=parseFloat(n)||0; return "Rs.\u00a0"+v.toLocaleString("en-IN",{minimumFractionDigits:2}); }
@@ -102,41 +119,61 @@ function getStatus(c){ return c.FinanceApprovalStatus&&c.FinanceApprovalStatus!=
 function getStatusLabel(s){ var m={PENDING_MANAGER:"Pending Manager",PENDING_FINANCE:"Pending Finance",APPROVED_FINANCE:"Finance Approved",REJECTED_MANAGER:"Rejected",REJECTED_FINANCE:"Fin.Rejected",PAID:"Paid",CLOSED:"Closed"}; return m[s]||s||"-"; }
 function getBadgeCls(s){ var m={PENDING_MANAGER:"b-pm",PENDING_FINANCE:"b-pf",APPROVED_FINANCE:"b-af",REJECTED_MANAGER:"b-rej",REJECTED_FINANCE:"b-rej",PAID:"b-paid",CLOSED:"b-paid"}; return m[s]||"b-pm"; }
 
+// Table header HTML
+var TABLE_HDR = "<table><thead><tr><th style='width:20px'>#</th><th style='width:130px'>Claim / Employee</th><th style='width:90px'>Client</th><th style='width:100px'>Classification</th><th>Description &amp; Sub-nature</th><th style='width:70px;text-align:right'>Amount</th><th style='width:90px'>Status</th><th style='width:80px'>Att. Ref.</th></tr></thead><tbody>";
+
+function claimRow(c, idx) {
+  var s = getStatus(c);
+  var h = "<tr>";
+  h += "<td style='color:#9090b0;font-size:10px;text-align:center;vertical-align:top'>"+(idx+1)+"</td>";
+  h += "<td style='vertical-align:top'><span class='mono'>"+c.ClaimID+"</span><div style='font-size:11px;font-weight:600;color:#1a1a2e;margin-top:2px'>"+(c.ClaimantName||c.ClaimantID||"-")+"</div><div style='font-size:9px;color:#9090b0'>"+fmtD(c.DateOfExpense)+" · "+(c.Category||"-")+"</div></td>";
+  h += "<td style='font-size:11px;vertical-align:top'>"+(c.ClientName||"-")+"</td>";
+  h += "<td style='vertical-align:top'><div style='font-size:11px;font-weight:600;color:#1a1a2e'>"+(c.MajorHead||"-")+"</div><div style='font-size:9px;color:#9090b0;line-height:1.5'>"+(c.MinorHead||"")+(c.Nature?"<br>"+c.Nature:"")+"</div></td>";
+  h += "<td style='vertical-align:top'><div style='font-size:10px;color:#1a1a2e;line-height:1.5'>"+(c.Description||"-")+"</div>"+(c.SubNature?"<div style='font-size:9px;color:#9090b0'>Sub: "+c.SubNature+"</div>":"")+"</td>";
+  h += "<td class='amt' style='vertical-align:top'>"+fmtA(c.Amount)+"</td>";
+  h += "<td style='vertical-align:top'><span class='badge "+getBadgeCls(s)+"'>"+getStatusLabel(s)+"</span></td>";
+  h += "<td style='vertical-align:top;font-family:monospace;font-size:9px;color:#9090b0'>"+(c.AttachmentRef||"")+"</td>";
+  h += "</tr>";
+  return h;
+}
+
+function subtotalRow(colspan, total) {
+  return "<tr class='sec-subtotal'><td colspan='"+(colspan-1)+"' style='text-align:right;font-size:10px;text-transform:uppercase;letter-spacing:0.06em'>Subtotal</td><td class='amt'>"+fmtA(total)+"</td></tr>";
+}
+
 function render() {
   if (!data.length) {
     document.getElementById("page").innerHTML = "<div style='text-align:center;padding:60px;color:#8b1a1a'>No data to display. Please select claims first.</div>";
     return;
   }
 
-  // Compute totals
+  var groupBy = document.getElementById("groupBy") ? document.getElementById("groupBy").value : "category";
+  var grouped = groupBy !== "none";
   var total = 0;
-  var catTotals = {}, clientTotals = {}, statusCount = {};
-  for (var i = 0; i < data.length; i++) {
-    var amt = parseFloat(data[i].Amount) || 0; total += amt;
-    var cat = data[i].Category || "Uncategorised";
-    catTotals[cat] = (catTotals[cat] || 0) + amt;
-    var cli = data[i].ClientName || "General";
-    clientTotals[cli] = (clientTotals[cli] || 0) + amt;
-    var st = getStatus(data[i]);
-    statusCount[st] = (statusCount[st] || 0) + 1;
+  var catTotals = {}, clientTotals = {};
+  for (var i=0; i<data.length; i++) {
+    var amt = parseFloat(data[i].Amount)||0; total += amt;
+    var cat = data[i].Category||"Uncategorised";
+    catTotals[cat] = (catTotals[cat]||0) + amt;
+    var cli = data[i].ClientName||"General";
+    clientTotals[cli] = (clientTotals[cli]||0) + amt;
   }
-
-  var printDate = new Date().toLocaleDateString("en-IN", {day:"2-digit",month:"long",year:"numeric"});
-  var printTime = new Date().toLocaleTimeString("en-IN", {hour:"2-digit",minute:"2-digit"});
+  var approved = data.filter(function(c){return getStatus(c)==="APPROVED_FINANCE"||getStatus(c)==="PAID";}).length;
+  var pending  = data.filter(function(c){var s=getStatus(c);return s==="PENDING_MANAGER"||s==="PENDING_FINANCE";}).length;
+  var printDate = new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"});
+  var printTime = new Date().toLocaleTimeString("en-IN",{hour:"2-digit",minute:"2-digit"});
 
   var html = "";
 
-  // ── HEADER ──
+  // Header
   html += "<div class='firm-header'>";
   html += "<div class='firm-name'>Pratapkaran Paul &amp; Co.</div>";
   html += "<div class='firm-sub'>Chartered Accountants</div>";
-  html += "<div class='report-title'>" + title + "</div>";
-  html += "<div class='report-meta'><span>Prepared by: " + (user.name||"System") + "</span><span>Printed: " + printDate + " at " + printTime + "</span></div>";
+  html += "<div class='report-title'>"+title+"</div>";
+  html += "<div class='report-meta'><span>Prepared by: "+(user.name||"System")+"</span><span>Printed: "+printDate+" at "+printTime+"</span></div>";
   html += "</div>";
 
-  // ── STATS BAR ──
-  var approved = data.filter(function(c){return getStatus(c)==="APPROVED_FINANCE"||getStatus(c)==="PAID";}).length;
-  var pending  = data.filter(function(c){var s=getStatus(c);return s==="PENDING_MANAGER"||s==="PENDING_FINANCE";}).length;
+  // Stats bar
   html += "<div class='stats-bar'>";
   html += "<div class='stat-box'><div class='stat-lbl'>Total Claims</div><div class='stat-val'>"+data.length+"</div></div>";
   html += "<div class='stat-box'><div class='stat-lbl'>Total Amount</div><div class='stat-val gold'>"+fmtA(total)+"</div></div>";
@@ -144,81 +181,67 @@ function render() {
   html += "<div class='stat-box'><div class='stat-lbl'>Pending</div><div class='stat-val'>"+pending+"</div></div>";
   html += "</div>";
 
-  // ── CLAIMS TABLE ──
-  html += "<table><thead><tr>";
-  html += "<th style='width:20px'>#</th>";
-  html += "<th style='width:150px'>Claim / Employee</th>";
-  html += "<th style='width:90px'>Client</th>";
-  html += "<th style='width:105px'>Classification</th>";
-  html += "<th>Description &amp; Sub-nature</th>";
-  html += "<th style='width:75px;text-align:right'>Amount</th>";
-  html += "<th style='width:95px'>Status</th>";
-  html += "<th style='width:85px'>Attachment Ref.</th>";
-  html += "</tr></thead><tbody>";
-  for (var i = 0; i < data.length; i++) {
-    var c = data[i]; var s = getStatus(c);
-    html += "<tr>";
-    // Serial
-    html += "<td style='color:#9090b0;font-size:10px;text-align:center;vertical-align:top'>"+(i+1)+"</td>";
-    // Claim / Employee (two rows)
-    html += "<td style='vertical-align:top'>";
-    html += "<span class='mono'>"+c.ClaimID+"</span>";
-    html += "<div style='font-size:11px;font-weight:600;color:#1a1a2e;margin-top:2px'>"+(c.ClaimantName||c.ClaimantID||"-")+"</div>";
-    html += "<div style='font-size:9px;color:#9090b0;margin-top:1px'>"+fmtD(c.DateOfExpense)+" &middot; "+(c.Category||"-")+"</div>";
-    html += "</td>";
-    // Client
-    html += "<td style='font-size:11px;vertical-align:top'>"+(c.ClientName||"-")+"</td>";
-    // Classification (three rows)
-    html += "<td style='vertical-align:top'>";
-    html += "<div style='font-size:11px;font-weight:600;color:#1a1a2e'>"+(c.MajorHead||"-")+"</div>";
-    html += "<div style='font-size:9px;color:#9090b0;line-height:1.5'>"+(c.MinorHead||"")+(c.Nature?"<br>"+c.Nature:"")+"</div>";
-    html += "</td>";
-    // Description & Sub-nature
-    html += "<td style='vertical-align:top'>";
-    html += "<div style='font-size:10px;color:#1a1a2e;line-height:1.5'>"+(c.Description||"-")+"</div>";
-    if(c.SubNature) html += "<div style='font-size:9px;color:#9090b0;margin-top:2px'>Sub: "+c.SubNature+"</div>";
-    html += "</td>";
-    // Amount
-    html += "<td class='amt' style='vertical-align:top'>"+fmtA(c.Amount)+"</td>";
-    // Status
-    html += "<td style='vertical-align:top'><span class='badge "+getBadgeCls(s)+"'>"+getStatusLabel(s)+"</span></td>";
-    // Attachment Ref
-    html += "<td style='vertical-align:top;font-family:monospace;font-size:9px;color:#9090b0'>"+(c.AttachmentRef||"")+"</td>";
-    html += "</tr>";
+  if (grouped) {
+    // ── GROUPED ──
+    var groupKeys = [], groupMap = {}, groupTotals = {};
+
+    if (groupBy === "category") {
+      var ORDER = ["Client Reimbursable","Non Reimbursable","Inclusive in Billing","Firms Expenses","Team Cost","Drawings"];
+      data.forEach(function(c){ var k=c.Category||"Uncategorised"; if(!groupMap[k]) groupMap[k]=[]; groupMap[k].push(c); groupTotals[k]=(groupTotals[k]||0)+(parseFloat(c.Amount)||0); });
+      ORDER.forEach(function(k){ if(groupMap[k]) groupKeys.push(k); });
+      Object.keys(groupMap).forEach(function(k){ if(ORDER.indexOf(k)<0) groupKeys.push(k); });
+    } else if (groupBy === "client") {
+      data.forEach(function(c){ var k=c.ClientName||"General"; if(!groupMap[k]) groupMap[k]=[]; groupMap[k].push(c); groupTotals[k]=(groupTotals[k]||0)+(parseFloat(c.Amount)||0); });
+      groupKeys = Object.keys(groupMap).sort();
+    } else if (groupBy === "employee") {
+      data.forEach(function(c){ var k=c.ClaimantName||c.ClaimantID||"Unknown"; if(!groupMap[k]) groupMap[k]=[]; groupMap[k].push(c); groupTotals[k]=(groupTotals[k]||0)+(parseFloat(c.Amount)||0); });
+      groupKeys = Object.keys(groupMap).sort();
+    }
+
+    groupKeys.forEach(function(key) {
+      var grpData = groupMap[key];
+      var grpTotal = groupTotals[key]||0;
+      html += "<div class='sec-hdr'><span class='sec-hdr-title'>"+key+"</span><span class='sec-hdr-amt'>"+fmtA(grpTotal)+" ("+grpData.length+" claims)</span></div>";
+      html += TABLE_HDR;
+      grpData.forEach(function(c, i){ html += claimRow(c, i); });
+      html += subtotalRow(8, grpTotal);
+      html += "</tbody></table>";
+    });
+
+    html += "<div class='grand-total-bar'><span class='gt-label'>Grand Total — "+data.length+" claims</span><span class='gt-val'>"+fmtA(total)+"</span></div>";
+
+  } else {
+    // ── COMBINED TABLE ──
+    html += TABLE_HDR;
+    data.forEach(function(c, i){ html += claimRow(c, i); });
+    html += "<tr class='total-row'><td colspan='5' style='text-align:right'>Grand Total</td><td class='amt'>"+fmtA(total)+"</td><td colspan='2'></td></tr>";
+    html += "</tbody></table>";
   }
-  html += "<tr class='total-row'><td colspan='5' style='text-align:right'>Grand Total</td><td class='amt'>"+fmtA(total)+"</td><td colspan='2'></td></tr>";
-  html += "</tbody></table>";
 
-  // ── SUMMARY SECTION ──
+  // Summary section
   html += "<div class='summary-section'>";
-
   // Category summary
   html += "<div class='sum-card'><div class='sum-card-title'>Summary by Category</div><table class='sum-table'>";
   for (var cat in catTotals) html += "<tr><td>"+cat+"</td><td>"+fmtA(catTotals[cat])+"</td></tr>";
   html += "<tr><td>Grand Total</td><td>"+fmtA(total)+"</td></tr></table></div>";
-
-  // Client summary
+  // Client summary — show ALL clients, no limit
   html += "<div class='sum-card'><div class='sum-card-title'>Summary by Client</div><table class='sum-table'>";
-  var clientKeys = Object.keys(clientTotals).slice(0,8); // max 8 clients on print
+  var clientKeys = Object.keys(clientTotals);
   for (var ci=0; ci<clientKeys.length; ci++) html += "<tr><td>"+clientKeys[ci]+"</td><td>"+fmtA(clientTotals[clientKeys[ci]])+"</td></tr>";
-  if(Object.keys(clientTotals).length > 8) html += "<tr><td colspan='2' style='color:#9090b0;font-size:10px'>...and "+(Object.keys(clientTotals).length-8)+" more</td></tr>";
   html += "<tr><td>Grand Total</td><td>"+fmtA(total)+"</td></tr></table></div>";
-
   html += "</div>";
 
-  // ── SIGNATURES ──
+  // Signatures
   html += "<div class='sign-section'>";
   html += "<div class='sign-box'><div class='sign-line'></div><div class='sign-name'>"+(user.name||"")+"</div><div class='sign-role'>Prepared by</div></div>";
   html += "<div class='sign-box'><div class='sign-line'></div><div class='sign-name'>&nbsp;</div><div class='sign-role'>Verified by</div></div>";
   html += "<div class='sign-box'><div class='sign-line'></div><div class='sign-name'>&nbsp;</div><div class='sign-role'>Authorised by</div></div>";
   html += "</div>";
 
-  // ── FOOTER ──
+  // Footer
   html += "<div class='doc-footer'><span>Pratapkaran Paul &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
 
   document.getElementById("page").innerHTML = html;
-
-  // Auto-open print dialog
   setTimeout(function(){ window.print(); }, 600);
 }
 

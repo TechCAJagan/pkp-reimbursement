@@ -62,6 +62,8 @@ body{font-family:"Palatino Linotype","Palatino","Book Antiqua",Palatino,serif;ba
 .srch{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;outline:none;min-width:160px;background:#f9fafb}
 .srch:focus{border-color:var(--blue3);background:#fff}
 .fsel{padding:7px 32px 7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%231a1a2e' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none}
+.nc-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none;cursor:pointer;transition:border-color 0.2s}
+.nc-select:focus{border-color:var(--blue3)}
 .tw{overflow-x:auto}
 table{width:100%;border-collapse:collapse}
 th{padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);background:#f4f4f8;border-bottom:1px solid var(--border);white-space:nowrap;font-family:"Palatino Linotype",serif}
@@ -101,7 +103,7 @@ tr:hover td{background:#fafafa}
 .fc-hdr{padding:13px 18px;border-bottom:1px solid var(--border)}
 .fc-title{font-size:14px;font-weight:600;color:var(--blue)}
 .fc-body{padding:16px 18px}
-.cat-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
 .cat-opt{border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:#fff;transition:all 0.15s}
 .cat-opt:hover{border-color:var(--blue3)}
 .cat-opt.sel{border-color:var(--blue2);background:var(--blue-lt)}
@@ -193,24 +195,46 @@ tr:hover td{background:#fafafa}
 <header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">➕ New Claim</button></header>
 <div class="pane on" id="pane-dashboard"><div style="font-size:20px;font-weight:700;color:var(--blue);margin-bottom:18px" id="dashTitle">Dashboard</div><div class="sg" id="dashStats"></div><div id="dashActions"></div><div id="dashPending"></div></div>
 <div class="pane" id="pane-new-claim">
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">📅 Basic Details</div></div><div class="fc-body"><div class="fg fg2">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📅 Basic Details</div></div><div class="fc-body">
+<div class="fg fg3">
 <div class="field"><label>Date of Expense <span class="req">*</span></label><input type="date" id="ncDate"></div>
-<div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="ncClient" placeholder="e.g. ABC Corporation"></div>
-</div></div></div>
-<div class="fcard"><div class="fc-hdr"><div class="fc-title">📁 Expense Classification</div></div><div class="fc-body"><div class="fg fg3">
+<div class="field"><label>Paid By <span class="req">*</span></label>
+<select id="ncPaidBy" class="nc-select">
+  <option value="">Select who paid</option>
+</select>
+</div>
+<div class="field"><label>Client Name <span class="req">*</span></label>
+<select id="ncClient" class="nc-select">
+  <option value="">Select Client</option>
+  <optgroup label="── Internal ──" id="ncClientInternal"></optgroup>
+  <optgroup label="── Clients ──" id="ncClientExternal"></optgroup>
+</select>
+</div>
+</div>
+<div style="margin-top:5px;text-align:right">
+  <button type="button" onclick="openAddClientMod()" style="padding:4px 10px;border-radius:6px;background:none;color:var(--blue3);border:1px solid var(--blue3);font-size:11px;font-family:inherit;cursor:pointer;font-weight:600">＋ Add New Client</button>
+</div>
+</div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📁 Expense Classification</div></div><div class="fc-body">
+<div class="fg fg3" style="margin-bottom:10px">
 <div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select Major Head</option></select></div>
 <div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select Minor Head</option></select></div>
 <div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select Nature</option></select></div>
-<div class="field sp2"><label>Sub-Nature</label><input type="text" id="ncSub" placeholder="Optional"></div>
+</div>
+<div class="fg" style="grid-template-columns:1fr 1fr 2fr">
+<div class="field"><label>Sub-Nature</label><input type="text" id="ncSub" placeholder="Optional"></div>
 <div class="field"><label>Amount (Rs.) <span class="req">*</span></label><input type="number" id="ncAmt" placeholder="0.00" min="0" step="0.01"></div>
-<div class="field sp3"><label>Description <span class="req">*</span></label><textarea id="ncDesc" placeholder="Purpose, occasion, persons involved..."></textarea></div>
-</div></div></div>
+<div class="field"><label>Description <span class="req">*</span></label><textarea id="ncDesc" rows="2" placeholder="Purpose, occasion, persons involved..." style="resize:vertical;min-height:60px"></textarea></div>
+</div>
+</div></div>
 <div class="fcard"><div class="fc-hdr"><div class="fc-title">🏷️ Category</div></div><div class="fc-body">
 <div class="cat-grid">
 <label class="cat-opt sel" id="cat0"><input type="radio" name="cat" value="Client Reimbursable" checked><div><div class="cat-lbl">Client Reimbursable</div><div class="cat-sub">Recover from client</div></div></label>
 <label class="cat-opt" id="cat1"><input type="radio" name="cat" value="Non Reimbursable"><div><div class="cat-lbl">Non Reimbursable</div><div class="cat-sub">Firm bears cost</div></div></label>
-<label class="cat-opt" id="cat2"><input type="radio" name="cat" value="Drawings"><div><div class="cat-lbl">Drawings</div><div class="cat-sub">Partner drawings</div></div></label>
+<label class="cat-opt" id="cat2"><input type="radio" name="cat" value="Inclusive in Billing"><div><div class="cat-lbl">Inclusive in Billing</div><div class="cat-sub">Included in Client Billing</div></div></label>
 <label class="cat-opt" id="cat3"><input type="radio" name="cat" value="Firms Expenses"><div><div class="cat-lbl">Firms Expenses</div><div class="cat-sub">General overhead</div></div></label>
+<label class="cat-opt" id="cat4"><input type="radio" name="cat" value="Team Cost"><div><div class="cat-lbl">Team Cost</div><div class="cat-sub">One-to-one team expense</div></div></label>
+<label class="cat-opt" id="cat5"><input type="radio" name="cat" value="Drawings"><div><div class="cat-lbl">Drawings</div><div class="cat-sub">Partner drawings</div></div></label>
 </div>
 <div class="amt-box"><span style="font-size:13px;color:var(--blue);font-weight:500">Claim Amount</span><span class="amt-val" id="ncAmtD">Rs. 0.00</span></div>
 </div></div>
@@ -226,7 +250,7 @@ tr:hover td{background:#fafafa}
 <div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">📥 Export CSV</button><button class="ghost" onclick="loadMC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">📥 Export CSV</button><button class="ghost" onclick="loadAP()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">📥 Export CSV</button><button class="ghost" onclick="loadFIN()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
-<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">📥 Export CSV</button><button class="ghost" onclick="loadACC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Paid Date</th><th>Invoice Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">📥 Export CSV</button><button class="ghost" onclick="loadACC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Pay Mode</th><th>Paid Date</th><th>Intimation Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 <div class="pane" id="pane-reports">
 <div class="rpt-print-header" id="rptPrintHdr"></div>
 <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div>
@@ -241,6 +265,24 @@ tr:hover td{background:#fafafa}
 <div id="rptOut"></div>
 <div class="rpt-print-footer" id="rptPrintFtr"></div>
 </div>
+<div class="pane" id="pane-accounts-view">
+<div class="tc"><div class="th2"><div class="th2-title">My Payments & Claims</div>
+<div class="tb">
+<input class="srch" id="avSrch" placeholder="Search..." oninput="filterAV()">
+<select class="fsel" id="avFil" onchange="filterAV()">
+  <option value="">All</option>
+  <option value="claimant">My Claims</option>
+  <option value="paidby">Paid By Me</option>
+</select>
+<button class="ghost" onclick="loadAV()">🔄 Refresh</button>
+</div></div>
+<div class="tw"><table><thead><tr>
+  <th>Claim ID</th><th>Employee</th><th>Role</th><th>Client</th><th>Amount</th>
+  <th>Category</th><th>Paid Date</th><th>Intimation</th><th>Receipt</th><th>Actions</th>
+</tr></thead><tbody id="avBody">
+<tr><td colspan="10"><div class="empty">Loading...</div></td></tr>
+</tbody></table></div></div></div>
+
 <div class="pane" id="pane-types">
 <div class="tc"><div class="th2"><div class="th2-title">Reimbursement Types</div>
 <div class="tb"><input class="srch" id="typeSrch" placeholder="Search..." oninput="filterTypes()">
@@ -253,7 +295,19 @@ tr:hover td{background:#fafafa}
 <div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">👤 Add Employee</button><button class="ghost" onclick="loadUSR()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
 </main>
 <div class="overlay" id="detOv"><div class="modal"><div class="mhdr"><div class="mtitle" id="mTtl">Claim Details</div><button class="mcls" onclick="closeMod()">&#10005;</button></div><div class="mbdy"><div class="ibar" id="mIBar" style="display:none"></div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div><div id="mBdg"></div></div><div class="dg" id="mDets"></div><div id="mRem"></div></div><div class="mft" id="mFt"></div></div></div>
-<div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">Finance Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
+<div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">HR Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field"><label>Team Name</label><input type="text" id="uTm" placeholder="e.g. Audit Team A"></div><div class="field"><label>Designation</label><select id="uDsg"><option value="">Employee (default)</option><option value="Articled Assistant">Articled Assistant</option><option value="Paid Assistant">Paid Assistant</option></select></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
+<div class="overlay" id="addClientOv">
+<div class="modal" style="width:380px">
+<div class="mhdr"><div class="mtitle">Add New Client</div><button class="mcls" onclick="closeAddClientMod()">&#10005;</button></div>
+<div class="mbdy">
+<div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="newClientName" placeholder="e.g. ABC Corporation" autocomplete="off"></div>
+</div>
+<div class="mft">
+<button class="bsec" onclick="closeAddClientMod()">Cancel</button>
+<button class="bpri" id="addClientSvBtn" onclick="confirmAddClient()">Save Client</button>
+</div>
+</div></div>
+
 <div class="overlay" id="typeOv">
 <div class="modal" style="width:460px">
 <div class="mhdr"><div class="mtitle" id="typeMTtl">Add Type</div><button class="mcls" onclick="closeTypeMod()">&#10005;</button></div>
@@ -274,7 +328,22 @@ tr:hover td{background:#fafafa}
 <button class="bpri" id="typeSvBtn" onclick="saveType()">Add Type</button></div>
 </div></div>
 
-<div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId"><div class="fg"><div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div><div class="field"><label>Date Paid by Firm</label><input type="date" id="acDp"></div><div class="field"><label>Date Invoiced to Client</label><input type="date" id="acDi"></div><div class="field"><label>Date Received from Client</label><input type="date" id="acDr"></div></div></div><div class="mft"><button class="bsec" onclick="closeAccMod()">Cancel</button><button class="bpri" id="acSv" onclick="saveAcc()">Save</button></div></div></div>
+<div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId">
+<div style="font-size:11px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:var(--blue-lt);border-radius:6px">📅 <span id="acTimeline">—</span></div>
+<div class="fg">
+<div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div>
+<div class="field"><label>Payment Mode</label>
+<select id="acPm" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none">
+<option value="">Select mode</option><option value="Bank 1">Bank 1</option><option value="Bank 2">Bank 2</option><option value="Client Direct">Client Direct</option><option value="Cash">Cash</option><option value="Other">Other</option>
+</select></div>
+<div class="field"><label>Date Paid by Firm</label><input type="date" id="acDp"></div>
+<div class="field"><label>Date Intimated to Client</label><input type="date" id="acDi"></div>
+<div class="field"><label>Date Received from Client</label><input type="date" id="acDr"></div>
+</div>
+<div id="acTimelineVis" style="margin-top:12px;display:none">
+<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">Payment Timeline (days from expense)</div>
+<div id="acTLBar" style="position:relative;height:44px;margin:0 10px"></div>
+</div></div><div class="mft"><button class="bsec" onclick="closeAccMod()">Cancel</button><button class="bpri" id="acSv" onclick="saveAcc()">Save</button></div></div></div>
 <div class="toast" id="toast"></div>
 <script>
 
@@ -286,7 +355,16 @@ var apCurTab = 'pending';
 try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = sessionStorage.getItem('pkp_token')||''; } catch(e){}
 if (!sess.role) { window.location.href = 'index.html'; }
 
-var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'Finance Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
+var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'HR Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
+var DESIG_LABELS = {'Articled Assistant':'Articled Assistant','Paid Assistant':'Paid Assistant','Employee':'Employee'};
+
+function getDisplayRole(role, designation) {
+  if (role === 'EMPLOYEE' && designation && designation !== 'Employee' && designation !== '') {
+    return designation;
+  }
+  return RLABELS[role] || role;
+}
+
 var NAV_ICONS = {
   'dashboard':   '📊',
   'new-claim':   '➕',
@@ -296,22 +374,23 @@ var NAV_ICONS = {
   'accounts':    '💳',
   'reports':     '📈',
   'users':       '👥',
-  'types':       '🗂️'
+  'types':       '🗂️',
+  'accounts-view': '💵'
 };
 
 var NAV = {
-  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'reports',lbl:'Reports'}],
-  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'reports',lbl:'Reports'}],
-  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'reports',lbl:'Reports'}],
-  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
+  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
   ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
 };
 
 function init() {
   document.getElementById('sAv').textContent = (sess.name||'U').charAt(0).toUpperCase();
   document.getElementById('sNm').textContent = sess.name||'User';
-  document.getElementById('sRl').textContent = RLABELS[sess.role]||sess.role;
-  var rt = document.getElementById('rtag'); rt.textContent = RLABELS[sess.role]||sess.role; rt.className = 'rtag rt-'+sess.role;
+  document.getElementById('sRl').textContent = getDisplayRole(sess.role, sess.designation);
+  var rt = document.getElementById('rtag'); rt.textContent = getDisplayRole(sess.role, sess.designation); rt.className = 'rtag rt-'+sess.role;
   if (sess.role==='EMPLOYEE'||sess.role==='MANAGER'||sess.role==='ADMIN') document.getElementById('ncBtn').style.display='inline-flex';
   document.getElementById('loBtn').addEventListener('click', function(){ sessionStorage.clear(); window.location.href='index.html'; });
   buildNav();
@@ -351,13 +430,14 @@ function go(id) {
   if (pane) pane.className='pane on';
   var ni = document.querySelector('.ni[data-pane="'+id+'"]');
   if (ni) ni.className='ni on';
-  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management',types:'Reimbursement Types'};
+  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management',types:'Reimbursement Types','accounts-view':'My Payments'};
   document.getElementById('topTitle').textContent = titles[id]||id;
   if (id==='dashboard') loadDash();
   if (id==='my-claims') loadMC();
   if (id==='approvals') loadAP();
   if (id==='finance') loadFIN();
   if (id==='accounts') loadACC();
+  if (id==='accounts-view') loadAV();
   if (id==='reports') buildRpts();
   if (id==='users') loadUSR();
   if (id==='types') loadTypes();
@@ -440,11 +520,12 @@ function loadDash() {
   api({action:'getClaims',filter:filter}, function(res) {
     if (res.error) { document.getElementById('dashStats').innerHTML='<div class="empty" style="color:var(--red)">'+res.error+'</div>'; return; }
     var claims = res.claims||[];
-    if (role==='EMPLOYEE') renderEmpDash(claims);
-    else if (role==='MANAGER') renderMgrDash(claims);
-    else if (role==='FINANCE_MGR') renderFinDash(claims);
-    else if (role==='ACCOUNTS') renderAccDash(claims);
-    else renderAdminDash(claims);
+    // Store in appropriate lists so findClaim/viewClaim works from dashboard
+    if (role==='EMPLOYEE') { myData=claims; renderEmpDash(claims); }
+    else if (role==='MANAGER') { teamData=claims; renderMgrDash(claims); }
+    else if (role==='FINANCE_MGR') { finData=claims; renderFinDash(claims); }
+    else if (role==='ACCOUNTS') { accData=claims; renderAccDash(claims); }
+    else { teamData=claims; myData=claims; renderAdminDash(claims); }
   });
 }
 
@@ -689,11 +770,12 @@ function filterAP() {
     var tr=document.createElement("tr");
     tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td><span class=\"av\">"+nm.charAt(0).toUpperCase()+"</span>"+nm+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td>"+statusBadge(c.ManagerApprovalStatus)+"</td><td></td>";
     var td=tr.querySelector("td:last-child");
-    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
+    td.style.whiteSpace="nowrap";
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View"; vb.style.marginRight="3px";
     (function(id,ip){ vb.addEventListener("click",function(){ viewClaim(id,ip,false); }); })(c.ClaimID,isPend);
     td.appendChild(vb);
     if(isPend){
-      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve";
+      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve"; ab.style.marginRight="3px";
       (function(id){ ab.addEventListener("click",function(){ qApprove(id); }); })(c.ClaimID);
       var rb=document.createElement("button"); rb.className="btn btn-no"; rb.innerHTML="❌ Reject";
       (function(id){ rb.addEventListener("click",function(){ qReject(id); }); })(c.ClaimID);
@@ -759,9 +841,10 @@ function qFinReject(id){var r=prompt('Reason:');if(!r)return;api({action:'financ
 // ── ACCOUNTS ──
 function loadACC() {
   document.getElementById('accBody').innerHTML='<tr><td colspan="9"><div class="empty">Loading...</div></td></tr>';
-  api({action:'getClaims',filter:'team'},function(res){
+  var filter = (sess.role==='EMPLOYEE'||sess.role==='FINANCE_MGR') ? 'mine' : 'team';
+  api({action:'getClaims',filter:filter},function(res){
     if(res.error){toast(res.error,'err');return;}
-    accData=(res.claims||[]).filter(function(c){return c.FinanceApprovalStatus==='APPROVED_FINANCE'||c.DatePaidByFirm;});
+    accData = res.claims||[];
     filterACC();
   });
 }
@@ -771,7 +854,8 @@ function filterACC() {
   var f=document.getElementById("accFil").value;
   var filtered=accData.filter(function(c){
     var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
-    var mf=!f||(f==="unpaid"&&!c.DatePaidByFirm)||(f==="uninvoiced"&&c.Category==="Client Reimbursable"&&!c.DateInvoicedToClient)||(f==="unreceived"&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
+    var isClientReimb=c.Category==="Client Reimbursable";
+    var mf=!f||(f==="unpaid"&&!c.DatePaidByFirm)||(f==="uninvoiced"&&isClientReimb&&!c.DateInvoicedToClient)||(f==="unreceived"&&isClientReimb&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
     return mq&&mf;
   });
   var tb=document.getElementById("accBody");
@@ -779,16 +863,36 @@ function filterACC() {
   tb.innerHTML="";
   for(var i=0;i<filtered.length;i++){
     var c=filtered[i];
+    var isClientReimb=c.Category==="Client Reimbursable";
     var pd=c.DatePaidByFirm?fmtD(c.DatePaidByFirm):"<span style=\"color:var(--amber)\">Pending</span>";
-    var id2=c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):(c.Category==="Client Reimbursable"?"<span style=\"color:var(--amber)\">Pending</span>":"-");
-    var rd=c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?"<span style=\"color:var(--amber)\">Pending</span>":"-");
+    var id2=isClientReimb?(c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):"<span style=\"color:var(--amber)\">Pending</span>"):"<span style=\"color:var(--muted)\">N/A</span>";
+    var rd=isClientReimb?(c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?"<span style=\"color:var(--amber)\">Pending</span>":"—")):"<span style=\"color:var(--muted)\">N/A</span>";
+    var pm=c.PaymentMode?"<span style=\"font-size:10px;color:var(--muted)\">"+c.PaymentMode+"</span>":"—";
     var tr=document.createElement("tr");
-    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td>"+pd+"</td><td>"+id2+"</td><td>"+rd+"</td><td></td>";
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td>"+pm+"</td><td>"+pd+"</td><td>"+id2+"</td><td>"+rd+"</td><td></td>";
     var td=tr.querySelector("td:last-child");
     var ub=document.createElement("button"); ub.className="btn"; ub.innerHTML="📝 Update";
     (function(id){ ub.addEventListener("click",function(){ openAccMod(id); }); })(c.ClaimID);
     td.appendChild(ub);
     tb.appendChild(tr);
+    // Timeline text row
+    var tlParts=[];
+    var tlBase=c.DateOfExpense&&c.DateOfExpense!=="-"&&c.DateOfExpense!==""?new Date(c.DateOfExpense):null;
+    function tlDay(d){ if(!tlBase||!d||d==="-"||d==="") return ""; var days=Math.round((new Date(d)-tlBase)/86400000); return days===0?" (+0d)":" ("+(days>0?"+":"")+days+"d)"; }
+    if(c.DateOfExpense&&c.DateOfExpense!=="-"&&c.DateOfExpense!=="") tlParts.push("Expense: "+fmtD(c.DateOfExpense));
+    if(c.DateClaimed&&c.DateClaimed!=="-"&&c.DateClaimed!=="") tlParts.push("Claimed: "+fmtD(c.DateClaimed)+tlDay(c.DateClaimed));
+    if(c.DateManagerApproved&&c.DateManagerApproved!=="-"&&c.DateManagerApproved!=="") tlParts.push("Mgr ✓: "+fmtD(c.DateManagerApproved)+tlDay(c.DateManagerApproved));
+    if(c.FinanceApprovalStatus==="APPROVED_FINANCE") tlParts.push("Fin ✓");
+    if(c.DatePaidByFirm&&c.DatePaidByFirm!=="-"&&c.DatePaidByFirm!=="") tlParts.push("Paid: "+fmtD(c.DatePaidByFirm)+tlDay(c.DatePaidByFirm));
+    if(c.DateInvoicedToClient&&c.DateInvoicedToClient!=="-"&&c.DateInvoicedToClient!=="") tlParts.push("Intimated: "+fmtD(c.DateInvoicedToClient)+tlDay(c.DateInvoicedToClient));
+    if(c.DateReceivedFromClient&&c.DateReceivedFromClient!=="-"&&c.DateReceivedFromClient!=="") tlParts.push("Received: "+fmtD(c.DateReceivedFromClient)+tlDay(c.DateReceivedFromClient));
+    if(tlParts.length>0){
+      var tlRow=document.createElement("tr"); tlRow.style.cssText="background:#f0f0f8;border-bottom:1px solid var(--border)";
+      var tlTd=document.createElement("td"); tlTd.colSpan=10;
+      tlTd.style.cssText="padding:3px 14px 4px 14px;font-size:10px;color:#4a4a8a;font-family:'Palatino Linotype',serif";
+      tlTd.textContent="📅  "+tlParts.join("  →  ");
+      tlRow.appendChild(tlTd); tb.appendChild(tlRow);
+    }
   }
 }
 
@@ -798,15 +902,59 @@ function openAccMod(id) {
   document.getElementById('acId').value=id;
   document.getElementById('acMTtl').textContent='Update: '+id;
   document.getElementById('acPb').value=c.PaidBy||'';
+  if(document.getElementById('acPm')) document.getElementById('acPm').value=c.PaymentMode||'';
   document.getElementById('acDp').value=toDateInput(c.DatePaidByFirm);
   document.getElementById('acDi').value=toDateInput(c.DateInvoicedToClient);
   document.getElementById('acDr').value=toDateInput(c.DateReceivedFromClient);
+  var tlParts=[];
+  if(c.DateOfExpense) tlParts.push('Expense: '+fmtD(c.DateOfExpense));
+  if(c.DateClaimed) tlParts.push('Claimed: '+fmtD(c.DateClaimed));
+  if(c.DateManagerApproved) tlParts.push('Mgr ✓: '+fmtD(c.DateManagerApproved));
+  if(c.FinanceApprovalStatus==='APPROVED_FINANCE') tlParts.push('Fin ✓');
+  if(document.getElementById('acTimeline')) document.getElementById('acTimeline').textContent=tlParts.join(' → ')||'—';
+  renderAccTimeline(c);
   document.getElementById('accOv').className='overlay on';
+}
+
+function renderAccTimeline(c) {
+  var vis=document.getElementById('acTimelineVis');
+  var bar=document.getElementById('acTLBar');
+  if(!vis||!bar) return;
+  var pts=[
+    {lbl:'Expense',d:c.DateOfExpense,col:'#1a1a2e'},
+    {lbl:'Claimed',d:c.DateClaimed,col:'#4a4a8a'},
+    {lbl:'Mgr Appvd',d:c.DateManagerApproved,col:'#c9a84c'},
+    {lbl:'Paid',d:c.DatePaidByFirm,col:'#0a5c36'},
+    {lbl:'Intimated',d:c.DateInvoicedToClient,col:'#1e40af'},
+    {lbl:'Received',d:c.DateReceivedFromClient,col:'#0a5c36'}
+  ];
+  var base=c.DateOfExpense?new Date(c.DateOfExpense):null;
+  if(!base){vis.style.display='none';return;}
+  var filled=pts.filter(function(p){return p.d&&p.d!=='-'&&p.d!=='';});
+  if(filled.length<2){vis.style.display='none';return;}
+  vis.style.display='block';
+  var days=filled.map(function(p){return Math.round((new Date(p.d)-base)/86400000);});
+  var minD=Math.min.apply(null,days), maxD=Math.max.apply(null,days);
+  var range=maxD-minD||1;
+  bar.innerHTML='';
+  var line=document.createElement('div');
+  line.style.cssText='position:absolute;top:10px;left:0;right:0;height:2px;background:#dddde8;border-radius:2px';
+  bar.appendChild(line);
+  filled.forEach(function(p,i){
+    var pct=((days[i]-minD)/range*100);
+    var dot=document.createElement('div');
+    dot.style.cssText='position:absolute;top:4px;width:14px;height:14px;border-radius:50%;background:'+p.col+';border:2px solid #fff;box-shadow:0 0 0 1px '+p.col+';left:calc('+pct+'% - 7px)';
+    dot.title=p.lbl+': '+fmtD(p.d)+' (Day '+(days[i]>=0?'+':'')+days[i]+')';
+    var lbl=document.createElement('div');
+    lbl.style.cssText='position:absolute;top:20px;font-size:8px;color:'+p.col+';white-space:nowrap;font-weight:600;left:calc('+pct+'% - 10px)';
+    lbl.textContent=(days[i]>=0?'+':'')+days[i]+'d';
+    bar.appendChild(dot); bar.appendChild(lbl);
+  });
 }
 function closeAccMod(){document.getElementById('accOv').className='overlay';}
 function saveAcc(){
   var btn=document.getElementById('acSv'); btn.disabled=true; btn.textContent='Saving...';
-  api({action:'updateAccountsDetails',claimId:document.getElementById('acId').value,paidBy:document.getElementById('acPb').value,datePaidByFirm:document.getElementById('acDp').value,dateInvoicedToClient:document.getElementById('acDi').value,dateReceivedFromClient:document.getElementById('acDr').value},function(res){
+  api({action:'updateAccountsDetails',claimId:document.getElementById('acId').value,paidBy:document.getElementById('acPb').value,paymentMode:document.getElementById('acPm').value,datePaidByFirm:document.getElementById('acDp').value,dateInvoicedToClient:document.getElementById('acDi').value,dateReceivedFromClient:document.getElementById('acDr').value},function(res){
     btn.disabled=false; btn.textContent='Save';
     if(res.error){toast(res.error,'err');return;}
     // Update local cache
@@ -830,7 +978,7 @@ function viewClaim(id, canApprove, isFinance) {
   document.getElementById('mBdg').innerHTML=statusBadge(getStatus(c));
   var ib=document.getElementById('mIBar');
   if(canApprove){ib.textContent='This claim awaits your approval.';ib.style.display='block';}else{ib.style.display='none';}
-  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
+  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Paid By',c.PaidByName||c.PaidBy||'—'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
   if(c.SubNature) fields.push(['Sub-Nature',c.SubNature]);
   var dhtml=''; for(var i=0;i<fields.length;i++) dhtml+='<div class="di"><div class="dl">'+fields[i][0]+'</div><div class="dv">'+fields[i][1]+'</div></div>';
   dhtml+='<div class="di df"><div class="dl">Description</div><div class="dv">'+(c.Description||'-')+'</div></div>';
@@ -919,43 +1067,204 @@ function buildTypeMap() {
 function populateMinor(majorVal) {
   var mn=document.getElementById('ncMinor');
   mn.innerHTML='<option value="">Select Minor Head</option>';
-  var key = (majorVal||'').trim();
-  if (!key) return;
-  console.log('populateMinor called with:', JSON.stringify(key));
-  console.log('MINOR keys available:', Object.keys(MINOR));
-  // If MINOR not loaded yet, force reload
-  if (Object.keys(MINOR).length === 0) {
-    ALL_TYPES = [];
+  var key=(majorVal||'').trim();
+  if(!key) return;
+  if(Object.keys(MINOR).length===0){
+    ALL_TYPES=[];
     loadTypeData(function(){ populateMinor(key); });
     return;
   }
-  var opts = MINOR[key] || [];
-  console.log('opts for', key, ':', opts);
-  if (opts.length === 0) {
-    mn.innerHTML='<option value="">No types for this head</option>';
-    return;
-  }
-  for(var i=0;i<opts.length;i++){
-    var o=document.createElement('option');
-    o.value=opts[i]; o.textContent=opts[i];
-    mn.appendChild(o);
-  }
+  var rawOpts=MINOR[key]||[];
+  if(rawOpts.length===0){ mn.innerHTML='<option value="">No types for this head</option>'; return; }
+  var opts=rawOpts.slice().sort(function(a,b){return a.localeCompare(b);});
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
   document.getElementById('ncNature').innerHTML='<option value="">Select Nature</option>';
 }
 
 function populateNature(minorVal) {
   var ns=document.getElementById('ncNature');
   ns.innerHTML='<option value="">Select Nature</option>';
-  var key = (minorVal||'').trim();
-  if (!key) return;
-  console.log('populateNature called with:', JSON.stringify(key));
-  var opts = NATURE[key] || NATURE['default'] || ['Standard','Special','Recurring','One-time'];
-  console.log('nature opts:', opts);
-  for(var i=0;i<opts.length;i++){
-    var o=document.createElement('option');
-    o.value=opts[i]; o.textContent=opts[i];
-    ns.appendChild(o);
+  var key=(minorVal||'').trim();
+  if(!key) return;
+  var opts=(NATURE[key]||NATURE['default']||['Standard','Special','Recurring','One-time']).slice().sort(function(a,b){return a.localeCompare(b);});
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
+}
+
+function loadClients(selectAfter) {
+  var intGroup = document.getElementById('ncClientInternal');
+  var extGroup = document.getElementById('ncClientExternal');
+  if (!intGroup || !extGroup) return;
+  // Internal fixed options
+  intGroup.innerHTML = '';
+  ['PKP','General'].forEach(function(v){
+    var o=document.createElement('option'); o.value=v; o.textContent=v; intGroup.appendChild(o);
+  });
+  api({action:'getClients'}, function(res){
+    extGroup.innerHTML = '';
+    var sc=(res.clients||[]).slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    sc.forEach(function(c){
+      var o=document.createElement('option'); o.value=c.name; o.textContent=c.name;
+      extGroup.appendChild(o);
+    });
+    if (selectAfter) {
+      var sel = document.getElementById('ncClient');
+      if (sel) for(var i=0;i<sel.options.length;i++){
+        if(sel.options[i].value===selectAfter){ sel.selectedIndex=i; break; }
+      }
+    }
+  });
+}
+
+function buildClientSelect(q, selectAfter) {
+  var sel = document.getElementById('ncClient');
+  if (!sel) return;
+  sel.innerHTML = '';
+  var internals = window._clientInternal||[];
+  var externals = window._clientExternal||[];
+  var filtI = !q ? internals : internals.filter(function(n){ return n.toLowerCase().indexOf(q.toLowerCase())>=0; });
+  var filtE = !q ? externals : externals.filter(function(n){ return n.toLowerCase().indexOf(q.toLowerCase())>=0; });
+  if (filtI.length) {
+    var gi = document.createElement('optgroup'); gi.label='── Internal ──';
+    filtI.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; gi.appendChild(o); });
+    sel.appendChild(gi);
   }
+  if (filtE.length) {
+    var ge = document.createElement('optgroup'); ge.label='── Clients ──';
+    filtE.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; ge.appendChild(o); });
+    sel.appendChild(ge);
+  }
+  if (!filtI.length && !filtE.length) {
+    var o=document.createElement('option'); o.value=''; o.textContent='No matches'; sel.appendChild(o);
+  }
+  if (selectAfter) {
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].value===selectAfter){ sel.selectedIndex=i; break; }
+    }
+  }
+}
+
+function filterClientSelect(q) { buildClientSelect(q); }
+
+
+
+
+
+
+function onClientSearch(val) {
+  var addBar = document.getElementById('ncClientAddBar');
+  var addMsg = document.getElementById('ncClientAddMsg');
+  if (!val || !val.trim()) { if(addBar) addBar.style.display='none'; return; }
+  var list = window._clientList || [];
+  var match = list.some(function(n){ return n.toLowerCase() === val.toLowerCase().trim(); });
+  if (!match && addBar && addMsg) {
+    addMsg.textContent = 'Add "' + val.trim() + '" as new client?';
+    addBar.style.display = 'flex';
+  } else if (addBar) {
+    addBar.style.display = 'none';
+  }
+}
+
+function onClientBlur(val) {
+  // On blur, hide add bar if value matches existing
+  setTimeout(function(){
+    var addBar = document.getElementById('ncClientAddBar');
+    if (!val || !val.trim()) return;
+    var list = window._clientList || [];
+    var match = list.some(function(n){ return n.toLowerCase() === val.toLowerCase().trim(); });
+    if (match && addBar) addBar.style.display = 'none';
+  }, 200);
+}
+
+function openAddClientMod() {
+  var el = document.getElementById('newClientName');
+  if (el) el.value = '';
+  document.getElementById('addClientOv').className = 'overlay on';
+  setTimeout(function(){ if(el) el.focus(); }, 100);
+}
+function closeAddClientMod() {
+  document.getElementById('addClientOv').className = 'overlay';
+}
+function confirmAddClient() {
+  var inp = document.getElementById('newClientName');
+  var name = inp ? inp.value.trim() : '';
+  if (!name) { toast('Enter a client name.','err'); return; }
+  var btn = document.getElementById('addClientSvBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  api({action:'saveClient', clientName:name}, function(res){
+    btn.disabled = false; btn.textContent = 'Save Client';
+    if (res.error) { toast(res.error,'err'); return; }
+    toast('"'+name+'" added!','ok');
+    closeAddClientMod();
+    loadClients(name);
+  });
+}
+
+function addNewClient(){ confirmAddClient(); }
+
+function populatePaidBy() {
+  var sel = document.getElementById('ncPaidBy');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select who paid</option>';
+  window._paidByAll = [];
+  api({action:'getEmployees'}, function(res){
+    var emps = res.employees||[];
+    var myTeam = sess.teamName||'';
+    var myMgr  = sess.managerId||'';
+    var myId   = sess.id||'';
+    var active = emps.filter(function(e){
+      return String(e.isActive||'').toUpperCase().trim()==='TRUE' || e.isActive===true;
+    });
+    var list = [];
+    if (myTeam) list = active.filter(function(e){ return e.teamName === myTeam; });
+    if (list.length===0 && myMgr) list = active.filter(function(e){ return e.managerId===myMgr||e.id===myMgr; });
+    if (list.length===0) list = active.filter(function(e){ return e.id===myId; });
+    if (!list.some(function(e){ return e.id===myId; })) {
+      var self=active.filter(function(e){ return e.id===myId; });
+      list=self.concat(list);
+    }
+    // Deduplicate
+    var seen={}; var unique=[];
+    list.forEach(function(e){ if(!seen[e.id]){ seen[e.id]=true; unique.push(e); } });
+    unique.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    window._paidByAll = unique;
+    sel.innerHTML = '';
+    unique.forEach(function(e){
+      var o=document.createElement('option');
+      o.value=e.id; o.textContent=e.name+' ('+e.id+')';
+      sel.appendChild(o);
+    });
+    // Auto-select self
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].value===myId){ sel.selectedIndex=i; break; }
+    }
+  });
+}
+
+function filterPaidBySelect(q) {
+  var sel = document.getElementById('ncPaidBy');
+  var all = window._paidByAll||[];
+  sel.innerHTML = '';
+  var filtered = !q ? all : all.filter(function(e){
+    return e.name.toLowerCase().indexOf(q.toLowerCase())>=0||e.id.toLowerCase().indexOf(q.toLowerCase())>=0;
+  });
+  filtered.forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' ('+e.id+')';
+    sel.appendChild(o);
+  });
+}
+
+function onPaidBySearch(val){ filterPaidBySelect(val); }
+
+function onPaidBySearch(val) {
+  var hidden = document.getElementById('ncPaidBy');
+  var map = window._paidByMap || {};
+  // Try exact match by name
+  var id = map[val.toLowerCase()];
+  if (id) { hidden.value = id; return; }
+  // Try matching id directly
+  if (map[val]) { hidden.value = val; return; }
+  hidden.value = '';
 }
 
 function setupNewClaim() {
@@ -963,6 +1272,8 @@ function setupNewClaim() {
   var el = function(id){ return document.getElementById(id); };
   if(el('ncCancel')) el('ncCancel').addEventListener('click', function(){ go('my-claims'); });
   if(el('ncDate')) el('ncDate').max=today;
+  loadClients();
+  populatePaidBy();
   var ms=el('ncMajor');
   if(ms) ms.addEventListener('change',function(){ populateMinor(this.value); });
   var mn=el('ncMinor');
@@ -978,7 +1289,8 @@ function setupNewClaim() {
 function resetNC(){
   var today=new Date().toISOString().split('T')[0];
   document.getElementById('ncDate').value=today;
-  document.getElementById('ncClient').value='';
+
+
   document.getElementById('ncMinor').innerHTML='<option value="">Select</option>';
   document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
   document.getElementById('ncSub').value='';
@@ -1000,6 +1312,8 @@ function resetNC(){
       var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);
     }
   });
+  loadClients();
+  populatePaidBy();
 }
 
 function getRef(){
@@ -1013,13 +1327,16 @@ function getRef(){
 }
 
 function submitClaim(){
-  var checks=[{id:'ncDate',n:'Date'},{id:'ncClient',n:'Client'},{id:'ncMajor',n:'Major Head'},{id:'ncMinor',n:'Minor Head'},{id:'ncNature',n:'Nature'},{id:'ncAmt',n:'Amount'},{id:'ncDesc',n:'Description'}];
+  var checks=[{id:'ncDate',n:'Date'},{id:'ncPaidBy',n:'Paid By'},{id:'ncMajor',n:'Major Head'},{id:'ncMinor',n:'Minor Head'},{id:'ncNature',n:'Nature'},{id:'ncAmt',n:'Amount'},{id:'ncDesc',n:'Description'}];
+  var clientEl2=document.getElementById('ncClient'); if(!clientEl2||!clientEl2.value.trim()){toast('Please select a Client.','err');return;}
   for(var i=0;i<checks.length;i++){var el=document.getElementById(checks[i].id);if(!el.value||!el.value.trim()){toast('Please fill in: '+checks[i].n,'err');el.focus();return;}}
   var catEl=document.querySelector('input[name=cat]:checked');
   var btn=document.getElementById('ncSubmit');
   if(btn.disabled) return;
   btn.disabled=true; btn.textContent='Submitting...';
-  api({action:'submitClaim',dateExpense:document.getElementById('ncDate').value,clientName:document.getElementById('ncClient').value.trim(),majorHead:document.getElementById('ncMajor').value,minorHead:document.getElementById('ncMinor').value,nature:document.getElementById('ncNature').value,subNature:document.getElementById('ncSub').value.trim(),description:document.getElementById('ncDesc').value.trim(),amount:document.getElementById('ncAmt').value,category:catEl?catEl.value:'Non Reimbursable',attachmentRef:document.getElementById('ncAttRef').value.trim(),attachmentURL:document.getElementById('ncAttURL').value.trim()},function(res){
+  var paidByEl = document.getElementById('ncPaidBy');  // select - value is employee ID
+  var clientEl = document.getElementById('ncClient');  // select
+  api({action:'submitClaim',dateExpense:document.getElementById('ncDate').value,clientName:clientEl?clientEl.value.trim():'',paidBy:paidByEl?paidByEl.value:'',majorHead:document.getElementById('ncMajor').value,minorHead:document.getElementById('ncMinor').value,nature:document.getElementById('ncNature').value,subNature:document.getElementById('ncSub').value.trim(),description:document.getElementById('ncDesc').value.trim(),amount:document.getElementById('ncAmt').value,category:catEl?catEl.value:'Non Reimbursable',attachmentRef:document.getElementById('ncAttRef').value.trim(),attachmentURL:document.getElementById('ncAttURL').value.trim()},function(res){
     btn.disabled=false; btn.textContent='Submit for Approval';
     if(res.error){toast('Error: '+res.error,'err');return;}
     toast('Claim '+res.claimId+' submitted! Pending manager approval.','ok');
@@ -1036,6 +1353,8 @@ function buildRpts(){
     {id:"pending_finance",t:"Pending Finance",s:"Awaiting finance approval",ic:"🔍"},
     {id:"pending_payment",t:"Pending Payment",s:"Approved but not paid",ic:"💳"},
     {id:"pending_receipt",t:"Pending Receipt",s:"Invoiced, not received",ic:"📬"},
+    {id:"pending_intimation",t:"Pending Intimation",s:"Client reimb. not yet intimated",ic:"📤"},
+    {id:"my_payments",t:"My Payments",s:"Claims where I paid",ic:"💵"},
     {id:"clientwise",t:"Client-wise",s:"Grouped by client",ic:"🏢"}
   ];
   if(role==="ADMIN"||role==="FINANCE_MGR") cards.push({id:"employeewise",t:"Employee-wise",s:"Grouped by employee",ic:"👤"});
@@ -1073,7 +1392,9 @@ function loadRpt(rid){
     else if(rid==="pending_manager") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_MANAGER";});
     else if(rid==="pending_finance") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_FINANCE";});
     else if(rid==="pending_payment") filtered=all.filter(function(c){return c.FinanceApprovalStatus==="APPROVED_FINANCE"&&!c.DatePaidByFirm;});
-    else if(rid==="pending_receipt") filtered=all.filter(function(c){return c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
+    else if(rid==="pending_receipt") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
+    else if(rid==="pending_intimation") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&!c.DateInvoicedToClient&&(c.FinanceApprovalStatus==="APPROVED_FINANCE"||c.DatePaidByFirm);});
+    else if(rid==="my_payments") filtered=all.filter(function(c){return c.PaidBy===sess.id;});
     else if(rid==="clientwise") filtered=all.slice().sort(function(a,b){return (a.ClientName||"").localeCompare(b.ClientName||"");});
     else if(rid==="employeewise") filtered=all.slice().sort(function(a,b){return (a.ClaimantName||"").localeCompare(b.ClaimantName||"");});
     else filtered=all;
@@ -1216,7 +1537,7 @@ function renderRpt(rid,data){
     var cat=data[i].Category||"Uncategorised";
     catTotals[cat]=(catTotals[cat]||0)+amt;
   }
-  var rptTitle={summary:"Claims Summary",pending_manager:"Pending Manager Approval",pending_finance:"Pending Finance Approval",pending_payment:"Pending Payment",pending_receipt:"Pending Receipt",clientwise:"Client-wise Report",employeewise:"Employee-wise Report"};
+  var rptTitle={summary:"Claims Summary",pending_manager:"Pending Manager Approval",pending_finance:"Pending Finance Approval",pending_payment:"Pending Payment",pending_receipt:"Pending Receipt",pending_intimation:"Pending Intimation",my_payments:"My Payments Report",clientwise:"Client-wise Report",employeewise:"Employee-wise Report"};
   var titleText=rptTitle[rid]||rid.replace(/_/g," ");
 
   var out=document.getElementById("rptOut");
@@ -1376,7 +1697,7 @@ function filterUSR(){
   var filtered=usrData.filter(function(e){
     return !q||(e.name||"").toLowerCase().indexOf(q)>=0||(e.email||"").toLowerCase().indexOf(q)>=0;
   });
-  var rlbl={EMPLOYEE:"Employee",MANAGER:"Manager",FINANCE_MGR:"Finance Mgr",ACCOUNTS:"Accounts",ADMIN:"Admin"};
+  var rlbl={EMPLOYEE:"Employee",MANAGER:"Manager",FINANCE_MGR:"HR Manager",ACCOUNTS:"Accounts",ADMIN:"Admin"};
   var tb=document.getElementById("usrBody");
   tb.innerHTML="";
   if(!filtered.length){
@@ -1390,7 +1711,7 @@ function filterUSR(){
     var badgeCls=act?"b-af":"b-rej";
     var statusColor=act?"#065f46":"#991b1b";
     var statusText=act?"Active":"Inactive";
-    var roleText=rlbl[e.role]||e.role;
+    var roleText=(e.role==='EMPLOYEE'&&e.designation&&e.designation!==''&&e.designation!=='Employee')?e.designation:(rlbl[e.role]||e.role);
     var initial=(e.name||"?").charAt(0).toUpperCase();
     var tr=document.createElement("tr");
     var td1=document.createElement("td");
@@ -1419,14 +1740,16 @@ function filterUSR(){
   }
 }
 function openAddUser(){document.getElementById('uMTtl').textContent='Add Employee';document.getElementById('uId').value='';document.getElementById('uNm').value='';document.getElementById('uEm').value='';document.getElementById('uPw').value='';document.getElementById('uRl').value='';document.getElementById('uDp').value='';document.getElementById('uMgr').value='';document.getElementById('uPwdL').innerHTML='Password <span class="req">*</span>';document.getElementById('uStRow').style.display='none';document.getElementById('uSv').textContent='Add Employee';document.getElementById('usrOv').className='overlay on';}
-function openEditUser(id){var e=null;for(var i=0;i<usrData.length;i++){if(usrData[i].id===id){e=usrData[i];break;}}if(!e)return;document.getElementById('uMTtl').textContent='Edit Employee';document.getElementById('uId').value=e.id;document.getElementById('uNm').value=e.name||'';document.getElementById('uEm').value=e.email||'';document.getElementById('uPw').value='';document.getElementById('uRl').value=e.role||'';document.getElementById('uDp').value=e.department||'';document.getElementById('uMgr').value=e.managerId||'';document.getElementById('uSt').value=String(e.isActive).toUpperCase()==='TRUE'?'TRUE':'FALSE';document.getElementById('uPwdL').innerHTML='New Password <small style="color:var(--muted)">(blank=keep)</small>';document.getElementById('uStRow').style.display='flex';document.getElementById('uSv').textContent='Save Changes';document.getElementById('usrOv').className='overlay on';}
-function closeUserMod(){document.getElementById('usrOv').className='overlay';}
+function openEditUser(id){var e=null;for(var i=0;i<usrData.length;i++){if(usrData[i].id===id){e=usrData[i];break;}}if(!e)return;document.getElementById('uMTtl').textContent='Edit Employee';document.getElementById('uId').value=e.id;document.getElementById('uNm').value=e.name||'';document.getElementById('uEm').value=e.email||'';document.getElementById('uPw').value='';document.getElementById('uRl').value=e.role||'';document.getElementById('uDp').value=e.department||'';if(document.getElementById('uTm'))document.getElementById('uTm').value=e.teamName||'';if(document.getElementById('uDsg'))document.getElementById('uDsg').value=e.designation||'';if(document.getElementById('uTm'))document.getElementById('uTm').value=e.teamName||'';document.getElementById('uMgr').value=e.managerId||'';document.getElementById('uSt').value=String(e.isActive).toUpperCase()==='TRUE'?'TRUE':'FALSE';document.getElementById('uPwdL').innerHTML='New Password <small style="color:var(--muted)">(blank=keep)</small>';document.getElementById('uStRow').style.display='flex';document.getElementById('uSv').textContent='Save Changes';document.getElementById('usrOv').className='overlay on';}
+function closeUserMod(){document.getElementById('usrOv').className='overlay';if(document.getElementById('uTm'))document.getElementById('uTm').value='';}
 function saveUser(){
   var eid=document.getElementById('uId').value,name=document.getElementById('uNm').value.trim(),email=document.getElementById('uEm').value.trim(),pwd=document.getElementById('uPw').value.trim(),role=document.getElementById('uRl').value,dept=document.getElementById('uDp').value.trim(),mgr=document.getElementById('uMgr').value,stat=document.getElementById('uSt').value;
   if(!name||!email||!role){toast('Name, email and role required.','err');return;}
   if(!eid&&!pwd){toast('Password required for new employee.','err');return;}
   var btn=document.getElementById('uSv');btn.disabled=true;btn.textContent='Saving...';
-  var p={}; if(eid){p.action='updateEmployee';p.employeeId=eid;p.Name=name;p.Email=email;p.Role=role;p.Department=dept;p.ManagerID=mgr;p.IsActive=stat;if(pwd)p.Password=pwd;}else{p.action='addEmployee';p.name=name;p.email=email;p.password=pwd;p.role=role;p.department=dept;p.managerId=mgr;}
+  var tm=document.getElementById('uTm')?document.getElementById('uTm').value.trim():'';
+  var dsg=document.getElementById('uDsg')?document.getElementById('uDsg').value:'';
+  var p={}; if(eid){p.action='updateEmployee';p.employeeId=eid;p.Name=name;p.Email=email;p.Role=role;p.Department=dept;p.ManagerID=mgr;p.IsActive=stat;p.TeamName=tm;p.Designation=dsg;if(pwd)p.Password=pwd;}else{p.action='addEmployee';p.name=name;p.email=email;p.password=pwd;p.role=role;p.department=dept;p.managerId=mgr;p.teamName=tm;p.designation=dsg;}
   api(p,function(res){btn.disabled=false;btn.textContent=eid?'Save Changes':'Add Employee';if(res.error){toast(res.error,'err');return;}toast(eid?'Employee updated!':'Employee added! ID: '+res.id,'ok');closeUserMod();loadUSR();});
 }
 function togUser(id,isActive){if(!confirm((isActive?'Deactivate':'Activate')+' this employee?'))return;api({action:'updateEmployee',employeeId:id,IsActive:isActive?'FALSE':'TRUE'},function(res){if(res.error){toast(res.error,'err');return;}toast((isActive?'Deactivated.':'Activated.'),'ok');loadUSR();});}
@@ -1545,6 +1868,95 @@ function toggleType(id, isActive) {
   });
 }
 
+
+// ── ACCOUNTS VIEW (read-only for all roles) ──
+var avData = [];
+
+function loadAV() {
+  document.getElementById('avBody').innerHTML='<tr><td colspan="10"><div class="empty">Loading...</div></td></tr>';
+  var filter = (sess.role==='MANAGER') ? 'team' : 'mine';
+  api({action:'getClaims', filter:filter}, function(res){
+    if(res.error){toast(res.error,'err');return;}
+    var all = res.claims||[];
+    var myId = sess.id||'';
+    // For each claim mark role: claimant or paidby (or both)
+    var seen = {};
+    avData = [];
+    all.forEach(function(c){
+      var isClaimant  = c.ClaimantID === myId;
+      var isPaidBy    = c.PaidByExpense === myId || c.PaidBy === myId;
+      if (!isClaimant && !isPaidBy) return;
+      var role = isClaimant && isPaidBy ? 'Claimant & Paid By' : (isClaimant ? 'Claimant' : 'Paid By');
+      if (!seen[c.ClaimID]) {
+        seen[c.ClaimID] = true;
+        avData.push(Object.assign({}, c, {_myRole: role}));
+      }
+    });
+    filterAV();
+  });
+}
+
+function filterAV() {
+  var q = (document.getElementById('avSrch').value||'').toLowerCase();
+  var f = document.getElementById('avFil').value;
+  var filtered = avData.filter(function(c){
+    var mq = !q || (c.ClaimID||'').toLowerCase().indexOf(q)>=0 || (c.ClientName||'').toLowerCase().indexOf(q)>=0;
+    var mf = !f ||
+      (f==='claimant' && (c._myRole==='Claimant'||c._myRole==='Claimant & Paid By')) ||
+      (f==='paidby'   && (c._myRole==='Paid By'||c._myRole==='Claimant & Paid By'));
+    return mq && mf;
+  });
+  var tb = document.getElementById('avBody');
+  if(!filtered.length){
+    tb.innerHTML='<tr><td colspan="10"><div class="empty">No records found.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML='';
+  filtered.forEach(function(c){
+    var isClientReimb = c.Category==='Client Reimbursable';
+    var pd  = c.DatePaidByFirm?fmtD(c.DatePaidByFirm):'<span style="color:var(--amber)">Pending</span>';
+    var id2 = isClientReimb?(c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):'<span style="color:var(--amber)">Pending</span>'):'<span style="color:var(--muted)">N/A</span>';
+    var rd  = isClientReimb?(c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?'<span style="color:var(--amber)">Pending</span>':'—')):'<span style="color:var(--muted)">N/A</span>';
+    // Role badge
+    var roleBg = c._myRole==='Claimant'?'background:#eeeef8;color:#2d2d4e':
+                 c._myRole==='Paid By'?'background:#fef9ec;color:#7a4f00':
+                 'background:#e8f8f0;color:#0a5c36';
+    var roleTag = '<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;'+roleBg+'">'+c._myRole+'</span>';
+    var tr = document.createElement('tr');
+    tr.innerHTML='<td><span class="cid">'+c.ClaimID+'</span></td>' +
+      '<td style="font-size:12px">'+(c.ClaimantName||c.ClaimantID||'-')+'</td>' +
+      '<td>'+roleTag+'</td>' +
+      '<td style="font-size:12px">'+(c.ClientName||'-')+'</td>' +
+      '<td class="amt">'+fmtA(c.Amount)+'</td>' +
+      '<td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td>' +
+      '<td>'+pd+'</td><td>'+id2+'</td><td>'+rd+'</td><td></td>';
+    // View button only
+    var td = tr.querySelector('td:last-child');
+    var vb = document.createElement('button'); vb.className='btn'; vb.innerHTML='👁 View';
+    (function(id){ vb.addEventListener('click',function(){ viewClaim(id,false,false); }); })(c.ClaimID);
+    td.appendChild(vb);
+    tb.appendChild(tr);
+    // Timeline row
+    var tlParts=[];
+    var tlBase=c.DateOfExpense&&c.DateOfExpense!=='-'&&c.DateOfExpense!==''?new Date(c.DateOfExpense):null;
+    function tlDay(d){ if(!tlBase||!d||d==='-'||d==='') return ''; var days=Math.round((new Date(d)-tlBase)/86400000); return days===0?' (+0d)':' ('+(days>0?'+':'')+days+'d)'; }
+    if(c.DateOfExpense&&c.DateOfExpense!=='-'&&c.DateOfExpense!=='') tlParts.push('Expense: '+fmtD(c.DateOfExpense));
+    if(c.DateClaimed&&c.DateClaimed!=='-'&&c.DateClaimed!=='') tlParts.push('Claimed: '+fmtD(c.DateClaimed)+tlDay(c.DateClaimed));
+    if(c.DateManagerApproved&&c.DateManagerApproved!=='-'&&c.DateManagerApproved!=='') tlParts.push('Mgr ✓: '+fmtD(c.DateManagerApproved)+tlDay(c.DateManagerApproved));
+    if(c.FinanceApprovalStatus==='APPROVED_FINANCE') tlParts.push('Fin ✓');
+    if(c.DatePaidByFirm&&c.DatePaidByFirm!=='-'&&c.DatePaidByFirm!=='') tlParts.push('Paid: '+fmtD(c.DatePaidByFirm)+tlDay(c.DatePaidByFirm));
+    if(c.DateInvoicedToClient&&c.DateInvoicedToClient!=='-'&&c.DateInvoicedToClient!=='') tlParts.push('Intimated: '+fmtD(c.DateInvoicedToClient)+tlDay(c.DateInvoicedToClient));
+    if(c.DateReceivedFromClient&&c.DateReceivedFromClient!=='-'&&c.DateReceivedFromClient!=='') tlParts.push('Received: '+fmtD(c.DateReceivedFromClient)+tlDay(c.DateReceivedFromClient));
+    if(tlParts.length>0){
+      var tlRow=document.createElement('tr'); tlRow.style.cssText='background:#f0f0f8;border-bottom:1px solid var(--border)';
+      var tlTd=document.createElement('td'); tlTd.colSpan=10;
+      tlTd.style.cssText='padding:3px 14px 4px 14px;font-size:10px;color:#4a4a8a';
+      tlTd.textContent='📅  '+tlParts.join('  →  ');
+      tlRow.appendChild(tlTd); tb.appendChild(tlRow);
+    }
+  });
+}
+
 // ── EXPORT ──
 function exportCSV(data,fname){
   if(!data||!data.length){toast('No data to export.','err');return;}
@@ -1563,6 +1975,7 @@ function printClaim(id){ sessionStorage.setItem('printClaimId',id); window.open(
 document.getElementById('detOv').addEventListener('click',function(e){if(e.target===this)closeMod();});
 document.getElementById('usrOv').addEventListener('click',function(e){if(e.target===this)closeUserMod();});
 document.getElementById('accOv').addEventListener('click',function(e){if(e.target===this)closeAccMod();});
+var _acOv=document.getElementById('addClientOv'); if(_acOv) _acOv.addEventListener('click',function(e){if(e.target===this)closeAddClientMod();});
 document.getElementById('typeOv').addEventListener('click',function(e){if(e.target===this)closeTypeMod();});
 
 // Preload types when app starts

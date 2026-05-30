@@ -216,7 +216,7 @@ function loadProfile() {
       ['Email',       p.email || '-'],
       ['Reporting Manager', p.managerName || (p.managerId ? p.managerId : 'No Manager')],
       ['Role',        ROLE_LABELS[p.role] || p.role],
-      ['Account Status', p.isActive === 'TRUE' ? '<span style="color:#0a5c36;font-weight:600">Active</span>' : '<span style="color:#8b1a1a;font-weight:600">Inactive</span>'],
+      ['Account Status', (String(p.isActive||'').toUpperCase().trim()==='TRUE'||p.isActive===true) ? '<span style="color:#0a5c36;font-weight:600">Active</span>' : '<span style="color:#8b1a1a;font-weight:600">Inactive</span>'],
       ['Last Login',  p.lastLogin ? new Date(p.lastLogin).toLocaleString('en-IN') : 'Not recorded'],
       ['Member Since', p.createdAt ? new Date(p.createdAt).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}) : '-'],
     ];

@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PKP Reimbursement</title>
+<link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1a1a2e;--blue2:#2d2d4e;--blue3:#4a4a8a;--blue-lt:#eeeef8;
+  --gold:#c9a84c;--gold-lt:#fef9ec;--gold2:#e8c96a;
+  --green:#0a5c36;--green-lt:#e8f8f0;
+  --red:#8b1a1a;--red-lt:#fdf2f2;
+  --amber:#7a4f00;--amber-lt:#fef8e8;
+  --gray:#2d2d4e;--border:#dddde8;--muted:#7070a0;--sw:250px;
+  --cream:#faf8f5;--surface:#ffffff;
+}
+body{font-family:"Palatino Linotype","Palatino","Book Antiqua",Palatino,serif;background:#f0f0f5;color:#1a1a2e;display:flex;min-height:100vh}
+.sidebar{width:var(--sw);background:linear-gradient(180deg,#1a1a2e 0%,#12122a 100%);min-height:100vh;position:fixed;top:0;left:0;z-index:100;display:flex;flex-direction:column;overflow-y:auto;border-right:1px solid rgba(201,168,76,0.15)}
+.s-logo{padding:22px 18px 18px;border-bottom:1px solid rgba(201,168,76,0.15);background:rgba(201,168,76,0.04)}
+.s-co{font-size:11px;font-weight:600;color:rgba(201,168,76,0.6);letter-spacing:0.15em;margin-bottom:5px;font-family:"Palatino Linotype",serif}
+.s-name{font-size:14px;font-weight:600;color:#fff;line-height:1.3;font-family:"Palatino Linotype",serif}
+.s-name span{color:var(--gold)}
+.nav{padding:10px 0}
+.ni{display:flex;align-items:center;gap:11px;padding:10px 18px;font-size:12.5px;color:rgba(255,255,255,0.55);cursor:pointer;border-left:3px solid transparent;transition:all 0.2s;user-select:none;letter-spacing:0.01em}
+.ni:hover{color:rgba(255,255,255,0.9);background:rgba(201,168,76,0.08)}
+.ni.on{color:#fff;background:rgba(201,168,76,0.12);border-left-color:var(--gold);font-weight:600}
+.ni span:first-child{width:20px;text-align:center;font-size:15px;flex-shrink:0}
+.ni .nb{margin-left:auto;background:var(--gold);color:var(--blue);font-size:10px;font-weight:700;padding:1px 7px;border-radius:20px}
+.s-foot{margin-top:auto;border-top:1px solid rgba(201,168,76,0.12)}
+.s-user{display:flex;align-items:center;gap:10px;padding:12px 18px}
+.s-av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--gold),var(--gold2));display:flex;align-items:center;justify-content:center;font-weight:700;color:var(--blue);font-size:13px;flex-shrink:0}
+.s-un{font-size:12.5px;font-weight:600;color:#fff;transition:color 0.15s}
+.s-user a:hover .s-un{color:var(--gold)}
+.s-user a:hover .s-av{box-shadow:0 0 0 2px var(--gold)}
+.s-ur{font-size:10px;color:rgba(255,255,255,0.4);margin-top:1px}
+.s-lo{background:none;border:none;color:rgba(255,255,255,0.35);cursor:pointer;margin-left:auto;font-size:14px;padding:4px;transition:color 0.15s}
+.s-lo:hover{color:var(--gold)}
+.s-powered{padding:8px 18px 14px;text-align:center;font-size:10px;color:rgba(201,168,76,0.5);letter-spacing:0.05em;font-family:"Palatino Linotype",serif;font-style:italic;border-top:1px solid rgba(201,168,76,0.08)}
+.s-powered span{color:rgba(201,168,76,0.8);font-weight:600}
+.main{margin-left:var(--sw);flex:1;display:flex;flex-direction:column}
+.topbar{background:#fff;border-bottom:1px solid var(--border);height:58px;display:flex;align-items:center;padding:0 28px;position:sticky;top:0;z-index:50;gap:12px;box-shadow:0 1px 8px rgba(26,26,46,0.06)}
+.topbar h1{font-size:19px;font-weight:600;color:var(--blue);flex:1;font-family:"Palatino Linotype",serif;letter-spacing:0.02em}
+.rtag{padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600}
+.rt-EMPLOYEE{background:#dbeafe;color:#1e40af}.rt-MANAGER{background:#d1fae5;color:#065f46}
+.rt-FINANCE_MGR{background:#fef3c7;color:#92400e}.rt-ACCOUNTS{background:#ede9fe;color:#5b21b6}.rt-ADMIN{background:#fee2e2;color:#991b1b}
+.pane{display:none;padding:24px 28px}
+.pane.on{display:block}
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:14px;margin-bottom:22px}
+.sc{background:#fff;border-radius:10px;padding:16px 18px;border:1px solid var(--border);transition:transform 0.2s,box-shadow 0.2s}
+.sc:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(26,26,46,0.08)}
+.sl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:6px;font-family:"Palatino Linotype",serif}
+.sv{font-size:26px;font-weight:700;color:var(--blue);line-height:1;font-family:"Palatino Linotype",serif}
+.sv.green{color:var(--green)}.sv.red{color:var(--red)}.sv.amber{color:var(--amber)}
+.ss2{font-size:11px;color:var(--muted);margin-top:3px}
+.tc{background:#fff;border-radius:10px;border:1px solid var(--border);overflow:hidden;margin-bottom:18px}
+.th2{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px}
+.th2-title{font-size:15px;font-weight:600;color:var(--blue);font-family:"Palatino Linotype",serif;letter-spacing:0.01em}
+.tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.srch{padding:7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;outline:none;min-width:160px;background:#f9fafb}
+.srch:focus{border-color:var(--blue3);background:#fff}
+.fsel{padding:7px 32px 7px 11px;border:1px solid var(--border);border-radius:7px;font-family:inherit;font-size:13px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='11' height='11' viewBox='0 0 24 24' fill='none' stroke='%231a1a2e' stroke-width='2.5'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center;outline:none;cursor:pointer;appearance:none;-webkit-appearance:none}
+.nc-select{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none;cursor:pointer;transition:border-color 0.2s}
+.nc-select:focus{border-color:var(--blue3)}
+.tw{overflow-x:auto}
+table{width:100%;border-collapse:collapse}
+th{padding:9px 13px;text-align:left;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.08em;color:var(--muted);background:#f4f4f8;border-bottom:1px solid var(--border);white-space:nowrap;font-family:"Palatino Linotype",serif}
+td{padding:11px 13px;font-size:13px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafafa}
+.cid{font-family:monospace;font-size:11px;color:var(--muted)}
+.av{width:27px;height:27px;border-radius:50%;background:var(--blue-lt);display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--blue2);margin-right:7px;vertical-align:middle}
+.amt{font-weight:600}
+.badge{display:inline-block;padding:2px 8px;border-radius:20px;font-size:11px;font-weight:600}
+.b-pm{background:#fef9ec;color:#92400e}.b-pf{background:#dbeafe;color:#1e40af}
+.b-af{background:#ecfdf5;color:#065f46}.b-rej{background:#fee2e2;color:#991b1b}
+.b-paid{background:#d1fae5;color:#065f46}.b-closed{background:#ede9fe;color:#5b21b6}
+.btn{padding:5px 11px;border-radius:6px;font-size:12px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:#fff;color:#374151;font-family:inherit;transition:all 0.15s;margin-right:3px}
+.btn:hover{border-color:var(--blue3);background:var(--blue-lt);color:var(--blue)}
+.btn-ok{border-color:#6ee7b7;color:var(--green);background:var(--green-lt)}
+.btn-ok:hover{background:#d1fae5}
+.btn-no{border-color:#fca5a5;color:var(--red);background:var(--red-lt)}
+.btn-no:hover{background:#fee2e2}
+.bpri{background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;border:none;border-radius:8px;padding:9px 18px;font-family:"Palatino Linotype",serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s;box-shadow:0 2px 8px rgba(26,26,46,0.2)}
+.bpri:hover{background:linear-gradient(135deg,#2d2d4e,#3d3d6e);transform:translateY(-1px);box-shadow:0 4px 12px rgba(26,26,46,0.3)}
+.bpri:disabled{opacity:0.6;cursor:default;transform:none}
+.bsec{background:#fff;color:var(--blue);border:1.5px solid var(--blue3);border-radius:8px;padding:9px 18px;font-family:"Palatino Linotype",serif;font-size:13px;font-weight:600;cursor:pointer;transition:all 0.2s}
+.bsec:hover{background:var(--blue-lt);transform:translateY(-1px)}
+.ghost{background:none;border:1px solid var(--border);border-radius:7px;padding:6px 13px;font-family:inherit;font-size:12px;color:var(--gray);cursor:pointer}
+.ghost:hover{border-color:var(--blue3);color:var(--blue)}
+.empty{padding:48px;text-align:center;color:var(--muted);font-size:13px}
+.fg{display:grid;gap:14px}.fg2{grid-template-columns:1fr 1fr}.fg3{grid-template-columns:1fr 1fr 1fr}
+.sp2{grid-column:span 2}.sp3{grid-column:span 3}
+.field{display:flex;flex-direction:column;gap:5px}
+.field label{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:#374151}
+.req{color:var(--gold)}
+.field input,.field select,.field textarea{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#111;background:#fff;outline:none;transition:border-color 0.2s;appearance:none}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--blue3)}
+.field textarea{resize:vertical;min-height:75px}
+.fcard{background:#fff;border-radius:10px;border:1px solid var(--border);margin-bottom:14px;overflow:hidden}
+.fc-hdr{padding:13px 18px;border-bottom:1px solid var(--border)}
+.fc-title{font-size:14px;font-weight:600;color:var(--blue)}
+.fc-body{padding:16px 18px}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.cat-opt{border:1.5px solid var(--border);border-radius:8px;padding:11px 13px;cursor:pointer;display:flex;align-items:flex-start;gap:9px;background:#fff;transition:all 0.15s}
+.cat-opt:hover{border-color:var(--blue3)}
+.cat-opt.sel{border-color:var(--blue2);background:var(--blue-lt)}
+.cat-opt input[type=radio]{margin-top:2px;accent-color:var(--blue2);flex-shrink:0}
+.cat-lbl{font-size:13px;font-weight:500;color:#111}
+.cat-sub{font-size:11px;color:var(--muted);margin-top:1px}
+.amt-box{background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:8px;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;margin-top:8px}
+.amt-val{font-size:24px;font-weight:700;color:var(--blue)}
+.sub-bar{background:#fff;border-top:1px solid var(--border);padding:12px 28px;display:flex;gap:10px;justify-content:flex-end;position:sticky;bottom:0}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:200;display:none;align-items:center;justify-content:center}
+.overlay.on{display:flex}
+.modal{background:#fff;border-radius:14px;width:560px;max-width:95vw;max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.2)}
+.mhdr{padding:20px 24px 0;display:flex;align-items:center;justify-content:space-between}
+.mtitle{font-size:17px;font-weight:600;color:var(--blue);font-family:"Palatino Linotype",serif;letter-spacing:0.01em}
+.mcls{background:none;border:none;font-size:20px;color:var(--muted);cursor:pointer}
+.mbdy{padding:16px 24px}
+.mft{padding:12px 24px 20px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.di{background:#f9fafb;border-radius:7px;padding:9px 12px}
+.dl{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--muted);margin-bottom:2px}
+.dv{font-size:13px;color:#111;font-weight:500}
+.df{grid-column:span 2}
+.ibar{background:var(--amber-lt);border:1px solid #fde68a;border-radius:7px;padding:9px 13px;font-size:12px;color:var(--amber);margin-bottom:12px}
+.tab-bar{display:flex;gap:3px;background:#f0f4f8;border-radius:8px;padding:3px;width:fit-content;margin-bottom:16px}
+.tbb{padding:6px 16px;border-radius:6px;font-size:13px;font-weight:500;color:var(--muted);cursor:pointer;border:none;background:none;font-family:inherit}
+.tbb.on{background:#fff;color:var(--blue);font-weight:600;box-shadow:0 1px 3px rgba(0,0,0,0.08)}
+.toast{position:fixed;bottom:20px;right:20px;padding:11px 16px;border-radius:9px;font-size:13px;font-family:inherit;z-index:999;opacity:0;transform:translateY(12px);transition:all 0.3s;pointer-events:none;max-width:320px}
+
+/* ── REPORT ENHANCEMENTS ── */
+.rpt-toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:12px 18px;background:#f8f8fc;border-bottom:1px solid var(--border)}
+.rpt-sel-bar{display:none;background:linear-gradient(135deg,#1a1a2e,#2d2d4e);color:#fff;padding:10px 18px;border-radius:9px;margin-bottom:10px;display:none;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.rpt-sel-bar.on{display:flex}
+.rpt-sel-info{font-size:13px;font-weight:600;font-family:"Palatino Linotype",serif}
+.rpt-sel-info span{color:var(--gold);font-size:16px;margin-right:6px}
+.rpt-sel-btns{display:flex;gap:8px;flex-wrap:wrap}
+.rpt-sel-btns button{padding:7px 14px;border-radius:7px;font-size:12px;font-weight:600;cursor:pointer;font-family:"Palatino Linotype",serif;border:none;transition:all 0.15s}
+.rpt-btn-pdf{background:var(--red-lt);color:var(--red);border:1px solid #fca5a5!important}
+.rpt-btn-pdf:hover{background:#fee2e2}
+.rpt-btn-xls{background:var(--green-lt);color:var(--green);border:1px solid #6ee7b7!important}
+.rpt-btn-xls:hover{background:#d1fae5}
+.rpt-btn-clr{background:rgba(255,255,255,0.15);color:#fff;border:1px solid rgba(255,255,255,0.2)!important}
+.rpt-btn-clr:hover{background:rgba(255,255,255,0.25)}
+
+/* Column filter dropdowns */
+.col-filter{position:relative;display:inline-block}
+.col-filter-btn{background:none;border:none;cursor:pointer;padding:2px 4px;font-size:10px;color:var(--muted);transition:color 0.15s;vertical-align:middle}
+.col-filter-btn.active{color:var(--gold)}
+.col-filter-btn:hover{color:var(--blue)}
+.col-filter-drop{position:absolute;top:100%;left:50%;transform:translateX(-50%);background:#fff;border:1px solid var(--border);border-radius:9px;box-shadow:0 8px 24px rgba(26,26,46,0.12);z-index:200;min-width:180px;max-height:260px;overflow-y:auto;padding:6px 0}
+.col-filter-drop input{width:calc(100% - 16px);margin:6px 8px;padding:6px 10px;border:1px solid var(--border);border-radius:7px;font-size:12px;font-family:inherit;outline:none}
+.col-filter-item{display:flex;align-items:center;gap:8px;padding:7px 12px;font-size:12px;cursor:pointer;color:#1a1a2e;transition:background 0.1s;white-space:nowrap}
+.col-filter-item:hover{background:#f4f4f8}
+.col-filter-item input[type=checkbox]{accent-color:var(--blue3);cursor:pointer;flex-shrink:0;width:13px;height:13px}
+.col-filter-item span{flex:1;font-size:12px;color:#1a1a2e}
+.col-filter-actions{display:flex;gap:6px;padding:6px 8px;border-top:1px solid var(--border);margin-top:4px}
+.col-filter-actions button{flex:1;padding:5px;font-size:11px;font-weight:600;border-radius:6px;cursor:pointer;font-family:inherit;border:none}
+.cf-ok{background:var(--blue);color:#fff}.cf-clr{background:#f4f4f8;color:var(--blue)}
+
+/* Row checkboxes */
+.rpt-chk{accent-color:var(--blue3);cursor:pointer;width:14px;height:14px}
+.rpt-row-sel td{background:#eeeef8!important}
+
+/* Print styles */
+@media print{
+  .sidebar,.topbar,.rpt-toolbar,.rpt-sel-bar,.th2,.rpt-chk,thead .col-filter,button{display:none!important}
+  body{background:#fff;font-family:"Palatino Linotype",serif}
+  .main{margin-left:0!important}
+  .pane{padding:0!important}
+  .rpt-print-header{display:block!important}
+  .tc{border:none!important;box-shadow:none!important}
+  th{background:#1a1a2e!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .rpt-print-footer{display:block!important;margin-top:20px;border-top:2px solid #1a1a2e;padding-top:12px}
+  tr{page-break-inside:avoid}
+}
+.rpt-print-header{display:none;margin-bottom:20px}
+.rpt-print-footer{display:none}
+.toast.show{opacity:1;transform:translateY(0)}
+.t-ok{background:#065f46;color:#fff}.t-err{background:#991b1b;color:#fff}.t-info{background:var(--blue);color:#fff}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body>
+<aside class="sidebar" id="sidebar">
+<div class="s-logo"><div class="s-co">Reimburse   'ment</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
+<nav class="nav" id="sideNav"></nav>
+<div class="s-foot"><div class="s-powered">Powered by <span>CA. Jagan A.</span></div><div class="s-user"><a href="profile.html" title="View Profile" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0"><div class="s-av" id="sAv">U</div><div style="min-width:0"><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div></a><button class="s-lo" id="loBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button></div></div>
+</aside>
+<main class="main">
+<header class="topbar"><h1 id="topTitle">Dashboard</h1><span class="rtag" id="rtag">-</span><button class="bpri" id="ncBtn" style="display:none" onclick="go('new-claim')">➕ New Claim</button></header>
+<div class="pane on" id="pane-dashboard"><div style="font-size:20px;font-weight:700;color:var(--blue);margin-bottom:18px" id="dashTitle">Dashboard</div><div class="sg" id="dashStats"></div><div id="dashActions"></div><div id="dashPending"></div></div>
+<div class="pane" id="pane-new-claim">
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📅 Basic Details</div></div><div class="fc-body">
+<div class="fg fg3">
+<div class="field"><label>Date of Expense <span class="req">*</span></label><input type="date" id="ncDate"></div>
+<div class="field"><label>Paid By <span class="req">*</span></label>
+<select id="ncPaidBy" class="nc-select">
+  <option value="">Select who paid</option>
+</select>
+</div>
+<div class="field"><label>Client Name <span class="req">*</span></label>
+<select id="ncClient" class="nc-select">
+  <option value="">Select Client</option>
+  <optgroup label="── Internal ──" id="ncClientInternal"></optgroup>
+  <optgroup label="── Clients ──" id="ncClientExternal"></optgroup>
+</select>
+</div>
+</div>
+<div style="margin-top:5px;text-align:right">
+  <button type="button" onclick="openAddClientMod()" style="padding:4px 10px;border-radius:6px;background:none;color:var(--blue3);border:1px solid var(--blue3);font-size:11px;font-family:inherit;cursor:pointer;font-weight:600">＋ Add New Client</button>
+</div>
+</div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📁 Expense Classification</div></div><div class="fc-body">
+<div class="fg fg3" style="margin-bottom:10px">
+<div class="field"><label>Major Head <span class="req">*</span></label><select id="ncMajor"><option value="">Select Major Head</option></select></div>
+<div class="field"><label>Minor Head <span class="req">*</span></label><select id="ncMinor"><option value="">Select Minor Head</option></select></div>
+<div class="field"><label>Nature <span class="req">*</span></label><select id="ncNature"><option value="">Select Nature</option></select></div>
+</div>
+<div class="fg" style="grid-template-columns:1fr 1fr 2fr">
+<div class="field"><label>Sub-Nature</label><input type="text" id="ncSub" placeholder="Optional"></div>
+<div class="field"><label>Amount (Rs.) <span class="req">*</span></label><input type="number" id="ncAmt" placeholder="0.00" min="0" step="0.01"></div>
+<div class="field"><label>Description <span class="req">*</span></label><textarea id="ncDesc" rows="2" placeholder="Purpose, occasion, persons involved..." style="resize:vertical;min-height:60px"></textarea></div>
+</div>
+</div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">🏷️ Category</div></div><div class="fc-body">
+<div class="cat-grid">
+<label class="cat-opt sel" id="cat0"><input type="radio" name="cat" value="Client Reimbursable" checked><div><div class="cat-lbl">Client Reimbursable</div><div class="cat-sub">Recover from client</div></div></label>
+<label class="cat-opt" id="cat1"><input type="radio" name="cat" value="Non Reimbursable"><div><div class="cat-lbl">Non Reimbursable</div><div class="cat-sub">Firm bears cost</div></div></label>
+<label class="cat-opt" id="cat2"><input type="radio" name="cat" value="Inclusive in Billing"><div><div class="cat-lbl">Inclusive in Billing</div><div class="cat-sub">Included in Client Billing</div></div></label>
+<label class="cat-opt" id="cat3"><input type="radio" name="cat" value="Firms Expenses"><div><div class="cat-lbl">Firms Expenses</div><div class="cat-sub">General overhead</div></div></label>
+<label class="cat-opt" id="cat4"><input type="radio" name="cat" value="Team Cost"><div><div class="cat-lbl">Team Cost</div><div class="cat-sub">One-to-one team expense</div></div></label>
+<label class="cat-opt" id="cat5"><input type="radio" name="cat" value="Drawings"><div><div class="cat-lbl">Drawings</div><div class="cat-sub">Partner drawings</div></div></label>
+</div>
+<div class="amt-box"><span style="font-size:13px;color:var(--blue);font-weight:500">Claim Amount</span><span class="amt-val" id="ncAmtD">Rs. 0.00</span></div>
+</div></div>
+<div class="fcard"><div class="fc-hdr"><div class="fc-title">📎 Attachment Reference (Optional)</div></div><div class="fc-body">
+<div class="field"><label>Attachment Reference No.</label><input type="text" id="ncAttRef" placeholder="e.g. PKP-ATT-2025-0001 (auto-generated on request)"></div>
+<div class="field"><label>Document Link (OneDrive/Drive shared link)</label><input type="text" id="ncAttURL" placeholder="Paste shareable link here"></div>
+<p style="font-size:12px;color:var(--muted);margin-top:8px">Upload your document to a shared folder and paste the link above. Or leave blank.</p>
+<button class="ghost" style="margin-top:10px" onclick="getRef()">🔖 Generate Reference Number</button>
+<span id="refStatus" style="font-size:12px;color:var(--blue);margin-left:10px"></span>
+</div></div>
+<div class="sub-bar"><button class="ghost" id="ncCancel">Cancel</button><button class="bpri" id="ncSubmit" onclick="submitClaim()">📨 Submit for Approval</button></div>
+</div>
+<div class="pane" id="pane-my-claims"><div class="sg" id="mcStats"></div><div class="tc"><div class="th2"><div class="th2-title">My Claims</div><div class="tb"><input class="srch" id="mcSrch" placeholder="Search..." oninput="filterMC()"><select class="fsel" id="mcSt" onchange="filterMC()"><option value="">All Status</option><option value="PENDING_MANAGER">Pending Manager</option><option value="PENDING_FINANCE">Pending Finance</option><option value="APPROVED_FINANCE">Approved</option><option value="PAID">Paid</option><option value="REJECTED_MANAGER">Rejected</option></select><button class="ghost" onclick="exportCSV(myData,'my_claims')">📥 Export CSV</button><button class="ghost" onclick="loadMC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Nature</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead><tbody id="mcBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-approvals"><div class="sg" id="apStats"></div><div class="tab-bar"><button class="tbb on" id="apt1" onclick="apTab('pending')">Pending</button><button class="tbb" id="apt2" onclick="apTab('all')">All Team</button></div><div class="tc"><div class="th2"><div class="th2-title" id="apTitle">Pending Approvals</div><div class="tb"><input class="srch" id="apSrch" placeholder="Search..." oninput="filterAP()"><select class="fsel" id="apEmp" onchange="filterAP()"><option value="">All Employees</option></select><button class="ghost" onclick="exportCSV(teamData,'team_claims')">📥 Export CSV</button><button class="ghost" onclick="loadAP()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Amount</th><th>Attachment</th><th>Status</th><th>Actions</th></tr></thead><tbody id="apBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-finance"><div class="sg" id="finStats"></div><div class="tc"><div class="th2"><div class="th2-title">Finance Approvals</div><div class="tb"><input class="srch" id="finSrch" placeholder="Search..." oninput="filterFIN()"><button class="ghost" onclick="exportCSV(finData,'finance_claims')">📥 Export CSV</button><button class="ghost" onclick="loadFIN()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Date</th><th>Client</th><th>Category</th><th>Amount</th><th>Attachment</th><th>Actions</th></tr></thead><tbody id="finBody"><tr><td colspan="8"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-accounts"><div class="tc"><div class="th2"><div class="th2-title">Update Payment Details</div><div class="tb"><input class="srch" id="accSrch" placeholder="Search..." oninput="filterACC()"><select class="fsel" id="accFil" onchange="filterACC()"><option value="">All</option><option value="unpaid">Unpaid</option><option value="uninvoiced">Not Invoiced</option><option value="unreceived">Not Received</option></select><button class="ghost" onclick="exportCSV(accData,'accounts')">📥 Export CSV</button><button class="ghost" onclick="loadACC()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Category</th><th>Pay Mode</th><th>Paid Date</th><th>Intimation Date</th><th>Received Date</th><th>Action</th></tr></thead><tbody id="accBody"><tr><td colspan="9"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+<div class="pane" id="pane-reports">
+<div class="rpt-print-header" id="rptPrintHdr"></div>
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:20px" id="rptCards"></div>
+<div class="rpt-sel-bar" id="rptSelBar">
+  <div class="rpt-sel-info"><span id="selCount">0</span> claim(s) selected</div>
+  <div class="rpt-sel-btns">
+    <button class="rpt-btn-pdf" onclick="exportSelectedPDF()">🖨️ Print / PDF</button>
+    <button class="rpt-btn-xls" onclick="exportSelectedXLS()">📊 Export Excel</button>
+    <button class="rpt-btn-clr" onclick="clearSelection()">✖ Clear Selection</button>
+  </div>
+</div>
+<div id="rptOut"></div>
+<div class="rpt-print-footer" id="rptPrintFtr"></div>
+</div>
+<div class="pane" id="pane-accounts-view">
+<div class="tc"><div class="th2"><div class="th2-title">My Payments & Claims</div>
+<div class="tb">
+<input class="srch" id="avSrch" placeholder="Search..." oninput="filterAV()">
+<select class="fsel" id="avFil" onchange="filterAV()">
+  <option value="">All</option>
+  <option value="claimant">My Claims</option>
+  <option value="paidby">Paid By Me</option>
+</select>
+<button class="ghost" onclick="loadAV()">🔄 Refresh</button>
+</div></div>
+<div class="tw"><table><thead><tr>
+  <th>Claim ID</th><th>Employee</th><th>Role</th><th>Client</th><th>Amount</th>
+  <th>Category</th><th>Paid Date</th><th>Intimation</th><th>Receipt</th><th>Actions</th>
+</tr></thead><tbody id="avBody">
+<tr><td colspan="10"><div class="empty">Loading...</div></td></tr>
+</tbody></table></div></div></div>
+
+<div class="pane" id="pane-types">
+<div class="tc"><div class="th2"><div class="th2-title">Reimbursement Types</div>
+<div class="tb"><input class="srch" id="typeSrch" placeholder="Search..." oninput="filterTypes()">
+<select class="fsel" id="typeFilter" onchange="filterTypes()"><option value="">All</option><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select>
+<button class="bpri" onclick="openAddType()">➕ Add Type</button>
+<button class="ghost" onclick="loadTypes()">🔄 Refresh</button></div></div>
+<div class="tw"><table><thead><tr><th>ID</th><th>Major Head</th><th>Minor Head</th><th>Nature</th><th>Status</th><th>Actions</th></tr></thead>
+<tbody id="typesBody"><tr><td colspan="6"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+
+<div class="pane" id="pane-users"><div class="tc"><div class="th2"><div class="th2-title">User Management</div><div class="tb"><input class="srch" id="usrSrch" placeholder="Search..." oninput="filterUSR()"><button class="bpri" onclick="openAddUser()">👤 Add Employee</button><button class="ghost" onclick="loadUSR()">🔄 Refresh</button></div></div><div class="tw"><table><thead><tr><th>Name</th><th>ID</th><th>Email</th><th>Role</th><th>Department</th><th>Status</th><th>Actions</th></tr></thead><tbody id="usrBody"><tr><td colspan="7"><div class="empty">Loading...</div></td></tr></tbody></table></div></div></div>
+</main>
+<div class="overlay" id="detOv"><div class="modal"><div class="mhdr"><div class="mtitle" id="mTtl">Claim Details</div><button class="mcls" onclick="closeMod()">&#10005;</button></div><div class="mbdy"><div class="ibar" id="mIBar" style="display:none"></div><div style="display:flex;align-items:baseline;gap:12px;margin-bottom:14px"><div><div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--muted)">Amount</div><div style="font-size:26px;font-weight:700;color:var(--blue)" id="mAmt">-</div></div><div id="mBdg"></div></div><div class="dg" id="mDets"></div><div id="mRem"></div></div><div class="mft" id="mFt"></div></div></div>
+<div class="overlay" id="usrOv"><div class="modal" style="width:480px"><div class="mhdr"><div class="mtitle" id="uMTtl">Add Employee</div><button class="mcls" onclick="closeUserMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="uId"><div class="fg fg2"><div class="field sp2"><label>Full Name <span class="req">*</span></label><input type="text" id="uNm" placeholder="Full name"></div><div class="field"><label>Email <span class="req">*</span></label><input type="email" id="uEm" placeholder="email@company.com"></div><div class="field"><label id="uPwdL">Password <span class="req">*</span></label><input type="text" id="uPw" placeholder="Set password"></div><div class="field"><label>Role <span class="req">*</span></label><select id="uRl"><option value="">Select</option><option value="EMPLOYEE">Employee</option><option value="MANAGER">Manager</option><option value="FINANCE_MGR">HR Manager</option><option value="ACCOUNTS">Accounts Team</option><option value="ADMIN">Admin</option></select></div><div class="field"><label>Department</label><input type="text" id="uDp" placeholder="e.g. Audit, Tax"></div><div class="field"><label>Team Name</label><input type="text" id="uTm" placeholder="e.g. Audit Team A"></div><div class="field"><label>Designation</label><select id="uDsg"><option value="">Employee (default)</option><option value="Articled Assistant">Articled Assistant</option><option value="Paid Assistant">Paid Assistant</option></select></div><div class="field sp2" id="uMgrRow"><label>Reporting Manager</label><select id="uMgr"><option value="">No Manager</option></select></div><div class="field" id="uStRow" style="display:none"><label>Status</label><select id="uSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div></div></div><div class="mft"><button class="bsec" onclick="closeUserMod()">Cancel</button><button class="bpri" id="uSv" onclick="saveUser()">Add Employee</button></div></div></div>
+<div class="overlay" id="addClientOv">
+<div class="modal" style="width:380px">
+<div class="mhdr"><div class="mtitle">Add New Client</div><button class="mcls" onclick="closeAddClientMod()">&#10005;</button></div>
+<div class="mbdy">
+<div class="field"><label>Client Name <span class="req">*</span></label><input type="text" id="newClientName" placeholder="e.g. ABC Corporation" autocomplete="off"></div>
+</div>
+<div class="mft">
+<button class="bsec" onclick="closeAddClientMod()">Cancel</button>
+<button class="bpri" id="addClientSvBtn" onclick="confirmAddClient()">Save Client</button>
+</div>
+</div></div>
+
+<div class="overlay" id="typeOv">
+<div class="modal" style="width:460px">
+<div class="mhdr"><div class="mtitle" id="typeMTtl">Add Type</div><button class="mcls" onclick="closeTypeMod()">&#10005;</button></div>
+<div class="mbdy">
+<input type="hidden" id="typeId">
+<div class="fg">
+<div class="field"><label>Major Head <span class="req">*</span></label>
+<input type="text" id="typeMajor" placeholder="e.g. Travel, Client Entertainment" list="majorSugg">
+<datalist id="majorSugg"></datalist></div>
+<div class="field"><label>Minor Head <span class="req">*</span></label>
+<input type="text" id="typeMinor" placeholder="e.g. Air Travel, Hotel Stay"></div>
+<div class="field"><label>Nature <span class="req">*</span></label>
+<input type="text" id="typeNature" placeholder="e.g. Domestic, Local"></div>
+<div class="field" id="typeStRow" style="display:none"><label>Status</label>
+<select id="typeSt"><option value="TRUE">Active</option><option value="FALSE">Inactive</option></select></div>
+</div></div>
+<div class="mft"><button class="bsec" onclick="closeTypeMod()">Cancel</button>
+<button class="bpri" id="typeSvBtn" onclick="saveType()">Add Type</button></div>
+</div></div>
+
+<div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId">
+<div style="font-size:11px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:var(--blue-lt);border-radius:6px">📅 <span id="acTimeline">—</span></div>
+<div class="fg">
+<div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div>
+<div class="field"><label>Payment Mode</label>
+<select id="acPm" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none">
+<option value="">Select mode</option><option value="Bank 1">Bank 1</option><option value="Bank 2">Bank 2</option><option value="Client Direct">Client Direct</option><option value="Cash">Cash</option><option value="Other">Other</option>
+</select></div>
+<div class="field"><label>Date Paid by Firm</label><input type="date" id="acDp"></div>
+<div class="field"><label>Date Intimated to Client</label><input type="date" id="acDi"></div>
+<div class="field"><label>Date Received from Client</label><input type="date" id="acDr"></div>
+</div>
+<div id="acTimelineVis" style="margin-top:12px;display:none">
+<div style="font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:8px">Payment Timeline (days from expense)</div>
+<div id="acTLBar" style="position:relative;height:44px;margin:0 10px"></div>
+</div></div><div class="mft"><button class="bsec" onclick="closeAccMod()">Cancel</button><button class="bpri" id="acSv" onclick="saveAcc()">Save</button></div></div></div>
+<div class="toast" id="toast"></div>
+<script>
+
+var API = 'https://script.google.com/macros/s/AKfycbzz-toxODXS8280oTFNgSfhheCV4Zhkobx4dE1DKTECGzIPHrJ3jr1LHdlk50sxDoXZBg/exec';
+var sess = {}, tok = '';
+var myData=[], teamData=[], finData=[], accData=[], usrData=[], rptData=[];
+var apCurTab = 'pending';
+
+try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = sessionStorage.getItem('pkp_token')||''; } catch(e){}
+if (!sess.role) { window.location.href = 'index.html'; }
+
+var RLABELS = {EMPLOYEE:'Employee',MANAGER:'Manager',FINANCE_MGR:'HR Manager',ACCOUNTS:'Accounts Team',ADMIN:'Administrator'};
+var DESIG_LABELS = {'Articled Assistant':'Articled Assistant','Paid Assistant':'Paid Assistant','Employee':'Employee'};
+
+function getDisplayRole(role, designation) {
+  if (role === 'EMPLOYEE' && designation && designation !== 'Employee' && designation !== '') {
+    return designation;
+  }
+  return RLABELS[role] || role;
+}
+
+var NAV_ICONS = {
+  'dashboard':   '📊',
+  'new-claim':   '➕',
+  'my-claims':   '📋',
+  'approvals':   '✅',
+  'finance':     '🔍',
+  'accounts':    '💳',
+  'reports':     '📈',
+  'users':       '👥',
+  'types':       '🗂️',
+  'accounts-view': '💵'
+};
+
+var NAV = {
+  EMPLOYEE: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  MANAGER:  [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Pending Approvals',bid:'apBdg'},{id:'my-claims',lbl:'My Claims'},{id:'new-claim',lbl:'New Claim'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  FINANCE_MGR:[{id:'dashboard',lbl:'Dashboard'},{id:'finance',lbl:'Finance Approvals',bid:'finBdg'},{id:'accounts-view',lbl:'My Payments'},{id:'reports',lbl:'Reports'}],
+  ACCOUNTS: [{id:'dashboard',lbl:'Dashboard'},{id:'new-claim',lbl:'New Claim'},{id:'my-claims',lbl:'My Claims'},{id:'accounts',lbl:'Update Payments'},{id:'reports',lbl:'Reports'}],
+  ADMIN:    [{id:'dashboard',lbl:'Dashboard'},{id:'approvals',lbl:'Manager Approvals'},{id:'finance',lbl:'Finance Approvals'},{id:'accounts',lbl:'Accounts'},{id:'reports',lbl:'Reports'},{id:'users',lbl:'User Management'},{id:'types',lbl:'Reimb. Types'},{id:'new-claim',lbl:'New Claim'}]
+};
+
+function init() {
+  document.getElementById('sAv').textContent = (sess.name||'U').charAt(0).toUpperCase();
+  document.getElementById('sNm').textContent = sess.name||'User';
+  document.getElementById('sRl').textContent = getDisplayRole(sess.role, sess.designation);
+  var rt = document.getElementById('rtag'); rt.textContent = getDisplayRole(sess.role, sess.designation); rt.className = 'rtag rt-'+sess.role;
+  if (sess.role==='EMPLOYEE'||sess.role==='MANAGER'||sess.role==='ADMIN') document.getElementById('ncBtn').style.display='inline-flex';
+  document.getElementById('loBtn').addEventListener('click', function(){ sessionStorage.clear(); window.location.href='index.html'; });
+  buildNav();
+  go('dashboard');
+  setupNewClaim();
+}
+
+function buildNav() {
+  var items = NAV[sess.role]||NAV.EMPLOYEE;
+  var nav = document.getElementById('sideNav');
+  nav.innerHTML = '';
+  for (var i=0; i<items.length; i++) {
+    var it = items[i];
+    var d = document.createElement('div');
+    d.className = 'ni'; d.setAttribute('data-pane', it.id);
+    var icon = document.createElement('span');
+    icon.textContent = NAV_ICONS[it.id] || '●';
+    icon.style.fontSize = '15px';
+    icon.style.width = '18px';
+    icon.style.textAlign = 'center';
+    var lbl = document.createElement('span'); lbl.textContent = it.lbl;
+    d.appendChild(icon); d.appendChild(lbl);
+    if (it.bid) {
+      var nb = document.createElement('span');
+      nb.className='nb'; nb.id=it.bid; nb.style.display='none'; nb.textContent='0';
+      d.appendChild(nb);
+    }
+    (function(pid){ d.addEventListener('click', function(){ go(pid); }); })(it.id);
+    nav.appendChild(d);
+  }
+}
+
+function go(id) {
+  document.querySelectorAll('.pane').forEach(function(p){ p.className='pane'; });
+  document.querySelectorAll('.ni').forEach(function(n){ n.className='ni'; });
+  var pane = document.getElementById('pane-'+id);
+  if (pane) pane.className='pane on';
+  var ni = document.querySelector('.ni[data-pane="'+id+'"]');
+  if (ni) ni.className='ni on';
+  var titles = {dashboard:'Dashboard','new-claim':'New Claim','my-claims':'My Claims',approvals:'Manager Approvals',finance:'Finance Approvals',accounts:'Accounts Update',reports:'Reports',users:'User Management',types:'Reimbursement Types','accounts-view':'My Payments'};
+  document.getElementById('topTitle').textContent = titles[id]||id;
+  if (id==='dashboard') loadDash();
+  if (id==='my-claims') loadMC();
+  if (id==='approvals') loadAP();
+  if (id==='finance') loadFIN();
+  if (id==='accounts') loadACC();
+  if (id==='accounts-view') loadAV();
+  if (id==='reports') buildRpts();
+  if (id==='users') loadUSR();
+  if (id==='types') loadTypes();
+  if (id==='new-claim') resetNC();
+}
+
+function api(params, cb) {
+  var name = 'pkp'+Date.now()+Math.floor(Math.random()*9999);
+  var done = false;
+  var timer = setTimeout(function(){ if(!done){done=true;cleanup();cb({error:'Timed out.'});} },25000);
+  function cleanup(){ delete window[name]; var s=document.getElementById('s_'+name); if(s&&s.parentNode) s.parentNode.removeChild(s); }
+  window[name] = function(data){
+    if(!done){
+      done=true;clearTimeout(timer);cleanup();
+      // Auto logout on token errors
+      if(data.error && (data.error.indexOf('token')>=0||data.error.indexOf('Login')>=0||data.error.indexOf('session')>=0||data.error.indexOf('Session')>=0||data.error.indexOf('Invalid')>=0)) {
+        toast('Session expired. Please login again.','err');
+        setTimeout(function(){ sessionStorage.clear(); window.location.href='index.html'; },2000);
+        return;
+      }
+      cb(data);
+    }
+  };
+  var q='callback='+encodeURIComponent(name)+'&token='+encodeURIComponent(tok);
+  for(var k in params){ if(Object.prototype.hasOwnProperty.call(params,k)) q+='&'+encodeURIComponent(k)+'='+encodeURIComponent(params[k]); }
+  var sc=document.createElement('script'); sc.id='s_'+name; sc.src=API+'?'+q;
+  sc.onerror=function(){ if(!done){done=true;clearTimeout(timer);cleanup();cb({error:'Network error.'});} };
+  document.body.appendChild(sc);
+}
+
+function toast(msg, type) {
+  var el=document.getElementById('toast'); el.textContent=msg; el.className='toast show t-'+(type||'info');
+  setTimeout(function(){ el.className='toast'; },4000);
+}
+
+function fmtD(d){ if(!d) return '-'; try{ return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'}); }catch(e){ return d; } }
+function fmtA(n){ var v=parseFloat(n)||0; return 'Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2}); }
+function toDateInput(d){ if(!d) return ''; try{ var dt=new Date(d); if(isNaN(dt.getTime())) return ''; return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }catch(e){ return ''; } }
+
+function statusBadge(s){
+  var m={
+    PENDING_MANAGER: ['b-pm','⏳','Pending Manager'],
+    PENDING_FINANCE: ['b-pf','🔍','Pending Finance'],
+    APPROVED_FINANCE:['b-af','✅','Finance Approved'],
+    REJECTED_MANAGER:['b-rej','❌','Rejected'],
+    REJECTED_FINANCE:['b-rej','❌','Fin.Rejected'],
+    PAID:            ['b-paid','💳','Paid'],
+    CLOSED:          ['b-closed','🔒','Closed']
+  };
+  var info=m[s]||['b-pm','●',s||'-'];
+  return '<span class="badge '+info[0]+'">'+info[1]+' '+info[2]+'</span>';
+}
+
+function getStatus(c){ return c.FinanceApprovalStatus&&c.FinanceApprovalStatus!=='PENDING'?c.FinanceApprovalStatus:c.ManagerApprovalStatus||'PENDING_MANAGER'; }
+
+function attLink(url, ref) {
+  if (!url) return ref ? '<span style="font-family:monospace;font-size:11px;color:var(--muted)">'+ref+'</span>' : '-';
+  var urls = url.split('|'); var refs = ref ? ref.split(',') : [];
+  var html = '';
+  for (var i=0; i<urls.length; i++) {
+    var u = urls[i].trim(); var r = refs[i] ? refs[i].trim() : 'File '+(i+1);
+    if (u) html += '<a href="'+u+'" target="_blank" style="display:inline-block;margin:1px 2px;padding:2px 7px;background:var(--blue-lt);border:1px solid #bfdbfe;border-radius:4px;font-size:11px;font-family:monospace;color:var(--blue);text-decoration:none">'+r+'</a>';
+  }
+  return html || '-';
+}
+
+function statCard(lbl, val, cls, sub) {
+  return '<div class="sc"><div class="sl">'+lbl+'</div><div class="sv'+(cls?' '+cls:'')+'" >'+val+'</div>'+(sub?'<div class="ss2">'+sub+'</div>':'')+'</div>';
+}
+
+// ── DASHBOARD ──
+function loadDash() {
+  var role = sess.role;
+  document.getElementById('dashStats').innerHTML = '<div class="empty">Loading...</div>';
+  document.getElementById('dashActions').innerHTML = '';
+  document.getElementById('dashPending').innerHTML = '';
+  document.getElementById('dashTitle').textContent = 'Welcome, '+(sess.name||'');
+
+  var filter = (role==='EMPLOYEE') ? 'mine' : 'team';
+  api({action:'getClaims',filter:filter}, function(res) {
+    if (res.error) { document.getElementById('dashStats').innerHTML='<div class="empty" style="color:var(--red)">'+res.error+'</div>'; return; }
+    var claims = res.claims||[];
+    // Store in appropriate lists so findClaim/viewClaim works from dashboard
+    if (role==='EMPLOYEE') { myData=claims; renderEmpDash(claims); }
+    else if (role==='MANAGER') { teamData=claims; renderMgrDash(claims); }
+    else if (role==='FINANCE_MGR') { finData=claims; renderFinDash(claims); }
+    else if (role==='ACCOUNTS') { accData=claims; renderAccDash(claims); }
+    else { teamData=claims; myData=claims; renderAdminDash(claims); }
+  });
+}
+
+function makeActBtns(btns) {
+  var wrap = document.createElement('div');
+  wrap.style.cssText = 'display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px';
+  for (var i=0; i<btns.length; i++) {
+    var b = document.createElement('button');
+    b.className = btns[i][0]; b.textContent = btns[i][1];
+    (function(pid){ b.addEventListener('click', function(){ go(pid); }); })(btns[i][2]);
+    wrap.appendChild(b);
+  }
+  document.getElementById('dashActions').innerHTML = '';
+  document.getElementById('dashActions').appendChild(wrap);
+}
+
+function renderEmpDash(claims) {
+  var total=0,pend=0,appr=0,rcvd=0,rej=0;
+  for (var i=0;i<claims.length;i++) {
+    var c=claims[i]; var amt=parseFloat(c.Amount)||0; total+=amt;
+    var s=getStatus(c);
+    if(s==='PENDING_MANAGER'||s==='PENDING_FINANCE') pend+=amt;
+    else if(s==='APPROVED_FINANCE') appr+=amt;
+    else if(s==='PAID'||s==='CLOSED') rcvd+=amt;
+    else if(s==='REJECTED_MANAGER'||s==='REJECTED_FINANCE') rej+=amt;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Total Claimed',fmtA(total),'',''+claims.length+' claims') +
+    statCard('Pending Approval',fmtA(pend),'amber','Awaiting review') +
+    statCard('Approved',fmtA(appr),'','Finance approved') +
+    statCard('Received',fmtA(rcvd),'green','Paid by firm') +
+    statCard('Rejected',fmtA(rej),'red','');
+  makeActBtns([['bpri','+ New Claim','new-claim'],['bsec','My Claims','my-claims'],['bsec','Reports','reports']]);
+  renderRecentTbl(claims.slice(0,5));
+}
+
+function renderMgrDash(claims) {
+  var pend=0,pendAmt=0,appr=0,total=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; total+=parseFloat(c.Amount)||0;
+    if(c.ManagerApprovalStatus==='PENDING_MANAGER'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+    else if(c.ManagerApprovalStatus!=='REJECTED_MANAGER') appr++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Awaiting Approval',pend,'amber',fmtA(pendAmt)) +
+    statCard('Approved',appr,'green','') +
+    statCard('Total Team',claims.length,'',fmtA(total));
+  if(pend>0){var b=document.getElementById('apBdg');if(b){b.textContent=pend;b.style.display='inline-block';}}
+  makeActBtns([['bpri','Review Approvals ('+pend+')','approvals'],['bsec','+ My Claim','new-claim'],['bsec','Reports','reports']]);
+  renderPendingTbl(claims);
+}
+
+function renderFinDash(claims) {
+  var pend=0,pendAmt=0,appr=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i];
+    if(c.ManagerApprovalStatus==='PENDING_FINANCE'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+    else if(c.FinanceApprovalStatus==='APPROVED_FINANCE') appr++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Pending Finance',pend,'amber',fmtA(pendAmt)) +
+    statCard('Finance Approved',appr,'green','') +
+    statCard('Total',claims.length,'','');
+  makeActBtns([['bpri','Finance Approvals','finance'],['bsec','Reports','reports']]);
+}
+
+function renderAccDash(claims) {
+  var unpaid=0,unpaidAmt=0,uninv=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i];
+    if(c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DatePaidByFirm){unpaid++;unpaidAmt+=parseFloat(c.Amount)||0;}
+    if(c.Category==='Client Reimbursable'&&c.FinanceApprovalStatus==='APPROVED_FINANCE'&&!c.DateInvoicedToClient) uninv++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Pending Payment',unpaid,'amber',fmtA(unpaidAmt)) +
+    statCard('Pending Invoice',uninv,'','To client') +
+    statCard('Total Records',claims.length,'','');
+  makeActBtns([['bpri','Update Payments','accounts'],['bsec','Reports','reports']]);
+}
+
+function renderAdminDash(claims) {
+  var pm=0,pf=0,paid=0,total=0;
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; total+=parseFloat(c.Amount)||0;
+    if(c.ManagerApprovalStatus==='PENDING_MANAGER') pm++;
+    if(c.ManagerApprovalStatus==='PENDING_FINANCE') pf++;
+    if(c.DatePaidByFirm) paid++;
+  }
+  document.getElementById('dashStats').innerHTML =
+    statCard('Total Claims',claims.length,'',fmtA(total)) +
+    statCard('Pending Manager',pm,'amber','') +
+    statCard('Pending Finance',pf,'','') +
+    statCard('Paid',paid,'green','');
+  makeActBtns([['bpri','Manager Approvals','approvals'],['bpri','Finance Approvals','finance'],['bsec','Accounts','accounts'],['bsec','Users','users'],['bsec','Reports','reports']]);
+  renderPendingTbl(claims);
+}
+
+function renderRecentTbl(claims) {
+  var el=document.getElementById('dashPending');
+  if(!claims.length){el.innerHTML='';return;}
+  var wrap=document.createElement('div'); wrap.className='tc';
+  var hdr=document.createElement('div'); hdr.className='th2';
+  var ttl=document.createElement('div'); ttl.className='th2-title'; ttl.textContent='Recent Claims';
+  var vb=document.createElement('button'); vb.className='ghost'; vb.textContent='View All';
+  vb.addEventListener('click',function(){ go('my-claims'); });
+  hdr.appendChild(ttl); hdr.appendChild(vb); wrap.appendChild(hdr);
+  var tw=document.createElement('div'); tw.className='tw';
+  var tbl=document.createElement('table');
+  var html='<thead><tr><th>Claim ID</th><th>Date</th><th>Client</th><th>Amount</th><th>Status</th></tr></thead><tbody>';
+  for(var i=0;i<claims.length;i++){
+    var c=claims[i]; var s=getStatus(c);
+    html+='<tr><td><span class="cid">'+c.ClaimID+'</span></td><td>'+fmtD(c.DateOfExpense)+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td>'+statusBadge(s)+'</td></tr>';
+  }
+  html+='</tbody>';
+  tbl.innerHTML=html; tw.appendChild(tbl); wrap.appendChild(tw);
+  el.innerHTML=''; el.appendChild(wrap);
+}
+
+function renderPendingTbl(claims) {
+  var pending=[];
+  for(var i=0;i<claims.length;i++){if(claims[i].ManagerApprovalStatus==='PENDING_MANAGER') pending.push(claims[i]);}
+  var el=document.getElementById('dashPending');
+  if(!pending.length){el.innerHTML='<div style="padding:16px;background:#fff;border-radius:10px;border:1px solid var(--border);color:var(--muted);font-size:13px">No pending approvals!</div>';return;}
+  var wrap=document.createElement('div'); wrap.className='tc';
+  var hdr=document.createElement('div'); hdr.className='th2';
+  hdr.innerHTML='<div class="th2-title">Pending Approvals ('+pending.length+')</div>';
+  var vb=document.createElement('button'); vb.className='ghost'; vb.textContent='View All';
+  vb.addEventListener('click',function(){go('approvals');}); hdr.appendChild(vb); wrap.appendChild(hdr);
+  var tw=document.createElement('div'); tw.className='tw';
+  var tbl=document.createElement('table');
+  tbl.innerHTML='<thead><tr><th>Claim ID</th><th>Employee</th><th>Client</th><th>Amount</th><th>Actions</th></tr></thead>';
+  var tbody=document.createElement('tbody');
+  var shown=Math.min(pending.length,5);
+  for(var i=0;i<shown;i++){
+    var c=pending[i]; var tr=document.createElement('tr');
+    tr.innerHTML='<td><span class="cid">'+c.ClaimID+'</span></td><td>'+(c.ClaimantName||c.ClaimantID||'-')+'</td><td>'+(c.ClientName||'-')+'</td><td class="amt">'+fmtA(c.Amount)+'</td><td></td>';
+    var td=tr.querySelector('td:last-child');
+    var ab=document.createElement('button'); ab.className='btn btn-ok'; ab.textContent='Approve'; ab.setAttribute('data-id',c.ClaimID);
+    ab.addEventListener('click',function(){qApprove(this.getAttribute('data-id'));});
+    var rb=document.createElement('button'); rb.className='btn btn-no'; rb.textContent='Reject'; rb.setAttribute('data-id',c.ClaimID);
+    rb.addEventListener('click',function(){qReject(this.getAttribute('data-id'));});
+    var vb2=document.createElement('button'); vb2.className='btn'; vb2.textContent='View'; vb2.setAttribute('data-id',c.ClaimID);
+    vb2.addEventListener('click',function(){viewClaim(this.getAttribute('data-id'),true,false);});
+    td.appendChild(ab); td.appendChild(rb); td.appendChild(vb2);
+    tbody.appendChild(tr);
+  }
+  tbl.appendChild(tbody); tw.appendChild(tbl); wrap.appendChild(tw);
+  el.innerHTML=''; el.appendChild(wrap);
+}
+
+// ── MY CLAIMS ──
+function loadMC() {
+  document.getElementById('mcBody').innerHTML='<tr><td colspan="7"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'mine'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    myData=res.claims||[];
+    var total=0,pend=0,appr=0,rcvd=0;
+    for(var i=0;i<myData.length;i++){var c=myData[i];var amt=parseFloat(c.Amount)||0;total+=amt;var s=getStatus(c);if(s==='PENDING_MANAGER'||s==='PENDING_FINANCE')pend+=amt;else if(s==='APPROVED_FINANCE')appr+=amt;else if(s==='PAID'||s==='CLOSED')rcvd+=amt;}
+    document.getElementById('mcStats').innerHTML=statCard('Total',fmtA(total),'','')+statCard('Pending',fmtA(pend),'amber','')+statCard('Approved',fmtA(appr),'','')+statCard('Received',fmtA(rcvd),'green','');
+    filterMC();
+  });
+}
+
+function filterMC() {
+  var q=(document.getElementById("mcSrch").value||"").toLowerCase();
+  var sf=document.getElementById("mcSt").value;
+  var filtered=[];
+  for(var i=0;i<myData.length;i++){
+    var c=myData[i]; var s=getStatus(c);
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0;
+    var ms=!sf||s===sf;
+    if(mq&&ms) filtered.push(c);
+  }
+  var tb=document.getElementById("mcBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"7\"><div class=\"empty\">No claims found.</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var s=getStatus(c);
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td>"+(c.MajorHead||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+statusBadge(s)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
+    var last=tr.querySelector("td:last-child");
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
+    (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,false); }); })(c.ClaimID);
+    last.appendChild(vb);
+    if(s==="APPROVED_FINANCE"){
+      var pb=document.createElement("button"); pb.className="btn"; pb.textContent="Print";
+      (function(id){ pb.addEventListener("click",function(){ printClaim(id); }); })(c.ClaimID);
+      last.appendChild(pb);
+    }
+    tb.appendChild(tr);
+  }
+}
+
+// ── APPROVALS ──
+function loadAP() {
+  document.getElementById('apBody').innerHTML='<tr><td colspan="8"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    teamData=res.claims||[];
+    var pend=0,pendAmt=0,appr=0,rej=0;
+    var empMap={};
+    for(var i=0;i<teamData.length;i++){
+      var c=teamData[i];
+      if(c.ManagerApprovalStatus==='PENDING_MANAGER'){pend++;pendAmt+=parseFloat(c.Amount)||0;}
+      else if(c.ManagerApprovalStatus!=='REJECTED_MANAGER') appr++;
+      else rej++;
+      if(c.ClaimantID) empMap[c.ClaimantID]=c.ClaimantName||c.ClaimantID;
+    }
+    document.getElementById('apStats').innerHTML=statCard('Pending',pend,'amber',fmtA(pendAmt))+statCard('Approved',appr,'green','')+statCard('Rejected',rej,'red','')+statCard('Total',teamData.length,'','');
+    if(pend>0){var b=document.getElementById('apBdg');if(b){b.textContent=pend;b.style.display='inline-block';}}
+    var sel=document.getElementById('apEmp'); sel.innerHTML='<option value="">All Employees</option>';
+    for(var id in empMap){var o=document.createElement('option');o.value=id;o.textContent=empMap[id];sel.appendChild(o);}
+    filterAP();
+  });
+}
+
+function apTab(tab) {
+  apCurTab=tab;
+  document.getElementById('apt1').className='tbb'+(tab==='pending'?' on':'');
+  document.getElementById('apt2').className='tbb'+(tab==='all'?' on':'');
+  document.getElementById('apTitle').textContent=tab==='pending'?'Pending Approvals':'All Team Claims';
+  filterAP();
+}
+
+function filterAP() {
+  var q=(document.getElementById("apSrch").value||"").toLowerCase();
+  var ef=document.getElementById("apEmp").value;
+  var filtered=[];
+  for(var i=0;i<teamData.length;i++){
+    var c=teamData[i];
+    if(apCurTab==="pending"&&c.ManagerApprovalStatus!=="PENDING_MANAGER") continue;
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
+    var me=!ef||c.ClaimantID===ef;
+    if(mq&&me) filtered.push(c);
+  }
+  var tb=document.getElementById("apBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"8\"><div class=\"empty\">"+(apCurTab==="pending"?"No pending approvals!":"No claims.")+"</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i]; var isPend=c.ManagerApprovalStatus==="PENDING_MANAGER";
+    var nm=c.ClaimantName||c.ClaimantID||"-";
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td><span class=\"av\">"+nm.charAt(0).toUpperCase()+"</span>"+nm+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td>"+statusBadge(c.ManagerApprovalStatus)+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    td.style.whiteSpace="nowrap";
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View"; vb.style.marginRight="3px";
+    (function(id,ip){ vb.addEventListener("click",function(){ viewClaim(id,ip,false); }); })(c.ClaimID,isPend);
+    td.appendChild(vb);
+    if(isPend){
+      var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve"; ab.style.marginRight="3px";
+      (function(id){ ab.addEventListener("click",function(){ qApprove(id); }); })(c.ClaimID);
+      var rb=document.createElement("button"); rb.className="btn btn-no"; rb.innerHTML="❌ Reject";
+      (function(id){ rb.addEventListener("click",function(){ qReject(id); }); })(c.ClaimID);
+      td.appendChild(ab); td.appendChild(rb);
+    }
+    tb.appendChild(tr);
+  }
+}
+
+function qApprove(id) {
+  if(!confirm('Approve claim '+id+'?')) return;
+  api({action:'managerApprove',claimId:id,status:'APPROVED',remarks:''},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast('Claim '+id+' approved!','ok'); loadAP(); loadDash();
+  });
+}
+function qReject(id) {
+  var reason=prompt('Reason for rejection (required):');
+  if(!reason||!reason.trim()) return;
+  api({action:'managerApprove',claimId:id,status:'REJECTED',remarks:reason},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast('Claim '+id+' rejected.','ok'); loadAP(); loadDash();
+  });
+}
+
+// ── FINANCE ──
+function loadFIN() {
+  document.getElementById('finBody').innerHTML='<tr><td colspan="8"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getClaims',filter:'team'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    finData=(res.claims||[]).filter(function(c){return c.ManagerApprovalStatus==='PENDING_FINANCE'&&c.FinanceApprovalStatus!=='APPROVED_FINANCE'&&c.FinanceApprovalStatus!=='REJECTED_FINANCE';});
+    var total=0; for(var i=0;i<finData.length;i++) total+=parseFloat(finData[i].Amount)||0;
+    document.getElementById('finStats').innerHTML=statCard('Pending Finance',finData.length,'amber',fmtA(total));
+    filterFIN();
+  });
+}
+
+function filterFIN() {
+  var q=(document.getElementById("finSrch").value||"").toLowerCase();
+  var filtered=finData.filter(function(c){return !q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;});
+  var tb=document.getElementById("finBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"8\"><div class=\"empty\">No pending finance approvals.</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i];
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+fmtD(c.DateOfExpense)+"</td><td>"+(c.ClientName||"-")+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td>"+attLink(c.AttachmentURL,c.AttachmentRef)+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var vb=document.createElement("button"); vb.className="btn"; vb.innerHTML="👁 View";
+    (function(id){ vb.addEventListener("click",function(){ viewClaim(id,false,true); }); })(c.ClaimID);
+    var ab=document.createElement("button"); ab.className="btn btn-ok"; ab.innerHTML="✅ Approve";
+    (function(id){ ab.addEventListener("click",function(){ qFinApprove(id); }); })(c.ClaimID);
+    var rb=document.createElement("button"); rb.className="btn btn-no"; rb.innerHTML="❌ Reject";
+    (function(id){ rb.addEventListener("click",function(){ qFinReject(id); }); })(c.ClaimID);
+    td.appendChild(vb); td.appendChild(ab); td.appendChild(rb);
+    tb.appendChild(tr);
+  }
+}
+
+function qFinApprove(id){if(!confirm('Finance approve '+id+'?'))return;api({action:'financeApprove',claimId:id,status:'APPROVED',remarks:''},function(res){if(res.error){toast(res.error,'err');return;}toast('Finance approved!','ok');loadFIN();});}
+function qFinReject(id){var r=prompt('Reason:');if(!r)return;api({action:'financeApprove',claimId:id,status:'REJECTED',remarks:r},function(res){if(res.error){toast(res.error,'err');return;}toast('Rejected.','ok');loadFIN();});}
+
+// ── ACCOUNTS ──
+function loadACC() {
+  document.getElementById('accBody').innerHTML='<tr><td colspan="9"><div class="empty">Loading...</div></td></tr>';
+  var filter = (sess.role==='EMPLOYEE'||sess.role==='FINANCE_MGR') ? 'mine' : 'team';
+  api({action:'getClaims',filter:filter},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    accData = res.claims||[];
+    filterACC();
+  });
+}
+
+function filterACC() {
+  var q=(document.getElementById("accSrch").value||"").toLowerCase();
+  var f=document.getElementById("accFil").value;
+  var filtered=accData.filter(function(c){
+    var mq=!q||(c.ClaimID||"").toLowerCase().indexOf(q)>=0||(c.ClientName||"").toLowerCase().indexOf(q)>=0||(c.ClaimantName||"").toLowerCase().indexOf(q)>=0;
+    var isClientReimb=c.Category==="Client Reimbursable";
+    var mf=!f||(f==="unpaid"&&!c.DatePaidByFirm)||(f==="uninvoiced"&&isClientReimb&&!c.DateInvoicedToClient)||(f==="unreceived"&&isClientReimb&&c.DateInvoicedToClient&&!c.DateReceivedFromClient);
+    return mq&&mf;
+  });
+  var tb=document.getElementById("accBody");
+  if(!filtered.length){tb.innerHTML="<tr><td colspan=\"9\"><div class=\"empty\">No records.</div></td></tr>";return;}
+  tb.innerHTML="";
+  for(var i=0;i<filtered.length;i++){
+    var c=filtered[i];
+    var isClientReimb=c.Category==="Client Reimbursable";
+    var pd=c.DatePaidByFirm?fmtD(c.DatePaidByFirm):"<span style=\"color:var(--amber)\">Pending</span>";
+    var id2=isClientReimb?(c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):"<span style=\"color:var(--amber)\">Pending</span>"):"<span style=\"color:var(--muted)\">N/A</span>";
+    var rd=isClientReimb?(c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?"<span style=\"color:var(--amber)\">Pending</span>":"—")):"<span style=\"color:var(--muted)\">N/A</span>";
+    var pm=c.PaymentMode?"<span style=\"font-size:10px;color:var(--muted)\">"+c.PaymentMode+"</span>":"—";
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td><span class=\"cid\">"+c.ClaimID+"</span></td><td>"+(c.ClaimantName||c.ClaimantID||"-")+"</td><td>"+(c.ClientName||"-")+"</td><td class=\"amt\">"+fmtA(c.Amount)+"</td><td style=\"font-size:11px;color:var(--muted)\">"+(c.Category||"-")+"</td><td>"+pm+"</td><td>"+pd+"</td><td>"+id2+"</td><td>"+rd+"</td><td></td>";
+    var td=tr.querySelector("td:last-child");
+    var ub=document.createElement("button"); ub.className="btn"; ub.innerHTML="📝 Update";
+    (function(id){ ub.addEventListener("click",function(){ openAccMod(id); }); })(c.ClaimID);
+    td.appendChild(ub);
+    tb.appendChild(tr);
+    // Timeline text row
+    var tlParts=[];
+    var tlBase=c.DateOfExpense&&c.DateOfExpense!=="-"&&c.DateOfExpense!==""?new Date(c.DateOfExpense):null;
+    function tlDay(d){ if(!tlBase||!d||d==="-"||d==="") return ""; var days=Math.round((new Date(d)-tlBase)/86400000); return days===0?" (+0d)":" ("+(days>0?"+":"")+days+"d)"; }
+    if(c.DateOfExpense&&c.DateOfExpense!=="-"&&c.DateOfExpense!=="") tlParts.push("Expense: "+fmtD(c.DateOfExpense));
+    if(c.DateClaimed&&c.DateClaimed!=="-"&&c.DateClaimed!=="") tlParts.push("Claimed: "+fmtD(c.DateClaimed)+tlDay(c.DateClaimed));
+    if(c.DateManagerApproved&&c.DateManagerApproved!=="-"&&c.DateManagerApproved!=="") tlParts.push("Mgr ✓: "+fmtD(c.DateManagerApproved)+tlDay(c.DateManagerApproved));
+    if(c.FinanceApprovalStatus==="APPROVED_FINANCE") tlParts.push("Fin ✓");
+    if(c.DatePaidByFirm&&c.DatePaidByFirm!=="-"&&c.DatePaidByFirm!=="") tlParts.push("Paid: "+fmtD(c.DatePaidByFirm)+tlDay(c.DatePaidByFirm));
+    if(c.DateInvoicedToClient&&c.DateInvoicedToClient!=="-"&&c.DateInvoicedToClient!=="") tlParts.push("Intimated: "+fmtD(c.DateInvoicedToClient)+tlDay(c.DateInvoicedToClient));
+    if(c.DateReceivedFromClient&&c.DateReceivedFromClient!=="-"&&c.DateReceivedFromClient!=="") tlParts.push("Received: "+fmtD(c.DateReceivedFromClient)+tlDay(c.DateReceivedFromClient));
+    if(tlParts.length>0){
+      var tlRow=document.createElement("tr"); tlRow.style.cssText="background:#f0f0f8;border-bottom:1px solid var(--border)";
+      var tlTd=document.createElement("td"); tlTd.colSpan=10;
+      tlTd.style.cssText="padding:3px 14px 4px 14px;font-size:10px;color:#4a4a8a;font-family:'Palatino Linotype',serif";
+      tlTd.textContent="📅  "+tlParts.join("  →  ");
+      tlRow.appendChild(tlTd); tb.appendChild(tlRow);
+    }
+  }
+}
+
+function openAccMod(id) {
+  var c=null; for(var i=0;i<accData.length;i++){if(accData[i].ClaimID===id){c=accData[i];break;}}
+  if(!c) return;
+  document.getElementById('acId').value=id;
+  document.getElementById('acMTtl').textContent='Update: '+id;
+  document.getElementById('acPb').value=c.PaidBy||'';
+  if(document.getElementById('acPm')) document.getElementById('acPm').value=c.PaymentMode||'';
+  document.getElementById('acDp').value=toDateInput(c.DatePaidByFirm);
+  document.getElementById('acDi').value=toDateInput(c.DateInvoicedToClient);
+  document.getElementById('acDr').value=toDateInput(c.DateReceivedFromClient);
+  var tlParts=[];
+  if(c.DateOfExpense) tlParts.push('Expense: '+fmtD(c.DateOfExpense));
+  if(c.DateClaimed) tlParts.push('Claimed: '+fmtD(c.DateClaimed));
+  if(c.DateManagerApproved) tlParts.push('Mgr ✓: '+fmtD(c.DateManagerApproved));
+  if(c.FinanceApprovalStatus==='APPROVED_FINANCE') tlParts.push('Fin ✓');
+  if(document.getElementById('acTimeline')) document.getElementById('acTimeline').textContent=tlParts.join(' → ')||'—';
+  renderAccTimeline(c);
+  document.getElementById('accOv').className='overlay on';
+}
+
+function renderAccTimeline(c) {
+  var vis=document.getElementById('acTimelineVis');
+  var bar=document.getElementById('acTLBar');
+  if(!vis||!bar) return;
+  var pts=[
+    {lbl:'Expense',d:c.DateOfExpense,col:'#1a1a2e'},
+    {lbl:'Claimed',d:c.DateClaimed,col:'#4a4a8a'},
+    {lbl:'Mgr Appvd',d:c.DateManagerApproved,col:'#c9a84c'},
+    {lbl:'Paid',d:c.DatePaidByFirm,col:'#0a5c36'},
+    {lbl:'Intimated',d:c.DateInvoicedToClient,col:'#1e40af'},
+    {lbl:'Received',d:c.DateReceivedFromClient,col:'#0a5c36'}
+  ];
+  var base=c.DateOfExpense?new Date(c.DateOfExpense):null;
+  if(!base){vis.style.display='none';return;}
+  var filled=pts.filter(function(p){return p.d&&p.d!=='-'&&p.d!=='';});
+  if(filled.length<2){vis.style.display='none';return;}
+  vis.style.display='block';
+  var days=filled.map(function(p){return Math.round((new Date(p.d)-base)/86400000);});
+  var minD=Math.min.apply(null,days), maxD=Math.max.apply(null,days);
+  var range=maxD-minD||1;
+  bar.innerHTML='';
+  var line=document.createElement('div');
+  line.style.cssText='position:absolute;top:10px;left:0;right:0;height:2px;background:#dddde8;border-radius:2px';
+  bar.appendChild(line);
+  filled.forEach(function(p,i){
+    var pct=((days[i]-minD)/range*100);
+    var dot=document.createElement('div');
+    dot.style.cssText='position:absolute;top:4px;width:14px;height:14px;border-radius:50%;background:'+p.col+';border:2px solid #fff;box-shadow:0 0 0 1px '+p.col+';left:calc('+pct+'% - 7px)';
+    dot.title=p.lbl+': '+fmtD(p.d)+' (Day '+(days[i]>=0?'+':'')+days[i]+')';
+    var lbl=document.createElement('div');
+    lbl.style.cssText='position:absolute;top:20px;font-size:8px;color:'+p.col+';white-space:nowrap;font-weight:600;left:calc('+pct+'% - 10px)';
+    lbl.textContent=(days[i]>=0?'+':'')+days[i]+'d';
+    bar.appendChild(dot); bar.appendChild(lbl);
+  });
+}
+function closeAccMod(){document.getElementById('accOv').className='overlay';}
+function saveAcc(){
+  var btn=document.getElementById('acSv'); btn.disabled=true; btn.textContent='Saving...';
+  api({action:'updateAccountsDetails',claimId:document.getElementById('acId').value,paidBy:document.getElementById('acPb').value,paymentMode:document.getElementById('acPm').value,datePaidByFirm:document.getElementById('acDp').value,dateInvoicedToClient:document.getElementById('acDi').value,dateReceivedFromClient:document.getElementById('acDr').value},function(res){
+    btn.disabled=false; btn.textContent='Save';
+    if(res.error){toast(res.error,'err');return;}
+    // Update local cache
+    var cid=document.getElementById('acId').value;
+    for(var i=0;i<accData.length;i++){if(accData[i].ClaimID===cid){accData[i].PaidBy=document.getElementById('acPb').value;accData[i].DatePaidByFirm=document.getElementById('acDp').value;accData[i].DateInvoicedToClient=document.getElementById('acDi').value;accData[i].DateReceivedFromClient=document.getElementById('acDr').value;break;}}
+    toast('Updated!','ok'); closeAccMod(); filterACC();
+  });
+}
+
+// ── CLAIM MODAL ──
+function findClaim(id) {
+  var lists=[myData,teamData,finData,accData];
+  for(var l=0;l<lists.length;l++){for(var i=0;i<lists[l].length;i++){if(lists[l][i].ClaimID===id) return lists[l][i];}}
+  return null;
+}
+
+function viewClaim(id, canApprove, isFinance) {
+  var c=findClaim(id); if(!c) return;
+  document.getElementById('mTtl').textContent=c.ClaimID;
+  document.getElementById('mAmt').textContent=fmtA(c.Amount);
+  document.getElementById('mBdg').innerHTML=statusBadge(getStatus(c));
+  var ib=document.getElementById('mIBar');
+  if(canApprove){ib.textContent='This claim awaits your approval.';ib.style.display='block';}else{ib.style.display='none';}
+  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Paid By',c.PaidByExpenseName||c.PaidByExpense||c.PaidBy||'—'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
+  if(c.SubNature) fields.push(['Sub-Nature',c.SubNature]);
+  var dhtml=''; for(var i=0;i<fields.length;i++) dhtml+='<div class="di"><div class="dl">'+fields[i][0]+'</div><div class="dv">'+fields[i][1]+'</div></div>';
+  dhtml+='<div class="di df"><div class="dl">Description</div><div class="dv">'+(c.Description||'-')+'</div></div>';
+  if(c.AttachmentURL||c.AttachmentRef) dhtml+='<div class="di df"><div class="dl">Attachments</div><div class="dv">'+attLink(c.AttachmentURL,c.AttachmentRef)+'</div></div>';
+  if(c.ManagerRemarks) dhtml+='<div class="di df"><div class="dl">Manager Remarks</div><div class="dv">'+c.ManagerRemarks+'</div></div>';
+  if(c.FinanceRemarks) dhtml+='<div class="di df"><div class="dl">Finance Remarks</div><div class="dv">'+c.FinanceRemarks+'</div></div>';
+  document.getElementById('mDets').innerHTML=dhtml;
+  var rem=document.getElementById('mRem'); var ft=document.getElementById('mFt');
+  rem.innerHTML=''; ft.innerHTML='';
+  function mkBtn(cls,txt,fn){var b=document.createElement('button');b.className=cls;b.textContent=txt;b.addEventListener('click',fn);return b;}
+  if(canApprove&&!isFinance){
+    rem.innerHTML='<div style="margin-top:10px"><label style="font-size:11px;font-weight:600;text-transform:uppercase;color:#374151;display:block;margin-bottom:5px">Remarks</label><textarea id="mRem2" style="width:100%;padding:9px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;min-height:70px;outline:none" placeholder="Optional for approval, required for rejection"></textarea></div>';
+    ft.appendChild(mkBtn('bsec','Cancel',closeMod));
+    ft.appendChild(mkBtn('btn btn-no','Reject',function(){doMgrAction(id,'REJECTED');}));
+    ft.appendChild(mkBtn('bpri','Approve',function(){doMgrAction(id,'APPROVED');}));
+  } else if(isFinance){
+    rem.innerHTML='<div style="margin-top:10px"><label style="font-size:11px;font-weight:600;text-transform:uppercase;color:#374151;display:block;margin-bottom:5px">Remarks</label><textarea id="mRem2" style="width:100%;padding:9px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;min-height:70px;outline:none" placeholder="Optional for approval, required for rejection"></textarea></div>';
+    ft.appendChild(mkBtn('bsec','Cancel',closeMod));
+    ft.appendChild(mkBtn('btn btn-no','Reject',function(){doFinAction(id,'REJECTED');}));
+    ft.appendChild(mkBtn('bpri','Finance Approve',function(){doFinAction(id,'APPROVED');}));
+  } else {
+    ft.appendChild(mkBtn('bsec','Close',closeMod));
+    if(getStatus(c)==='APPROVED_FINANCE') ft.appendChild(mkBtn('bpri','Print Summary',function(){printClaim(id);}));
+  }
+  document.getElementById('detOv').className='overlay on';
+}
+
+function closeMod(){document.getElementById('detOv').className='overlay';}
+
+function doMgrAction(id,status){
+  var rem=(document.getElementById('mRem2')||{}).value||'';
+  if(status==='REJECTED'&&!rem.trim()){toast('Please enter rejection reason.','err');return;}
+  api({action:'managerApprove',claimId:id,status:status,remarks:rem},function(res){if(res.error){toast(res.error,'err');return;}toast(status==='APPROVED'?'Approved! Sent to Finance.':'Rejected.','ok');closeMod();loadAP();loadDash();});
+}
+function doFinAction(id,status){
+  var rem=(document.getElementById('mRem2')||{}).value||'';
+  if(status==='REJECTED'&&!rem.trim()){toast('Please enter rejection reason.','err');return;}
+  api({action:'financeApprove',claimId:id,status:status,remarks:rem},function(res){if(res.error){toast(res.error,'err');return;}toast(status==='APPROVED'?'Finance approved!':'Rejected.','ok');closeMod();loadFIN();});
+}
+
+// ── NEW CLAIM ──
+// Types loaded from sheet - built dynamically
+var MINOR={};
+var NATURE={'default':['Standard','Special','Recurring','One-time']};
+var ALL_TYPES=[];
+
+function loadTypeData(cb) {
+  // Always reload if MINOR is empty (handles first visit and refresh)
+  if (ALL_TYPES.length > 0 && Object.keys(MINOR).length > 0) { if(cb) cb(); return; }
+  api({action:'getReimbursementTypes'}, function(res) {
+    if (res.error) { console.warn('Types error:', res.error); if(cb) cb(); return; }
+    if (!res.types || res.types.length === 0) {
+      console.warn('No types returned. Add types in Admin > Reimb. Types first.');
+      if(cb) cb(); return;
+    }
+    ALL_TYPES = res.types.filter(function(t){
+      var v = String(t.isActive).toUpperCase().trim();
+      return v === 'TRUE' || v === '1';
+    });
+    console.log('Types loaded:', ALL_TYPES.length, 'active types');
+    buildTypeMap();
+    console.log('MINOR keys:', Object.keys(MINOR));
+    if (cb) cb();
+  });
+}
+
+function buildTypeMap() {
+  MINOR = {};
+  for (var i=0; i<ALL_TYPES.length; i++) {
+    var t = ALL_TYPES[i];
+    var maj = (t.majorHead || '').trim();
+    var min = (t.minorHead || '').trim();
+    var nat = (t.nature    || '').trim();
+    if (!maj || !min) continue;
+    if (!MINOR[maj]) MINOR[maj] = [];
+    if (MINOR[maj].indexOf(min) < 0) MINOR[maj].push(min);
+    if (nat) {
+      if (!NATURE[min]) NATURE[min] = [];
+      if (NATURE[min].indexOf(nat) < 0) NATURE[min].push(nat);
+    }
+  }
+  console.log('buildTypeMap done. MINOR:', JSON.stringify(MINOR));
+  console.log('NATURE:', JSON.stringify(NATURE));
+}
+
+function populateMinor(majorVal) {
+  var mn=document.getElementById('ncMinor');
+  mn.innerHTML='<option value="">Select Minor Head</option>';
+  var key=(majorVal||'').trim();
+  if(!key) return;
+  if(Object.keys(MINOR).length===0){
+    ALL_TYPES=[];
+    loadTypeData(function(){ populateMinor(key); });
+    return;
+  }
+  var rawOpts=MINOR[key]||[];
+  if(rawOpts.length===0){ mn.innerHTML='<option value="">No types for this head</option>'; return; }
+  var opts=rawOpts.slice().sort(function(a,b){return a.localeCompare(b);});
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];mn.appendChild(o);}
+  document.getElementById('ncNature').innerHTML='<option value="">Select Nature</option>';
+}
+
+function populateNature(minorVal) {
+  var ns=document.getElementById('ncNature');
+  ns.innerHTML='<option value="">Select Nature</option>';
+  var key=(minorVal||'').trim();
+  if(!key) return;
+  var opts=(NATURE[key]||NATURE['default']||['Standard','Special','Recurring','One-time']).slice().sort(function(a,b){return a.localeCompare(b);});
+  for(var i=0;i<opts.length;i++){var o=document.createElement('option');o.value=opts[i];o.textContent=opts[i];ns.appendChild(o);}
+}
+
+function loadClients(selectAfter) {
+  var intGroup = document.getElementById('ncClientInternal');
+  var extGroup = document.getElementById('ncClientExternal');
+  if (!intGroup || !extGroup) return;
+  // Internal fixed options
+  intGroup.innerHTML = '';
+  ['PKP','General'].forEach(function(v){
+    var o=document.createElement('option'); o.value=v; o.textContent=v; intGroup.appendChild(o);
+  });
+  api({action:'getClients'}, function(res){
+    extGroup.innerHTML = '';
+    var sc=(res.clients||[]).slice().sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    sc.forEach(function(c){
+      var o=document.createElement('option'); o.value=c.name; o.textContent=c.name;
+      extGroup.appendChild(o);
+    });
+    if (selectAfter) {
+      var sel = document.getElementById('ncClient');
+      if (sel) for(var i=0;i<sel.options.length;i++){
+        if(sel.options[i].value===selectAfter){ sel.selectedIndex=i; break; }
+      }
+    }
+  });
+}
+
+function buildClientSelect(q, selectAfter) {
+  var sel = document.getElementById('ncClient');
+  if (!sel) return;
+  sel.innerHTML = '';
+  var internals = window._clientInternal||[];
+  var externals = window._clientExternal||[];
+  var filtI = !q ? internals : internals.filter(function(n){ return n.toLowerCase().indexOf(q.toLowerCase())>=0; });
+  var filtE = !q ? externals : externals.filter(function(n){ return n.toLowerCase().indexOf(q.toLowerCase())>=0; });
+  if (filtI.length) {
+    var gi = document.createElement('optgroup'); gi.label='── Internal ──';
+    filtI.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; gi.appendChild(o); });
+    sel.appendChild(gi);
+  }
+  if (filtE.length) {
+    var ge = document.createElement('optgroup'); ge.label='── Clients ──';
+    filtE.forEach(function(n){ var o=document.createElement('option'); o.value=n; o.textContent=n; ge.appendChild(o); });
+    sel.appendChild(ge);
+  }
+  if (!filtI.length && !filtE.length) {
+    var o=document.createElement('option'); o.value=''; o.textContent='No matches'; sel.appendChild(o);
+  }
+  if (selectAfter) {
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].value===selectAfter){ sel.selectedIndex=i; break; }
+    }
+  }
+}
+
+function filterClientSelect(q) { buildClientSelect(q); }
+
+
+
+
+
+
+function onClientSearch(val) {
+  var addBar = document.getElementById('ncClientAddBar');
+  var addMsg = document.getElementById('ncClientAddMsg');
+  if (!val || !val.trim()) { if(addBar) addBar.style.display='none'; return; }
+  var list = window._clientList || [];
+  var match = list.some(function(n){ return n.toLowerCase() === val.toLowerCase().trim(); });
+  if (!match && addBar && addMsg) {
+    addMsg.textContent = 'Add "' + val.trim() + '" as new client?';
+    addBar.style.display = 'flex';
+  } else if (addBar) {
+    addBar.style.display = 'none';
+  }
+}
+
+function onClientBlur(val) {
+  // On blur, hide add bar if value matches existing
+  setTimeout(function(){
+    var addBar = document.getElementById('ncClientAddBar');
+    if (!val || !val.trim()) return;
+    var list = window._clientList || [];
+    var match = list.some(function(n){ return n.toLowerCase() === val.toLowerCase().trim(); });
+    if (match && addBar) addBar.style.display = 'none';
+  }, 200);
+}
+
+function openAddClientMod() {
+  var el = document.getElementById('newClientName');
+  if (el) el.value = '';
+  document.getElementById('addClientOv').className = 'overlay on';
+  setTimeout(function(){ if(el) el.focus(); }, 100);
+}
+function closeAddClientMod() {
+  document.getElementById('addClientOv').className = 'overlay';
+}
+function confirmAddClient() {
+  var inp = document.getElementById('newClientName');
+  var name = inp ? inp.value.trim() : '';
+  if (!name) { toast('Enter a client name.','err'); return; }
+  var btn = document.getElementById('addClientSvBtn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+  api({action:'saveClient', clientName:name}, function(res){
+    btn.disabled = false; btn.textContent = 'Save Client';
+    if (res.error) { toast(res.error,'err'); return; }
+    toast('"'+name+'" added!','ok');
+    closeAddClientMod();
+    loadClients(name);
+  });
+}
+
+function addNewClient(){ confirmAddClient(); }
+
+function populatePaidBy() {
+  var sel = document.getElementById('ncPaidBy');
+  if (!sel) return;
+  sel.innerHTML = '<option value="">Select who paid</option>';
+  window._paidByAll = [];
+  api({action:'getEmployees'}, function(res){
+    var emps = res.employees||[];
+    var myTeam = sess.teamName||'';
+    var myMgr  = sess.managerId||'';
+    var myId   = sess.id||'';
+    var active = emps.filter(function(e){
+      return String(e.isActive||'').toUpperCase().trim()==='TRUE' || e.isActive===true;
+    });
+    var list = [];
+    if (myTeam) list = active.filter(function(e){ return e.teamName === myTeam; });
+    if (list.length===0 && myMgr) list = active.filter(function(e){ return e.managerId===myMgr||e.id===myMgr; });
+    if (list.length===0) list = active.filter(function(e){ return e.id===myId; });
+    if (!list.some(function(e){ return e.id===myId; })) {
+      var self=active.filter(function(e){ return e.id===myId; });
+      list=self.concat(list);
+    }
+    // Deduplicate
+    var seen={}; var unique=[];
+    list.forEach(function(e){ if(!seen[e.id]){ seen[e.id]=true; unique.push(e); } });
+    unique.sort(function(a,b){ return (a.name||'').localeCompare(b.name||''); });
+    window._paidByAll = unique;
+    sel.innerHTML = '';
+    unique.forEach(function(e){
+      var o=document.createElement('option');
+      o.value=e.id; o.textContent=e.name+' ('+e.id+')';
+      sel.appendChild(o);
+    });
+    // Auto-select self
+    for(var i=0;i<sel.options.length;i++){
+      if(sel.options[i].value===myId){ sel.selectedIndex=i; break; }
+    }
+  });
+}
+
+function filterPaidBySelect(q) {
+  var sel = document.getElementById('ncPaidBy');
+  var all = window._paidByAll||[];
+  sel.innerHTML = '';
+  var filtered = !q ? all : all.filter(function(e){
+    return e.name.toLowerCase().indexOf(q.toLowerCase())>=0||e.id.toLowerCase().indexOf(q.toLowerCase())>=0;
+  });
+  filtered.forEach(function(e){
+    var o=document.createElement('option');
+    o.value=e.id; o.textContent=e.name+' ('+e.id+')';
+    sel.appendChild(o);
+  });
+}
+
+function onPaidBySearch(val){ filterPaidBySelect(val); }
+
+function onPaidBySearch(val) {
+  var hidden = document.getElementById('ncPaidBy');
+  var map = window._paidByMap || {};
+  // Try exact match by name
+  var id = map[val.toLowerCase()];
+  if (id) { hidden.value = id; return; }
+  // Try matching id directly
+  if (map[val]) { hidden.value = val; return; }
+  hidden.value = '';
+}
+
+function setupNewClaim() {
+  var today=new Date().toISOString().split('T')[0];
+  var el = function(id){ return document.getElementById(id); };
+  if(el('ncCancel')) el('ncCancel').addEventListener('click', function(){ go('my-claims'); });
+  if(el('ncDate')) el('ncDate').max=today;
+  loadClients();
+  populatePaidBy();
+  var ms=el('ncMajor');
+  if(ms) ms.addEventListener('change',function(){ populateMinor(this.value); });
+  var mn=el('ncMinor');
+  if(mn) mn.addEventListener('change',function(){ populateNature(this.value); });
+  var amt=el('ncAmt');
+  if(amt) amt.addEventListener('input',function(){
+    var v=parseFloat(this.value)||0; el('ncAmtD').textContent='Rs.'+v.toLocaleString('en-IN',{minimumFractionDigits:2});
+  });
+  var cats=document.querySelectorAll('.cat-opt');
+  for(var c=0;c<cats.length;c++){cats[c].addEventListener('click',function(){for(var x=0;x<cats.length;x++) cats[x].className='cat-opt';this.className='cat-opt sel';});}
+}
+
+function resetNC(){
+  var today=new Date().toISOString().split('T')[0];
+  document.getElementById('ncDate').value=today;
+
+
+  document.getElementById('ncMinor').innerHTML='<option value="">Select</option>';
+  document.getElementById('ncNature').innerHTML='<option value="">Select</option>';
+  document.getElementById('ncSub').value='';
+  document.getElementById('ncAmt').value='';
+  document.getElementById('ncDesc').value='';
+  document.getElementById('ncAmtD').textContent='Rs. 0.00';
+  document.getElementById('ncAttRef').value='';
+  document.getElementById('ncAttURL').value='';
+  document.getElementById('refStatus').textContent='';
+  var cats=document.querySelectorAll('.cat-opt');
+  for(var i=0;i<cats.length;i++) cats[i].className='cat-opt';
+  if(document.getElementById('cat0')) document.getElementById('cat0').className='cat-opt sel';
+  // Rebuild major dropdown from loaded types
+  loadTypeData(function(){
+    var ms=document.getElementById('ncMajor');
+    ms.innerHTML='<option value="">Select Major Head</option>';
+    var majorList=Object.keys(MINOR);
+    for(var i=0;i<majorList.length;i++){
+      var o=document.createElement('option');o.value=majorList[i];o.textContent=majorList[i];ms.appendChild(o);
+    }
+  });
+  loadClients();
+  populatePaidBy();
+}
+
+function getRef(){
+  document.getElementById('refStatus').textContent='Generating...';
+  api({action:'getAttachmentRef'},function(res){
+    if(res.error){document.getElementById('refStatus').textContent='Error: '+res.error;return;}
+    document.getElementById('ncAttRef').value=res.ref;
+    document.getElementById('refStatus').textContent='Reference assigned!';
+    setTimeout(function(){document.getElementById('refStatus').textContent='';},3000);
+  });
+}
+
+function submitClaim(){
+  var checks=[{id:'ncDate',n:'Date'},{id:'ncPaidBy',n:'Paid By'},{id:'ncMajor',n:'Major Head'},{id:'ncMinor',n:'Minor Head'},{id:'ncNature',n:'Nature'},{id:'ncAmt',n:'Amount'},{id:'ncDesc',n:'Description'}];
+  var clientEl2=document.getElementById('ncClient'); if(!clientEl2||!clientEl2.value.trim()){toast('Please select a Client.','err');return;}
+  for(var i=0;i<checks.length;i++){var el=document.getElementById(checks[i].id);if(!el.value||!el.value.trim()){toast('Please fill in: '+checks[i].n,'err');el.focus();return;}}
+  var catEl=document.querySelector('input[name=cat]:checked');
+  var btn=document.getElementById('ncSubmit');
+  if(btn.disabled) return;
+  btn.disabled=true; btn.textContent='Submitting...';
+  var paidByEl = document.getElementById('ncPaidBy');  // select - value is employee ID
+  var clientEl = document.getElementById('ncClient');  // select
+  api({action:'submitClaim',dateExpense:document.getElementById('ncDate').value,clientName:clientEl?clientEl.value.trim():'',paidBy:paidByEl?paidByEl.value:'',majorHead:document.getElementById('ncMajor').value,minorHead:document.getElementById('ncMinor').value,nature:document.getElementById('ncNature').value,subNature:document.getElementById('ncSub').value.trim(),description:document.getElementById('ncDesc').value.trim(),amount:document.getElementById('ncAmt').value,category:catEl?catEl.value:'Non Reimbursable',attachmentRef:document.getElementById('ncAttRef').value.trim(),attachmentURL:document.getElementById('ncAttURL').value.trim()},function(res){
+    btn.disabled=false; btn.textContent='Submit for Approval';
+    if(res.error){toast('Error: '+res.error,'err');return;}
+    toast('Claim '+res.claimId+' submitted! Pending manager approval.','ok');
+    setTimeout(function(){go('my-claims');},2000);
+  });
+}
+
+// ── REPORTS ──
+function buildRpts(){
+  var role=sess.role;
+  var cards=[
+    {id:"summary",t:"Claims Summary",s:"All claims overview",ic:"📋"},
+    {id:"pending_manager",t:"Pending Manager",s:"Awaiting manager approval",ic:"⏳"},
+    {id:"pending_finance",t:"Pending Finance",s:"Awaiting finance approval",ic:"🔍"},
+    {id:"pending_payment",t:"Pending Payment",s:"Approved but not paid",ic:"💳"},
+    {id:"pending_receipt",t:"Pending Receipt",s:"Invoiced, not received",ic:"📬"},
+    {id:"pending_intimation",t:"Pending Intimation",s:"Client reimb. not yet intimated",ic:"📤"},
+    {id:"my_payments",t:"My Payments",s:"Claims where I paid",ic:"💵"},
+    {id:"clientwise",t:"Client-wise",s:"Grouped by client",ic:"🏢"}
+  ];
+  if(role==="ADMIN"||role==="FINANCE_MGR") cards.push({id:"employeewise",t:"Employee-wise",s:"Grouped by employee",ic:"👤"});
+  var grid=document.getElementById("rptCards");
+  grid.innerHTML="";
+  for(var i=0;i<cards.length;i++){
+    var cd=cards[i];
+    var div=document.createElement("div");
+    div.style.cssText="background:#fff;border-radius:10px;border:1px solid var(--border);padding:16px 18px;cursor:pointer;transition:all 0.15s";
+    div.innerHTML="<div style=\"font-size:28px;margin-bottom:8px\">"+cd.ic+"</div><div style=\"font-size:14px;font-weight:600;color:var(--blue);margin-bottom:4px;font-family:'Palatino Linotype',serif\">"+cd.t+"</div><div style=\"font-size:11px;color:var(--muted)\">"+cd.s+"</div>";
+    div.addEventListener("mouseover",function(){this.style.borderColor="var(--blue3)";this.style.transform="translateY(-2px)";this.style.boxShadow="0 4px 12px rgba(26,26,46,0.08)";});
+    div.addEventListener("mouseout",function(){this.style.borderColor="var(--border)";this.style.transform="";this.style.boxShadow="";});
+    (function(rid){ div.addEventListener("click",function(){ loadRpt(rid); }); })(cd.id);
+    grid.appendChild(div);
+  }
+  document.getElementById("rptOut").innerHTML="";
+  document.getElementById("rptSelBar").className="rpt-sel-bar";
+}
+
+// ── REPORT STATE ──
+var rptData=[];
+var rptCurrentRid="";
+var rptColFilters={};   // {colKey: Set of selected values}
+var rptSelected={};     // {ClaimID: true/false}
+
+function loadRpt(rid){
+  rptCurrentRid=rid; rptSelected={}; rptColFilters={};
+  document.getElementById("rptSelBar").className="rpt-sel-bar";
+  document.getElementById("rptOut").innerHTML="<div class=\"empty\">Loading...</div>";
+  // my_payments needs 'mine' filter which includes PaidByExpense claims
+  var rptFilter = (rid==="my_payments") ? "mine" : "team";
+  api({action:"getClaims",filter:rptFilter},function(res){
+    if(res.error){toast(res.error,"err");return;}
+    var all=res.claims||[];
+    var filtered=[];
+    if(rid==="summary") filtered=all;
+    else if(rid==="pending_manager") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_MANAGER";});
+    else if(rid==="pending_finance") filtered=all.filter(function(c){return c.ManagerApprovalStatus==="PENDING_FINANCE";});
+    else if(rid==="pending_payment") filtered=all.filter(function(c){return c.FinanceApprovalStatus==="APPROVED_FINANCE"&&!c.DatePaidByFirm;});
+    else if(rid==="pending_receipt") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
+    else if(rid==="pending_intimation") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&!c.DateInvoicedToClient&&(c.FinanceApprovalStatus==="APPROVED_FINANCE"||c.DatePaidByFirm);});
+    else if(rid==="my_payments") filtered=all.filter(function(c){return c.PaidByExpense===sess.id||((!c.PaidByExpense||c.PaidByExpense==="")&&c.PaidBy===sess.id);});
+    else if(rid==="clientwise") filtered=all.slice().sort(function(a,b){return (a.ClientName||"").localeCompare(b.ClientName||"");});
+    else if(rid==="employeewise") filtered=all.slice().sort(function(a,b){return (a.ClaimantName||"").localeCompare(b.ClaimantName||"");});
+    else filtered=all;
+    rptData=filtered;
+    renderRpt(rid,filtered);
+  });
+}
+
+// ── COLUMN FILTER LOGIC ──
+var COL_KEYS=["ClaimID","ClaimantName","DateOfExpense","ClientName","MajorHead","MinorHead","Category","Amount","status"];
+var COL_LABELS={"ClaimID":"Claim ID","ClaimantName":"Employee","DateOfExpense":"Date","ClientName":"Client","MajorHead":"Major Head","MinorHead":"Minor Head","Category":"Category","Amount":"Amount","status":"Status"};
+
+function getColVal(c,key){
+  if(key==="status") return getStatusLabel(getStatus(c));
+  if(key==="Amount") return fmtA(c.Amount);
+  if(key==="DateOfExpense") return fmtD(c.DateOfExpense);
+  return String(c[key]||"-");
+}
+
+function getStatusLabel(s){
+  var m={PENDING_MANAGER:"Pending Manager",PENDING_FINANCE:"Pending Finance",APPROVED_FINANCE:"Finance Approved",REJECTED_MANAGER:"Rejected",REJECTED_FINANCE:"Fin.Rejected",PAID:"Paid",CLOSED:"Closed"};
+  return m[s]||s||"-";
+}
+
+function getUniqueVals(key){
+  var vals={};
+  for(var i=0;i<rptData.length;i++) vals[getColVal(rptData[i],key)]=true;
+  return Object.keys(vals).sort();
+}
+
+function applyColFilters(){
+  var filtered=rptData.filter(function(c){
+    for(var key in rptColFilters){
+      if(!rptColFilters[key]||rptColFilters[key].length===0) continue;
+      var val=getColVal(c,key);
+      if(rptColFilters[key].indexOf(val)<0) return false;
+    }
+    return true;
+  });
+  return filtered;
+}
+
+function openColFilter(key,btnEl){
+  // Close any open filter dropdowns
+  document.querySelectorAll(".col-filter-drop").forEach(function(d){d.remove();});
+  var drop=document.createElement("div"); drop.className="col-filter-drop";
+  var si=document.createElement("input"); si.type="text"; si.placeholder="Search...";
+  drop.appendChild(si);
+  var allVals=getUniqueVals(key);
+  var selected=rptColFilters[key]||allVals.slice();
+  function buildItems(filter){
+    var old=drop.querySelectorAll(".col-filter-item");
+    old.forEach(function(o){o.remove();});
+    var actDiv=drop.querySelector(".col-filter-actions");
+    var shown=allVals.filter(function(v){return !filter||v.toLowerCase().indexOf(filter.toLowerCase())>=0;});
+    shown.forEach(function(v){
+      var item=document.createElement("div"); item.className="col-filter-item";
+      var cb=document.createElement("input"); cb.type="checkbox"; cb.value=v; cb.checked=selected.indexOf(v)>=0;
+      cb.addEventListener("change",function(){if(this.checked){if(selected.indexOf(v)<0)selected.push(v);}else{selected=selected.filter(function(s){return s!==v;});}});
+      var lbl=document.createElement("span"); lbl.textContent=v; lbl.style.flex="1"; lbl.style.fontSize="12px";
+      item.appendChild(cb); item.appendChild(lbl);
+      drop.insertBefore(item,actDiv);
+    });
+  }
+  var actions=document.createElement("div"); actions.className="col-filter-actions";
+  var okBtn=document.createElement("button"); okBtn.className="cf-ok"; okBtn.textContent="Apply";
+  var clrBtn=document.createElement("button"); clrBtn.className="cf-clr"; clrBtn.textContent="Clear";
+  okBtn.addEventListener("click",function(){
+    rptColFilters[key]=selected.length===allVals.length?[]:selected;
+    if(rptColFilters[key].length===0) delete rptColFilters[key];
+    drop.remove();
+    btnEl.className="col-filter-btn"+(Object.keys(rptColFilters).indexOf(key)>=0?" active":"");
+    renderRpt(rptCurrentRid,applyColFilters());
+  });
+  clrBtn.addEventListener("click",function(){
+    selected=allVals.slice(); delete rptColFilters[key];
+    buildItems(""); btnEl.className="col-filter-btn";
+  });
+  actions.appendChild(clrBtn); actions.appendChild(okBtn); drop.appendChild(actions);
+  buildItems("");
+  si.addEventListener("input",function(){buildItems(this.value);});
+  // Position
+  var rect=btnEl.getBoundingClientRect();
+  drop.style.position="fixed"; drop.style.top=(rect.bottom+4)+"px"; drop.style.left=Math.max(8,rect.left-60)+"px";
+  document.body.appendChild(drop);
+  // Close on outside click
+  setTimeout(function(){
+    document.addEventListener("click",function handler(e){
+      if(!drop.contains(e.target)&&e.target!==btnEl){drop.remove();document.removeEventListener("click",handler);}
+    });
+  },100);
+}
+
+// ── SELECTION LOGIC ──
+function toggleRowSelect(chk,claimId){
+  if(chk.checked) rptSelected[claimId]=true;
+  else delete rptSelected[claimId];
+  var tr=chk.closest("tr");
+  if(tr) tr.className=chk.checked?"rpt-row-sel":"";
+  updateSelBar();
+}
+
+function toggleSelectAll(chk){
+  var all=document.querySelectorAll(".rpt-chk");
+  for(var i=0;i<all.length;i++){
+    all[i].checked=chk.checked;
+    var cid=all[i].getAttribute("data-id");
+    if(chk.checked) rptSelected[cid]=true;
+    else delete rptSelected[cid];
+    var tr=all[i].closest("tr");
+    if(tr) tr.className=chk.checked?"rpt-row-sel":"";
+  }
+  updateSelBar();
+}
+
+function updateSelBar(){
+  var count=Object.keys(rptSelected).length;
+  var bar=document.getElementById("rptSelBar");
+  document.getElementById("selCount").textContent=count;
+  bar.className=count>0?"rpt-sel-bar on":"rpt-sel-bar";
+}
+
+function getSelectedClaims(){
+  return rptData.filter(function(c){return rptSelected[c.ClaimID];});
+}
+
+function clearSelection(){
+  rptSelected={};
+  document.querySelectorAll(".rpt-chk").forEach(function(c){c.checked=false;});
+  document.querySelectorAll(".rpt-row-sel").forEach(function(r){r.className="";});
+  var allChk=document.getElementById("rptSelectAll"); if(allChk) allChk.checked=false;
+  updateSelBar();
+}
+
+// ── RENDER REPORT ──
+function renderRpt(rid,data){
+  var total=0; var catTotals={};
+  for(var i=0;i<data.length;i++){
+    var amt=parseFloat(data[i].Amount)||0; total+=amt;
+    var cat=data[i].Category||"Uncategorised";
+    catTotals[cat]=(catTotals[cat]||0)+amt;
+  }
+  var rptTitle={summary:"Claims Summary",pending_manager:"Pending Manager Approval",pending_finance:"Pending Finance Approval",pending_payment:"Pending Payment",pending_receipt:"Pending Receipt",pending_intimation:"Pending Intimation",my_payments:"My Payments Report",clientwise:"Client-wise Report",employeewise:"Employee-wise Report"};
+  var titleText=rptTitle[rid]||rid.replace(/_/g," ");
+
+  var out=document.getElementById("rptOut");
+  out.innerHTML="";
+
+  // Print header (hidden on screen, shown on print)
+  var ph=document.getElementById("rptPrintHdr");
+  ph.innerHTML="<div style='text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:12px;margin-bottom:16px'><div style='font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#7070a0;margin-bottom:4px'>Pratapkaran Paul &amp; Co.</div><div style='font-size:20px;font-weight:700;color:#1a1a2e;font-family:Palatino Linotype,serif;margin-bottom:4px'>"+titleText+"</div><div style='font-size:11px;color:#7070a0'>Printed by: "+sess.name+" &nbsp;|&nbsp; Date: "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})+"</div></div>";
+
+  var wrap=document.createElement("div"); wrap.className="tc";
+  // Toolbar
+  var tbr=document.createElement("div"); tbr.className="rpt-toolbar";
+  var ttl=document.createElement("div"); ttl.className="th2-title"; ttl.style.marginRight="auto";
+  ttl.textContent=titleText+" ("+data.length+" records — "+fmtA(total)+")";
+  var selAllWrap=document.createElement("label"); selAllWrap.style.cssText="display:flex;align-items:center;gap:6px;font-size:12px;color:var(--muted);cursor:pointer";
+  var selAllChk=document.createElement("input"); selAllChk.type="checkbox"; selAllChk.id="rptSelectAll"; selAllChk.className="rpt-chk"; selAllChk.style.width="14px"; selAllChk.style.height="14px";
+  selAllChk.addEventListener("change",function(){toggleSelectAll(this);});
+  selAllWrap.appendChild(selAllChk); selAllWrap.appendChild(document.createTextNode("Select All"));
+  var xcsv=document.createElement("button"); xcsv.className="ghost"; xcsv.innerHTML="📥 CSV"; xcsv.addEventListener("click",function(){exportCSV(data,"report_"+rid);});
+  tbr.appendChild(ttl); tbr.appendChild(selAllWrap); tbr.appendChild(xcsv);
+  wrap.appendChild(tbr);
+
+  // Table
+  var tw=document.createElement("div"); tw.className="tw";
+  var tbl=document.createElement("table");
+  // Build thead with filter buttons
+  var thead=document.createElement("thead");
+  var htr=document.createElement("tr");
+  var cols=[
+    {key:"chk",lbl:""},
+    {key:"ClaimID",lbl:"Claim ID"},
+    {key:"ClaimantName",lbl:"Employee"},
+    {key:"DateOfExpense",lbl:"Date"},
+    {key:"ClientName",lbl:"Client"},
+    {key:"MajorHead",lbl:"Major Head"},
+    {key:"MinorHead",lbl:"Minor Head"},
+    {key:"Category",lbl:"Category"},
+    {key:"Amount",lbl:"Amount"},
+    {key:"status",lbl:"Status"}
+  ];
+  for(var ci=0;ci<cols.length;ci++){
+    var th=document.createElement("th");
+    if(cols[ci].key==="chk"){th.style.width="32px"; htr.appendChild(th); continue;}
+    var hasFilter=rptColFilters[cols[ci].key]&&rptColFilters[cols[ci].key].length>0;
+    th.innerHTML=cols[ci].lbl;
+    var fb=document.createElement("button"); fb.className="col-filter-btn"+(hasFilter?" active":""); fb.innerHTML="▼"; fb.title="Filter";
+    (function(k,btn){ fb.addEventListener("click",function(e){e.stopPropagation();openColFilter(k,btn);}); })(cols[ci].key,fb);
+    th.appendChild(fb);
+    htr.appendChild(th);
+  }
+  thead.appendChild(htr); tbl.appendChild(thead);
+
+  // Tbody
+  var tbody=document.createElement("tbody");
+  if(!data.length){
+    var etr=document.createElement("tr"); var etd=document.createElement("td"); etd.colSpan=10; etd.innerHTML="<div class=\"empty\">No records.</div>"; etr.appendChild(etd); tbody.appendChild(etr);
+  } else {
+    for(var i=0;i<data.length;i++){
+      var c=data[i]; var s=getStatus(c);
+      var tr=document.createElement("tr");
+      if(rptSelected[c.ClaimID]) tr.className="rpt-row-sel";
+      // Checkbox td
+      var chtd=document.createElement("td");
+      var chk=document.createElement("input"); chk.type="checkbox"; chk.className="rpt-chk"; chk.setAttribute("data-id",c.ClaimID); chk.checked=!!rptSelected[c.ClaimID];
+      (function(chkEl,cid){ chkEl.addEventListener("change",function(){toggleRowSelect(chkEl,cid);}); })(chk,c.ClaimID);
+      chtd.appendChild(chk); tr.appendChild(chtd);
+      // Data cells
+      var vals=["<span class=\"cid\">"+c.ClaimID+"</span>",c.ClaimantName||c.ClaimantID||"-",fmtD(c.DateOfExpense),c.ClientName||"-",c.MajorHead||"-",c.MinorHead||"-","<span style=\"font-size:11px;color:var(--muted)\">"+((c.Category||"-"))+"</span>","<span class=\"amt\">"+fmtA(c.Amount)+"</span>",statusBadge(s)];
+      for(var v=0;v<vals.length;v++){var td=document.createElement("td"); td.innerHTML=vals[v]; tr.appendChild(td);}
+      tbody.appendChild(tr);
+    }
+  }
+  tbl.appendChild(tbody); tw.appendChild(tbl); wrap.appendChild(tw);
+  out.appendChild(wrap);
+
+  // Print footer (hidden on screen)
+  var pf=document.getElementById("rptPrintFtr");
+  var catRows="";
+  for(var cat in catTotals) catRows+="<tr><td style='padding:4px 8px;font-size:12px'>"+cat+"</td><td style='padding:4px 8px;font-size:12px;text-align:right;font-weight:600'>"+fmtA(catTotals[cat])+"</td></tr>";
+  pf.innerHTML="<table style='width:100%;border-collapse:collapse;margin-bottom:16px'><thead><tr><th colspan='2' style='background:#1a1a2e;color:#fff;padding:7px 8px;font-size:12px;text-align:left'>Summary by Category</th></tr></thead><tbody>"+catRows+"<tr style='border-top:2px solid #1a1a2e'><td style='padding:6px 8px;font-weight:700;font-size:13px'>TOTAL</td><td style='padding:6px 8px;font-weight:700;font-size:13px;text-align:right'>"+fmtA(total)+"</td></tr></tbody></table><div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px'><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Prepared by<br><br><strong style='color:#1a1a2e'>"+sess.name+"</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Authorised by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Reviewed by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div></div><div style='margin-top:16px;font-size:9px;color:#9090b0;text-align:center'>Pratapkaran Paul &amp; Co. | System generated report | "+new Date().toLocaleString("en-IN")+"</div>";
+}
+
+// ── EXPORT SELECTED PDF (browser print) ──
+function exportSelectedPDF(){
+  var sel=getSelectedClaims();
+  if(!sel.length){toast("Select at least one claim to print.","err");return;}
+  // Store selected in sessionStorage and open print window
+  sessionStorage.setItem("printReportData", JSON.stringify(sel));
+  sessionStorage.setItem("printReportTitle", document.querySelector(".th2-title") ? document.querySelector(".th2-title").textContent : "Claims Report");
+  window.open("report_print.html","_blank","width=900,height=700");
+}
+
+// ── EXPORT SELECTED EXCEL ──
+function exportSelectedXLS(){
+  var sel=getSelectedClaims();
+  if(!sel.length){toast("Select at least one claim to export.","err");return;}
+  if(typeof XLSX==="undefined"){toast("Excel library not loaded. Please refresh.","err");return;}
+
+  var wb=XLSX.utils.book_new();
+
+  // Main data sheet
+  var headers=["Claim ID","Employee","Date of Expense","Client","Major Head","Minor Head","Nature","Category","Amount (Rs.)","Status","Manager Status","Finance Status","Date Paid","Invoice Date","Receipt Date"];
+  var rows=[headers];
+  var total=0;
+  for(var i=0;i<sel.length;i++){
+    var c=sel[i]; var amt=parseFloat(c.Amount)||0; total+=amt;
+    rows.push([
+      c.ClaimID, c.ClaimantName||c.ClaimantID||"",
+      fmtD(c.DateOfExpense), c.ClientName||"",
+      c.MajorHead||"", c.MinorHead||"", c.Nature||"",
+      c.Category||"", amt,
+      getStatusLabel(getStatus(c)),
+      c.ManagerApprovalStatus||"", c.FinanceApprovalStatus||"",
+      c.DatePaidByFirm||"", c.DateInvoicedToClient||"", c.DateReceivedFromClient||""
+    ]);
+  }
+  // Total row
+  rows.push(["","","","","","","","TOTAL",total,"","","","","",""]);
+
+  var ws=XLSX.utils.aoa_to_sheet(rows);
+
+  // Column widths
+  ws["!cols"]=[{wch:16},{wch:20},{wch:14},{wch:22},{wch:16},{wch:16},{wch:16},{wch:18},{wch:14},{wch:18},{wch:18},{wch:18},{wch:14},{wch:14},{wch:14}];
+
+  XLSX.utils.book_append_sheet(wb, ws, "Claims");
+
+  // Summary sheet
+  var catTotals={};
+  for(var i=0;i<sel.length;i++){
+    var cat=sel[i].Category||"Uncategorised";
+    catTotals[cat]=(catTotals[cat]||0)+(parseFloat(sel[i].Amount)||0);
+  }
+  var srows=[["Category","Total Amount (Rs.)"]];
+  for(var cat in catTotals) srows.push([cat, catTotals[cat]]);
+  srows.push(["GRAND TOTAL", total]);
+  var ws2=XLSX.utils.aoa_to_sheet(srows);
+  ws2["!cols"]=[{wch:24},{wch:20}];
+  XLSX.utils.book_append_sheet(wb, ws2, "Summary");
+
+  var fname="PKP_Claims_"+new Date().toISOString().slice(0,10)+".xlsx";
+  XLSX.writeFile(wb, fname);
+  toast("Excel exported: "+sel.length+" claims", "ok");
+}
+
+// ── USERS ──
+function loadUSR(){
+  document.getElementById('usrBody').innerHTML='<tr><td colspan="7"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getEmployees'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    usrData=res.employees||[];
+    fillMgrDrop(); filterUSR();
+  });
+}
+function fillMgrDrop(){var sel=document.getElementById('uMgr');sel.innerHTML='<option value="">No Manager</option>';for(var i=0;i<usrData.length;i++){var e=usrData[i];if(e.role==='MANAGER'||e.role==='ADMIN'||e.role==='FINANCE_MGR'){var o=document.createElement('option');o.value=e.id;o.textContent=e.name+' ('+e.role+')';sel.appendChild(o);}}}
+function filterUSR(){
+  var q=(document.getElementById("usrSrch").value||"").toLowerCase();
+  var filtered=usrData.filter(function(e){
+    return !q||(e.name||"").toLowerCase().indexOf(q)>=0||(e.email||"").toLowerCase().indexOf(q)>=0;
+  });
+  var rlbl={EMPLOYEE:"Employee",MANAGER:"Manager",FINANCE_MGR:"HR Manager",ACCOUNTS:"Accounts",ADMIN:"Admin"};
+  var tb=document.getElementById("usrBody");
+  tb.innerHTML="";
+  if(!filtered.length){
+    var tr=document.createElement("tr");
+    tr.innerHTML="<td colspan=\"7\"><div class=\"empty\">No users.</div></td>";
+    tb.appendChild(tr); return;
+  }
+  for(var i=0;i<filtered.length;i++){
+    var e=filtered[i];
+    var act=String(e.isActive).toUpperCase()==="TRUE";
+    var badgeCls=act?"b-af":"b-rej";
+    var statusColor=act?"#065f46":"#991b1b";
+    var statusText=act?"Active":"Inactive";
+    var roleText=(e.role==='EMPLOYEE'&&e.designation&&e.designation!==''&&e.designation!=='Employee')?e.designation:(rlbl[e.role]||e.role);
+    var initial=(e.name||"?").charAt(0).toUpperCase();
+    var tr=document.createElement("tr");
+    var td1=document.createElement("td");
+    var av=document.createElement("span"); av.className="av"; av.textContent=initial;
+    td1.appendChild(av); td1.appendChild(document.createTextNode(e.name||"-"));
+    var td2=document.createElement("td");
+    var cidSp=document.createElement("span"); cidSp.className="cid"; cidSp.textContent=e.id;
+    td2.appendChild(cidSp);
+    var td3=document.createElement("td"); td3.textContent=e.email||"-";
+    var td4=document.createElement("td");
+    var roleSp=document.createElement("span"); roleSp.className="badge "+badgeCls; roleSp.textContent=roleText;
+    td4.appendChild(roleSp);
+    var td5=document.createElement("td"); td5.textContent=e.department||"-";
+    var td6=document.createElement("td");
+    var stSp=document.createElement("span"); stSp.style.cssText="font-size:12px;font-weight:600;color:"+statusColor; stSp.textContent=statusText;
+    td6.appendChild(stSp);
+    var td7=document.createElement("td");
+    var eb=document.createElement("button"); eb.className="btn"; eb.innerHTML="✏️ Edit";
+    (function(id){ eb.addEventListener("click",function(){ openEditUser(id); }); })(e.id);
+    var deb=document.createElement("button"); deb.className="btn "+(act?"btn-no":"btn-ok"); deb.textContent=act?"Deactivate":"Activate";
+    (function(id,a){ deb.addEventListener("click",function(){ togUser(id,a); }); })(e.id,act);
+    td7.appendChild(eb); td7.appendChild(deb);
+    tr.appendChild(td1); tr.appendChild(td2); tr.appendChild(td3); tr.appendChild(td4);
+    tr.appendChild(td5); tr.appendChild(td6); tr.appendChild(td7);
+    tb.appendChild(tr);
+  }
+}
+function openAddUser(){document.getElementById('uMTtl').textContent='Add Employee';document.getElementById('uId').value='';document.getElementById('uNm').value='';document.getElementById('uEm').value='';document.getElementById('uPw').value='';document.getElementById('uRl').value='';document.getElementById('uDp').value='';document.getElementById('uMgr').value='';document.getElementById('uPwdL').innerHTML='Password <span class="req">*</span>';document.getElementById('uStRow').style.display='none';document.getElementById('uSv').textContent='Add Employee';document.getElementById('usrOv').className='overlay on';}
+function openEditUser(id){var e=null;for(var i=0;i<usrData.length;i++){if(usrData[i].id===id){e=usrData[i];break;}}if(!e)return;document.getElementById('uMTtl').textContent='Edit Employee';document.getElementById('uId').value=e.id;document.getElementById('uNm').value=e.name||'';document.getElementById('uEm').value=e.email||'';document.getElementById('uPw').value='';document.getElementById('uRl').value=e.role||'';document.getElementById('uDp').value=e.department||'';if(document.getElementById('uTm'))document.getElementById('uTm').value=e.teamName||'';if(document.getElementById('uDsg'))document.getElementById('uDsg').value=e.designation||'';if(document.getElementById('uTm'))document.getElementById('uTm').value=e.teamName||'';document.getElementById('uMgr').value=e.managerId||'';document.getElementById('uSt').value=String(e.isActive).toUpperCase()==='TRUE'?'TRUE':'FALSE';document.getElementById('uPwdL').innerHTML='New Password <small style="color:var(--muted)">(blank=keep)</small>';document.getElementById('uStRow').style.display='flex';document.getElementById('uSv').textContent='Save Changes';document.getElementById('usrOv').className='overlay on';}
+function closeUserMod(){document.getElementById('usrOv').className='overlay';if(document.getElementById('uTm'))document.getElementById('uTm').value='';}
+function saveUser(){
+  var eid=document.getElementById('uId').value,name=document.getElementById('uNm').value.trim(),email=document.getElementById('uEm').value.trim(),pwd=document.getElementById('uPw').value.trim(),role=document.getElementById('uRl').value,dept=document.getElementById('uDp').value.trim(),mgr=document.getElementById('uMgr').value,stat=document.getElementById('uSt').value;
+  if(!name||!email||!role){toast('Name, email and role required.','err');return;}
+  if(!eid&&!pwd){toast('Password required for new employee.','err');return;}
+  var btn=document.getElementById('uSv');btn.disabled=true;btn.textContent='Saving...';
+  var tm=document.getElementById('uTm')?document.getElementById('uTm').value.trim():'';
+  var dsg=document.getElementById('uDsg')?document.getElementById('uDsg').value:'';
+  var p={}; if(eid){p.action='updateEmployee';p.employeeId=eid;p.Name=name;p.Email=email;p.Role=role;p.Department=dept;p.ManagerID=mgr;p.IsActive=stat;p.TeamName=tm;p.Designation=dsg;if(pwd)p.Password=pwd;}else{p.action='addEmployee';p.name=name;p.email=email;p.password=pwd;p.role=role;p.department=dept;p.managerId=mgr;p.teamName=tm;p.designation=dsg;}
+  api(p,function(res){btn.disabled=false;btn.textContent=eid?'Save Changes':'Add Employee';if(res.error){toast(res.error,'err');return;}toast(eid?'Employee updated!':'Employee added! ID: '+res.id,'ok');closeUserMod();loadUSR();});
+}
+function togUser(id,isActive){if(!confirm((isActive?'Deactivate':'Activate')+' this employee?'))return;api({action:'updateEmployee',employeeId:id,IsActive:isActive?'FALSE':'TRUE'},function(res){if(res.error){toast(res.error,'err');return;}toast((isActive?'Deactivated.':'Activated.'),'ok');loadUSR();});}
+
+
+// ── TYPES MANAGEMENT ──
+var allTypes = [];
+
+function loadTypes() {
+  document.getElementById('typesBody').innerHTML='<tr><td colspan="6"><div class="empty">Loading...</div></td></tr>';
+  api({action:'getReimbursementTypes'}, function(res) {
+    if (res.error) { toast(res.error,'err'); return; }
+    allTypes = res.types || [];
+    ALL_TYPES = [];
+    buildTypeMap();
+    filterTypes();
+    // Update major suggestions datalist
+    var dl = document.getElementById('majorSugg');
+    if (dl) {
+      var majors = Object.keys(MINOR);
+      dl.innerHTML = '';
+      for(var i=0;i<majors.length;i++){var o=document.createElement('option');o.value=majors[i];dl.appendChild(o);}
+    }
+  });
+}
+
+function filterTypes() {
+  var q=(document.getElementById('typeSrch')?document.getElementById('typeSrch').value||'':'').toLowerCase();
+  var f=document.getElementById('typeFilter')?document.getElementById('typeFilter').value:'';
+  var filtered=allTypes.filter(function(t){
+    var mq=!q||(t.majorHead||'').toLowerCase().indexOf(q)>=0||(t.minorHead||'').toLowerCase().indexOf(q)>=0||(t.nature||'').toLowerCase().indexOf(q)>=0;
+    var mf=!f||t.isActive===f;
+    return mq&&mf;
+  });
+  var tb=document.getElementById('typesBody');
+  if(!filtered.length){tb.innerHTML='<tr><td colspan="6"><div class="empty">No types found.</div></td></tr>';return;}
+  tb.innerHTML='';
+  for(var i=0;i<filtered.length;i++){
+    var t=filtered[i];
+    var act=t.isActive==='TRUE';
+    var tr=document.createElement('tr');
+    var td1=document.createElement('td'); td1.innerHTML='<span class="cid">'+t.id+'</span>'; 
+    var td2=document.createElement('td'); td2.textContent=t.majorHead;
+    var td3=document.createElement('td'); td3.textContent=t.minorHead;
+    var td4=document.createElement('td'); td4.textContent=t.nature;
+    var td5=document.createElement('td');
+    var sp=document.createElement('span');
+    sp.style.cssText='font-size:12px;font-weight:600;color:'+(act?'#065f46':'#991b1b');
+    sp.textContent=act?'Active':'Inactive';
+    td5.appendChild(sp);
+    var td6=document.createElement('td');
+    var eb=document.createElement('button'); eb.className='btn'; eb.textContent='Edit';
+    (function(tid){ eb.addEventListener('click',function(){ openEditType(tid); }); })(t.id);
+    var tb2=document.createElement('button'); tb2.className='btn '+(act?'btn-no':'btn-ok'); tb2.textContent=act?'Deactivate':'Activate';
+    (function(tid,a){ tb2.addEventListener('click',function(){ toggleType(tid,a); }); })(t.id,act);
+    td6.appendChild(eb); td6.appendChild(tb2);
+    tr.appendChild(td1);tr.appendChild(td2);tr.appendChild(td3);tr.appendChild(td4);tr.appendChild(td5);tr.appendChild(td6);
+    tb.appendChild(tr);
+  }
+}
+
+function openAddType() {
+  document.getElementById('typeMTtl').textContent='Add Reimbursement Type';
+  document.getElementById('typeId').value='';
+  document.getElementById('typeMajor').value='';
+  document.getElementById('typeMinor').value='';
+  document.getElementById('typeNature').value='';
+  document.getElementById('typeStRow').style.display='none';
+  document.getElementById('typeSvBtn').textContent='Add Type';
+  document.getElementById('typeOv').className='overlay on';
+}
+
+function openEditType(id) {
+  var t=null; for(var i=0;i<allTypes.length;i++){if(allTypes[i].id===id){t=allTypes[i];break;}}
+  if(!t) return;
+  document.getElementById('typeMTtl').textContent='Edit Type';
+  document.getElementById('typeId').value=t.id;
+  document.getElementById('typeMajor').value=t.majorHead;
+  document.getElementById('typeMinor').value=t.minorHead;
+  document.getElementById('typeNature').value=t.nature;
+  document.getElementById('typeSt').value=t.isActive;
+  document.getElementById('typeStRow').style.display='flex';
+  document.getElementById('typeSvBtn').textContent='Save Changes';
+  document.getElementById('typeOv').className='overlay on';
+}
+
+function closeTypeMod() { document.getElementById('typeOv').className='overlay'; }
+
+function saveType() {
+  var major=document.getElementById('typeMajor').value.trim();
+  var minor=document.getElementById('typeMinor').value.trim();
+  var nature=document.getElementById('typeNature').value.trim();
+  var typeId=document.getElementById('typeId').value;
+  if(!major||!minor||!nature){toast('All fields are required.','err');return;}
+  var btn=document.getElementById('typeSvBtn'); btn.disabled=true; btn.textContent='Saving...';
+  var p={action:'saveReimbursementType',majorHead:major,minorHead:minor,nature:nature};
+  if(typeId) p.typeId=typeId;
+  if(typeId) p.isActive=document.getElementById('typeSt').value;
+  api(p,function(res){
+    btn.disabled=false; btn.textContent=typeId?'Save Changes':'Add Type';
+    if(res.error){toast(res.error,'err');return;}
+    toast(typeId?'Type updated!':'Type added!','ok');
+    closeTypeMod();
+    ALL_TYPES=[];  // force reload
+    loadTypes();
+  });
+}
+
+function toggleType(id, isActive) {
+  if(!confirm((isActive?'Deactivate':'Activate')+' this type?')) return;
+  api({action:'saveReimbursementType',typeId:id,isActive:isActive?'FALSE':'TRUE'},function(res){
+    if(res.error){toast(res.error,'err');return;}
+    toast(isActive?'Deactivated.':'Activated.','ok');
+    ALL_TYPES=[];  // force reload
+    loadTypes();
+  });
+}
+
+
+// ── ACCOUNTS VIEW (read-only for all roles) ──
+var avData = [];
+
+function loadAV() {
+  document.getElementById('avBody').innerHTML='<tr><td colspan="10"><div class="empty">Loading...</div></td></tr>';
+  var filter = (sess.role==='MANAGER'||sess.role==='ADMIN'||sess.role==='ACCOUNTS') ? 'team' : 'mine';
+  api({action:'getClaims', filter:filter}, function(res){
+    if(res.error){toast(res.error,'err');return;}
+    var all = res.claims||[];
+    var myId = sess.id||'';
+    // For each claim mark role: claimant or paidby (or both)
+    var seen = {};
+    avData = [];
+    all.forEach(function(c){
+      var isClaimant  = c.ClaimantID === myId;
+      // PaidByExpense = who paid the expense at time of claim (set during submission)
+      // PaidBy = who the firm paid back (set by accounts)
+      // PaidByExpense: set at claim submission (who paid the expense)
+      // PaidBy: sometimes used as accounts field - check both
+      var isPaidBy = c.PaidByExpense === myId ||
+                     (c.PaidByExpense === '' || !c.PaidByExpense) && c.PaidBy === myId;
+      if (!isClaimant && !isPaidBy) return;
+      var role = isClaimant && isPaidBy ? 'Claimant & Paid By' : (isClaimant ? 'Claimant' : 'Paid By');
+      if (!seen[c.ClaimID]) {
+        seen[c.ClaimID] = true;
+        avData.push(Object.assign({}, c, {_myRole: role}));
+      }
+    });
+    filterAV();
+  });
+}
+
+function filterAV() {
+  var q = (document.getElementById('avSrch').value||'').toLowerCase();
+  var f = document.getElementById('avFil').value;
+  var filtered = avData.filter(function(c){
+    var mq = !q || (c.ClaimID||'').toLowerCase().indexOf(q)>=0 || (c.ClientName||'').toLowerCase().indexOf(q)>=0;
+    var mf = !f ||
+      (f==='claimant' && (c._myRole==='Claimant'||c._myRole==='Claimant & Paid By')) ||
+      (f==='paidby'   && (c._myRole==='Paid By'||c._myRole==='Claimant & Paid By'));
+    return mq && mf;
+  });
+  var tb = document.getElementById('avBody');
+  if(!filtered.length){
+    tb.innerHTML='<tr><td colspan="10"><div class="empty">No records found.</div></td></tr>';
+    return;
+  }
+  tb.innerHTML='';
+  filtered.forEach(function(c){
+    var isClientReimb = c.Category==='Client Reimbursable';
+    var pd  = c.DatePaidByFirm?fmtD(c.DatePaidByFirm):'<span style="color:var(--amber)">Pending</span>';
+    var id2 = isClientReimb?(c.DateInvoicedToClient?fmtD(c.DateInvoicedToClient):'<span style="color:var(--amber)">Pending</span>'):'<span style="color:var(--muted)">N/A</span>';
+    var rd  = isClientReimb?(c.DateReceivedFromClient?fmtD(c.DateReceivedFromClient):(c.DateInvoicedToClient?'<span style="color:var(--amber)">Pending</span>':'—')):'<span style="color:var(--muted)">N/A</span>';
+    // Role badge
+    var roleBg = c._myRole==='Claimant'?'background:#eeeef8;color:#2d2d4e':
+                 c._myRole==='Paid By'?'background:#fef9ec;color:#7a4f00':
+                 'background:#e8f8f0;color:#0a5c36';
+    var roleTag = '<span style="font-size:10px;font-weight:600;padding:2px 7px;border-radius:10px;'+roleBg+'">'+c._myRole+'</span>';
+    var tr = document.createElement('tr');
+    tr.innerHTML='<td><span class="cid">'+c.ClaimID+'</span></td>' +
+      '<td style="font-size:12px">'+(c.ClaimantName||c.ClaimantID||'-')+'</td>' +
+      '<td>'+roleTag+'</td>' +
+      '<td style="font-size:12px">'+(c.ClientName||'-')+'</td>' +
+      '<td class="amt">'+fmtA(c.Amount)+'</td>' +
+      '<td style="font-size:11px;color:var(--muted)">'+(c.Category||'-')+'</td>' +
+      '<td>'+pd+'</td><td>'+id2+'</td><td>'+rd+'</td><td></td>';
+    // View button only
+    var td = tr.querySelector('td:last-child');
+    var vb = document.createElement('button'); vb.className='btn'; vb.innerHTML='👁 View';
+    (function(id){ vb.addEventListener('click',function(){ viewClaim(id,false,false); }); })(c.ClaimID);
+    td.appendChild(vb);
+    tb.appendChild(tr);
+    // Timeline row
+    var tlParts=[];
+    var tlBase=c.DateOfExpense&&c.DateOfExpense!=='-'&&c.DateOfExpense!==''?new Date(c.DateOfExpense):null;
+    function tlDay(d){ if(!tlBase||!d||d==='-'||d==='') return ''; var days=Math.round((new Date(d)-tlBase)/86400000); return days===0?' (+0d)':' ('+(days>0?'+':'')+days+'d)'; }
+    if(c.DateOfExpense&&c.DateOfExpense!=='-'&&c.DateOfExpense!=='') tlParts.push('Expense: '+fmtD(c.DateOfExpense));
+    if(c.DateClaimed&&c.DateClaimed!=='-'&&c.DateClaimed!=='') tlParts.push('Claimed: '+fmtD(c.DateClaimed)+tlDay(c.DateClaimed));
+    if(c.DateManagerApproved&&c.DateManagerApproved!=='-'&&c.DateManagerApproved!=='') tlParts.push('Mgr ✓: '+fmtD(c.DateManagerApproved)+tlDay(c.DateManagerApproved));
+    if(c.FinanceApprovalStatus==='APPROVED_FINANCE') tlParts.push('Fin ✓');
+    if(c.DatePaidByFirm&&c.DatePaidByFirm!=='-'&&c.DatePaidByFirm!=='') tlParts.push('Paid: '+fmtD(c.DatePaidByFirm)+tlDay(c.DatePaidByFirm));
+    if(c.DateInvoicedToClient&&c.DateInvoicedToClient!=='-'&&c.DateInvoicedToClient!=='') tlParts.push('Intimated: '+fmtD(c.DateInvoicedToClient)+tlDay(c.DateInvoicedToClient));
+    if(c.DateReceivedFromClient&&c.DateReceivedFromClient!=='-'&&c.DateReceivedFromClient!=='') tlParts.push('Received: '+fmtD(c.DateReceivedFromClient)+tlDay(c.DateReceivedFromClient));
+    if(tlParts.length>0){
+      var tlRow=document.createElement('tr'); tlRow.style.cssText='background:#f0f0f8;border-bottom:1px solid var(--border)';
+      var tlTd=document.createElement('td'); tlTd.colSpan=10;
+      tlTd.style.cssText='padding:3px 14px 4px 14px;font-size:10px;color:#4a4a8a';
+      tlTd.textContent='📅  '+tlParts.join('  →  ');
+      tlRow.appendChild(tlTd); tb.appendChild(tlRow);
+    }
+  });
+}
+
+// ── EXPORT ──
+function exportCSV(data,fname){
+  if(!data||!data.length){toast('No data to export.','err');return;}
+  var keys=['ClaimID','ClaimantName','DateOfExpense','DateClaimed','ClientName','MajorHead','MinorHead','Nature','Category','Amount','ManagerApprovalStatus','FinanceApprovalStatus','DatePaidByFirm','DateInvoicedToClient','DateReceivedFromClient'];
+  var rows=[keys];
+  for(var i=0;i<data.length;i++){var row=[];for(var j=0;j<keys.length;j++) row.push(data[i][keys[j]]||'');rows.push(row);}
+  var csv=rows.map(function(r){return r.map(function(v){return '"'+String(v).replace(/"/g,'""')+'"';}).join(',');}).join('\n');
+  var blob=new Blob([csv],{type:'text/csv'});var url=URL.createObjectURL(blob);var a=document.createElement('a');a.href=url;a.download=fname+'.csv';a.click();URL.revokeObjectURL(url);
+  toast('Exported!','ok');
+}
+
+// ── PRINT ──
+function printClaim(id){ sessionStorage.setItem('printClaimId',id); window.open('print.html','_blank'); }
+
+// ── CLOSE OVERLAYS ──
+document.getElementById('detOv').addEventListener('click',function(e){if(e.target===this)closeMod();});
+document.getElementById('usrOv').addEventListener('click',function(e){if(e.target===this)closeUserMod();});
+document.getElementById('accOv').addEventListener('click',function(e){if(e.target===this)closeAccMod();});
+var _acOv=document.getElementById('addClientOv'); if(_acOv) _acOv.addEventListener('click',function(e){if(e.target===this)closeAddClientMod();});
+document.getElementById('typeOv').addEventListener('click',function(e){if(e.target===this)closeTypeMod();});
+
+// Preload types when app starts
+loadTypeData(null);
+init();
+
+</script>
+</body>
+</html>

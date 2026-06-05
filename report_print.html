@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>PKP — Claims Report</title>
+<title>J&C — Claims Report</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;color:#1a1a2e;background:#fff;padding:24px}
@@ -167,7 +167,7 @@ function render() {
 
   // Header
   html += "<div class='firm-header'>";
-  html += "<div class='firm-name'>Pratapkaran Paul &amp; Co.</div>";
+  html += "<div class='firm-name'>Jagan &amp; Co.</div>";
   html += "<div class='firm-sub'>Chartered Accountants</div>";
   html += "<div class='report-title'>"+title+"</div>";
   html += "<div class='report-meta'><span>Prepared by: "+(user.name||"System")+"</span><span>Printed: "+printDate+" at "+printTime+"</span></div>";
@@ -239,7 +239,7 @@ function render() {
   html += "</div>";
 
   // Footer
-  html += "<div class='doc-footer'><span>Pratapkaran Paul &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
+  html += "<div class='doc-footer'><span>Jagan &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
 
   document.getElementById("page").innerHTML = html;
   setTimeout(function(){ window.print(); }, 600);

@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>J&C - Print Summary</title>
+<title>PKP - Print Summary</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:Arial,sans-serif;background:#f4f4f4;color:#111}
@@ -46,8 +46,8 @@ tr:nth-child(even) td{background:#f9fafb}
 </div>
 <div class="page" id="pg"><div class="loading">Loading claim details...</div></div>
 <script>
-var API = 'https://script.google.com/macros/s/AKfycbxyj6eMrHydeeRGBZxwSg4jD6ABjH_tIIg8gjMD9_WzzGpmeN5tS6T9mWTn8jfmQJ8n/exec';
-var COMPANY = 'Jagan & Co.';
+var API = 'https://script.google.com/macros/s/AKfycbzz-toxODXS8280oTFNgSfhheCV4Zhkobx4dE1DKTECGzIPHrJ3jr1LHdlk50sxDoXZBg/exec';
+var COMPANY = 'Pratapkaran Paul & Co.';
 var sess = {}, tok = '';
 try { sess = JSON.parse(sessionStorage.getItem('pkp_user')||'{}'); tok = sessionStorage.getItem('pkp_token')||''; } catch(e){}
 if (!sess.role) { window.location.href = 'index.html'; }

@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>J&C Reimbursement</title>
+<title>PKP Reimbursement</title>
 <link href="https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Cinzel:wght@400;600;700&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -187,7 +187,7 @@ tr:hover td{background:#fafafa}
 </head>
 <body>
 <aside class="sidebar" id="sidebar">
-<div class="s-logo"><div class="s-co">Reimburse   'ment</div><div class="s-name">Jagan <span>&amp; Co.</span></div></div>
+<div class="s-logo"><div class="s-co">Reimburse   'ment</div><div class="s-name">Pratapkaran Paul <span>&amp; Co.</span></div></div>
 <nav class="nav" id="sideNav"></nav>
 <div class="s-foot"><div class="s-powered">Powered by <span>CA. Jagan A.</span></div><div class="s-user"><a href="profile.html" title="View Profile" style="display:flex;align-items:center;gap:10px;text-decoration:none;flex:1;min-width:0"><div class="s-av" id="sAv">U</div><div style="min-width:0"><div class="s-un" id="sNm">User</div><div class="s-ur" id="sRl">-</div></div></a><button class="s-lo" id="loBtn" title="Logout"><i class="fa-solid fa-right-from-bracket"></i></button></div></div>
 </aside>
@@ -239,7 +239,7 @@ tr:hover td{background:#fafafa}
 <div class="amt-box"><span style="font-size:13px;color:var(--blue);font-weight:500">Claim Amount</span><span class="amt-val" id="ncAmtD">Rs. 0.00</span></div>
 </div></div>
 <div class="fcard"><div class="fc-hdr"><div class="fc-title">📎 Attachment Reference (Optional)</div></div><div class="fc-body">
-<div class="field"><label>Attachment Reference No.</label><input type="text" id="ncAttRef" placeholder="e.g. J&C-ATT-2025-0001 (auto-generated on request)"></div>
+<div class="field"><label>Attachment Reference No.</label><input type="text" id="ncAttRef" placeholder="e.g. PKP-ATT-2025-0001 (auto-generated on request)"></div>
 <div class="field"><label>Document Link (OneDrive/Drive shared link)</label><input type="text" id="ncAttURL" placeholder="Paste shareable link here"></div>
 <p style="font-size:12px;color:var(--muted);margin-top:8px">Upload your document to a shared folder and paste the link above. Or leave blank.</p>
 <button class="ghost" style="margin-top:10px" onclick="getRef()">🔖 Generate Reference Number</button>
@@ -331,7 +331,7 @@ tr:hover td{background:#fafafa}
 <div class="overlay" id="accOv"><div class="modal" style="width:440px"><div class="mhdr"><div class="mtitle" id="acMTtl">Update Payment</div><button class="mcls" onclick="closeAccMod()">&#10005;</button></div><div class="mbdy"><input type="hidden" id="acId">
 <div style="font-size:11px;color:var(--muted);margin-bottom:10px;padding:8px 10px;background:var(--blue-lt);border-radius:6px">📅 <span id="acTimeline">—</span></div>
 <div class="fg">
-<div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. J&C001"></div>
+<div class="field"><label>Paid By (Employee ID)</label><input type="text" id="acPb" placeholder="e.g. PKP001"></div>
 <div class="field"><label>Payment Mode</label>
 <select id="acPm" style="width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none">
 <option value="">Select mode</option><option value="Bank 1">Bank 1</option><option value="Bank 2">Bank 2</option><option value="Client Direct">Client Direct</option><option value="Cash">Cash</option><option value="Other">Other</option>
@@ -347,7 +347,7 @@ tr:hover td{background:#fafafa}
 <div class="toast" id="toast"></div>
 <script>
 
-var API = 'https://script.google.com/macros/s/AKfycbxyj6eMrHydeeRGBZxwSg4jD6ABjH_tIIg8gjMD9_WzzGpmeN5tS6T9mWTn8jfmQJ8n/exec';
+var API = 'https://script.google.com/macros/s/AKfycbzz-toxODXS8280oTFNgSfhheCV4Zhkobx4dE1DKTECGzIPHrJ3jr1LHdlk50sxDoXZBg/exec';
 var sess = {}, tok = '';
 var myData=[], teamData=[], finData=[], accData=[], usrData=[], rptData=[];
 var apCurTab = 'pending';
@@ -978,7 +978,7 @@ function viewClaim(id, canApprove, isFinance) {
   document.getElementById('mBdg').innerHTML=statusBadge(getStatus(c));
   var ib=document.getElementById('mIBar');
   if(canApprove){ib.textContent='This claim awaits your approval.';ib.style.display='block';}else{ib.style.display='none';}
-  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Paid By',c.PaidByName||c.PaidBy||'—'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
+  var fields=[['Claimant',c.ClaimantName||c.ClaimantID||'-'],['Paid By',c.PaidByExpenseName||c.PaidByExpense||c.PaidBy||'—'],['Date of Expense',fmtD(c.DateOfExpense)],['Submitted',fmtD(c.DateClaimed)],['Client',c.ClientName||'-'],['Major Head',c.MajorHead||'-'],['Minor Head',c.MinorHead||'-'],['Nature',c.Nature||'-'],['Category',c.Category||'-']];
   if(c.SubNature) fields.push(['Sub-Nature',c.SubNature]);
   var dhtml=''; for(var i=0;i<fields.length;i++) dhtml+='<div class="di"><div class="dl">'+fields[i][0]+'</div><div class="dv">'+fields[i][1]+'</div></div>';
   dhtml+='<div class="di df"><div class="dl">Description</div><div class="dv">'+(c.Description||'-')+'</div></div>';
@@ -1384,7 +1384,9 @@ function loadRpt(rid){
   rptCurrentRid=rid; rptSelected={}; rptColFilters={};
   document.getElementById("rptSelBar").className="rpt-sel-bar";
   document.getElementById("rptOut").innerHTML="<div class=\"empty\">Loading...</div>";
-  api({action:"getClaims",filter:"team"},function(res){
+  // my_payments needs 'mine' filter which includes PaidByExpense claims
+  var rptFilter = (rid==="my_payments") ? "mine" : "team";
+  api({action:"getClaims",filter:rptFilter},function(res){
     if(res.error){toast(res.error,"err");return;}
     var all=res.claims||[];
     var filtered=[];
@@ -1394,7 +1396,7 @@ function loadRpt(rid){
     else if(rid==="pending_payment") filtered=all.filter(function(c){return c.FinanceApprovalStatus==="APPROVED_FINANCE"&&!c.DatePaidByFirm;});
     else if(rid==="pending_receipt") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&c.DateInvoicedToClient&&!c.DateReceivedFromClient;});
     else if(rid==="pending_intimation") filtered=all.filter(function(c){return c.Category==="Client Reimbursable"&&!c.DateInvoicedToClient&&(c.FinanceApprovalStatus==="APPROVED_FINANCE"||c.DatePaidByFirm);});
-    else if(rid==="my_payments") filtered=all.filter(function(c){return c.PaidBy===sess.id;});
+    else if(rid==="my_payments") filtered=all.filter(function(c){return c.PaidByExpense===sess.id||((!c.PaidByExpense||c.PaidByExpense==="")&&c.PaidBy===sess.id);});
     else if(rid==="clientwise") filtered=all.slice().sort(function(a,b){return (a.ClientName||"").localeCompare(b.ClientName||"");});
     else if(rid==="employeewise") filtered=all.slice().sort(function(a,b){return (a.ClaimantName||"").localeCompare(b.ClaimantName||"");});
     else filtered=all;
@@ -1545,7 +1547,7 @@ function renderRpt(rid,data){
 
   // Print header (hidden on screen, shown on print)
   var ph=document.getElementById("rptPrintHdr");
-  ph.innerHTML="<div style='text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:12px;margin-bottom:16px'><div style='font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#7070a0;margin-bottom:4px'>Jagan &amp; Co.</div><div style='font-size:20px;font-weight:700;color:#1a1a2e;font-family:Palatino Linotype,serif;margin-bottom:4px'>"+titleText+"</div><div style='font-size:11px;color:#7070a0'>Printed by: "+sess.name+" &nbsp;|&nbsp; Date: "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})+"</div></div>";
+  ph.innerHTML="<div style='text-align:center;border-bottom:2px solid #1a1a2e;padding-bottom:12px;margin-bottom:16px'><div style='font-size:9px;letter-spacing:0.15em;text-transform:uppercase;color:#7070a0;margin-bottom:4px'>Pratapkaran Paul &amp; Co.</div><div style='font-size:20px;font-weight:700;color:#1a1a2e;font-family:Palatino Linotype,serif;margin-bottom:4px'>"+titleText+"</div><div style='font-size:11px;color:#7070a0'>Printed by: "+sess.name+" &nbsp;|&nbsp; Date: "+new Date().toLocaleDateString("en-IN",{day:"2-digit",month:"long",year:"numeric"})+"</div></div>";
 
   var wrap=document.createElement("div"); wrap.className="tc";
   // Toolbar
@@ -1617,7 +1619,7 @@ function renderRpt(rid,data){
   var pf=document.getElementById("rptPrintFtr");
   var catRows="";
   for(var cat in catTotals) catRows+="<tr><td style='padding:4px 8px;font-size:12px'>"+cat+"</td><td style='padding:4px 8px;font-size:12px;text-align:right;font-weight:600'>"+fmtA(catTotals[cat])+"</td></tr>";
-  pf.innerHTML="<table style='width:100%;border-collapse:collapse;margin-bottom:16px'><thead><tr><th colspan='2' style='background:#1a1a2e;color:#fff;padding:7px 8px;font-size:12px;text-align:left'>Summary by Category</th></tr></thead><tbody>"+catRows+"<tr style='border-top:2px solid #1a1a2e'><td style='padding:6px 8px;font-weight:700;font-size:13px'>TOTAL</td><td style='padding:6px 8px;font-weight:700;font-size:13px;text-align:right'>"+fmtA(total)+"</td></tr></tbody></table><div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px'><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Prepared by<br><br><strong style='color:#1a1a2e'>"+sess.name+"</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Authorised by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Reviewed by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div></div><div style='margin-top:16px;font-size:9px;color:#9090b0;text-align:center'>Jagan &amp; Co. | System generated report | "+new Date().toLocaleString("en-IN")+"</div>";
+  pf.innerHTML="<table style='width:100%;border-collapse:collapse;margin-bottom:16px'><thead><tr><th colspan='2' style='background:#1a1a2e;color:#fff;padding:7px 8px;font-size:12px;text-align:left'>Summary by Category</th></tr></thead><tbody>"+catRows+"<tr style='border-top:2px solid #1a1a2e'><td style='padding:6px 8px;font-weight:700;font-size:13px'>TOTAL</td><td style='padding:6px 8px;font-weight:700;font-size:13px;text-align:right'>"+fmtA(total)+"</td></tr></tbody></table><div style='display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;margin-top:20px'><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Prepared by<br><br><strong style='color:#1a1a2e'>"+sess.name+"</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Authorised by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div><div style='border-top:1px solid #1a1a2e;padding-top:8px;text-align:center;font-size:11px;color:#7070a0'>Reviewed by<br><br><strong style='color:#1a1a2e'>&nbsp;</strong></div></div><div style='margin-top:16px;font-size:9px;color:#9090b0;text-align:center'>Pratapkaran Paul &amp; Co. | System generated report | "+new Date().toLocaleString("en-IN")+"</div>";
 }
 
 // ── EXPORT SELECTED PDF (browser print) ──
@@ -1677,7 +1679,7 @@ function exportSelectedXLS(){
   ws2["!cols"]=[{wch:24},{wch:20}];
   XLSX.utils.book_append_sheet(wb, ws2, "Summary");
 
-  var fname="J&C_Claims_"+new Date().toISOString().slice(0,10)+".xlsx";
+  var fname="PKP_Claims_"+new Date().toISOString().slice(0,10)+".xlsx";
   XLSX.writeFile(wb, fname);
   toast("Excel exported: "+sel.length+" claims", "ok");
 }
@@ -1874,7 +1876,7 @@ var avData = [];
 
 function loadAV() {
   document.getElementById('avBody').innerHTML='<tr><td colspan="10"><div class="empty">Loading...</div></td></tr>';
-  var filter = (sess.role==='MANAGER') ? 'team' : 'mine';
+  var filter = (sess.role==='MANAGER'||sess.role==='ADMIN'||sess.role==='ACCOUNTS') ? 'team' : 'mine';
   api({action:'getClaims', filter:filter}, function(res){
     if(res.error){toast(res.error,'err');return;}
     var all = res.claims||[];
@@ -1884,7 +1886,12 @@ function loadAV() {
     avData = [];
     all.forEach(function(c){
       var isClaimant  = c.ClaimantID === myId;
-      var isPaidBy    = c.PaidByExpense === myId || c.PaidBy === myId;
+      // PaidByExpense = who paid the expense at time of claim (set during submission)
+      // PaidBy = who the firm paid back (set by accounts)
+      // PaidByExpense: set at claim submission (who paid the expense)
+      // PaidBy: sometimes used as accounts field - check both
+      var isPaidBy = c.PaidByExpense === myId ||
+                     (c.PaidByExpense === '' || !c.PaidByExpense) && c.PaidBy === myId;
       if (!isClaimant && !isPaidBy) return;
       var role = isClaimant && isPaidBy ? 'Claimant & Paid By' : (isClaimant ? 'Claimant' : 'Paid By');
       if (!seen[c.ClaimID]) {

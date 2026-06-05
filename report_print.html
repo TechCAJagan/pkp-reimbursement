@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>J&C — Claims Report</title>
+<title>PKP — Claims Report</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:"Palatino Linotype","Palatino","Book Antiqua",serif;color:#1a1a2e;background:#fff;padding:24px}
@@ -97,7 +97,8 @@ tr:nth-child(even) td{background:#f8f8fc}
     <select id="groupBy" onchange="render()" style="padding:6px 28px 6px 10px;border:1px solid #dddde8;border-radius:7px;font-family:inherit;font-size:13px;color:#1a1a2e;background:#fff;outline:none;cursor:pointer;appearance:none;background-image:url('data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%2212%22 height=%2212%22 viewBox=%220 0 24 24%22 fill=%22none%22 stroke=%22%231a1a2e%22 stroke-width=%222.5%22%3E%3Cpath d=%22m6 9 6 6 6-6%22/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 8px center">
       <option value="category" selected>Category</option>
       <option value="client">Client</option>
-      <option value="employee">Employee</option>
+      <option value="employee">Employee (Claimant)</option>
+      <option value="paidby">Employee (Paid By)</option>
       <option value="none">No Grouping</option>
     </select>
   </label>
@@ -120,13 +121,17 @@ function getStatusLabel(s){ var m={PENDING_MANAGER:"Pending Manager",PENDING_FIN
 function getBadgeCls(s){ var m={PENDING_MANAGER:"b-pm",PENDING_FINANCE:"b-pf",APPROVED_FINANCE:"b-af",REJECTED_MANAGER:"b-rej",REJECTED_FINANCE:"b-rej",PAID:"b-paid",CLOSED:"b-paid"}; return m[s]||"b-pm"; }
 
 // Table header HTML
-var TABLE_HDR = "<table><thead><tr><th style='width:20px'>#</th><th style='width:130px'>Claim / Employee</th><th style='width:90px'>Client</th><th style='width:100px'>Classification</th><th>Description &amp; Sub-nature</th><th style='width:70px;text-align:right'>Amount</th><th style='width:90px'>Status</th><th style='width:80px'>Att. Ref.</th></tr></thead><tbody>";
+var TABLE_HDR = "<table><thead><tr><th style='width:20px'>#</th><th style='width:140px'>Paid By / Claimant</th><th style='width:90px'>Client</th><th style='width:100px'>Classification</th><th>Description &amp; Sub-nature</th><th style='width:70px;text-align:right'>Amount</th><th style='width:90px'>Status</th><th style='width:80px'>Att. Ref.</th></tr></thead><tbody>";
 
 function claimRow(c, idx) {
   var s = getStatus(c);
   var h = "<tr>";
   h += "<td style='color:#9090b0;font-size:10px;text-align:center;vertical-align:top'>"+(idx+1)+"</td>";
-  h += "<td style='vertical-align:top'><span class='mono'>"+c.ClaimID+"</span><div style='font-size:11px;font-weight:600;color:#1a1a2e;margin-top:2px'>"+(c.ClaimantName||c.ClaimantID||"-")+"</div><div style='font-size:9px;color:#9090b0'>"+fmtD(c.DateOfExpense)+" · "+(c.Category||"-")+"</div></td>";
+  var paidByName = c.PaidByExpenseName || c.PaidByExpense || c.ClaimantName || c.ClaimantID || "-";
+  var paidByLine = (c.PaidByExpense && c.PaidByExpense !== c.ClaimantID)
+    ? "<div style='font-size:9px;color:#9090b0'>Claimant: "+(c.ClaimantName||c.ClaimantID||"-")+"</div>"
+    : "";
+  h += "<td style='vertical-align:top'><span class='mono'>"+c.ClaimID+"</span><div style='font-size:11px;font-weight:600;color:#1a1a2e;margin-top:2px'>"+paidByName+"</div><div style='font-size:9px;color:#9090b0'>"+fmtD(c.DateOfExpense)+" · "+(c.Category||"-")+"</div>"+paidByLine+"</td>";
   h += "<td style='font-size:11px;vertical-align:top'>"+(c.ClientName||"-")+"</td>";
   h += "<td style='vertical-align:top'><div style='font-size:11px;font-weight:600;color:#1a1a2e'>"+(c.MajorHead||"-")+"</div><div style='font-size:9px;color:#9090b0;line-height:1.5'>"+(c.MinorHead||"")+(c.Nature?"<br>"+c.Nature:"")+"</div></td>";
   h += "<td style='vertical-align:top'><div style='font-size:10px;color:#1a1a2e;line-height:1.5'>"+(c.Description||"-")+"</div>"+(c.SubNature?"<div style='font-size:9px;color:#9090b0'>Sub: "+c.SubNature+"</div>":"")+"</td>";
@@ -167,7 +172,7 @@ function render() {
 
   // Header
   html += "<div class='firm-header'>";
-  html += "<div class='firm-name'>Jagan &amp; Co.</div>";
+  html += "<div class='firm-name'>Pratapkaran Paul &amp; Co.</div>";
   html += "<div class='firm-sub'>Chartered Accountants</div>";
   html += "<div class='report-title'>"+title+"</div>";
   html += "<div class='report-meta'><span>Prepared by: "+(user.name||"System")+"</span><span>Printed: "+printDate+" at "+printTime+"</span></div>";
@@ -195,6 +200,14 @@ function render() {
       groupKeys = Object.keys(groupMap).sort();
     } else if (groupBy === "employee") {
       data.forEach(function(c){ var k=c.ClaimantName||c.ClaimantID||"Unknown"; if(!groupMap[k]) groupMap[k]=[]; groupMap[k].push(c); groupTotals[k]=(groupTotals[k]||0)+(parseFloat(c.Amount)||0); });
+      groupKeys = Object.keys(groupMap).sort();
+    } else if (groupBy === "paidby") {
+      data.forEach(function(c){
+        var k = c.PaidByExpenseName || c.PaidByExpense || c.ClaimantName || c.ClaimantID || "Unknown";
+        if(!groupMap[k]) groupMap[k]=[];
+        groupMap[k].push(c);
+        groupTotals[k]=(groupTotals[k]||0)+(parseFloat(c.Amount)||0);
+      });
       groupKeys = Object.keys(groupMap).sort();
     }
 
@@ -239,7 +252,7 @@ function render() {
   html += "</div>";
 
   // Footer
-  html += "<div class='doc-footer'><span>Jagan &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
+  html += "<div class='doc-footer'><span>Pratapkaran Paul &amp; Co. | Reimbursement Management System | Powered by CA. Jagan A.</span><span>"+data.length+" claims | "+fmtA(total)+" total | Generated "+printDate+"</span></div>";
 
   document.getElementById("page").innerHTML = html;
   setTimeout(function(){ window.print(); }, 600);
